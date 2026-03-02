@@ -70,11 +70,11 @@ export function DataProvider({ children }) {
         const memberCount = members.length;
         const utilityPerMember = memberCount > 0 ? totalUtilityCost / memberCount : 0;
 
-        // Subtract all non-baki expenses (regular + additional) from total deposit
-        const allNonBakiExpenses = expenses
-            .filter(e => e.type !== 'baki')
+        // Subtract all non-baki expenses that were paid from the mess fund
+        const messFundExpenses = expenses
+            .filter(e => e.type !== 'baki' && e.fundSource !== 'own')
             .reduce((sum, e) => sum + Number(e.amount), 0);
-        const managerCashInHand = totalDeposit - allNonBakiExpenses;
+        const managerCashInHand = totalDeposit - messFundExpenses;
 
         const stats = members.map(m => {
             const mMeals = mealsByMember[m.id] || 0;
