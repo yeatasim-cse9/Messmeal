@@ -24,9 +24,8 @@ export const getBanglaMonthYear = (monthStr) => {
     return `${banglaMonths[parseInt(month) - 1]}, ${englishToBangla(year)}`;
 };
 
-export const formatCurrency = (amount, forceDecimals = false) => {
-    if (!amount || isNaN(amount)) return '০ ৳';
+export const formatCurrency = (amount) => {
+    if (amount === null || amount === undefined || isNaN(amount)) return '০.০০ ৳';
     const num = Number(amount);
-    const formattedNum = forceDecimals ? num.toFixed(2) : (num % 1 === 0 ? num.toString() : num.toFixed(2));
-    return `${englishToBangla(formattedNum)} ৳`;
+    return `${englishToBangla(num.toFixed(2))} ৳`;
 };

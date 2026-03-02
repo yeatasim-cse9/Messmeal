@@ -98,8 +98,8 @@ export default function Summary() {
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 sm:mb-6 lg:mb-8 gap-3">
                     <h3 className="text-base sm:text-lg lg:text-xl font-bold text-slate-900">ফাইনাল রিপোর্ট</h3>
                     <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
-                        <span className="text-[11px] sm:text-sm font-medium text-slate-400 bg-slate-50 px-2.5 sm:px-4 py-1.5 sm:py-2 rounded-lg truncate">
-                            বিল প্রতি জন: {formatCurrency(utilityPerMember)}
+                        <span className="text-sm sm:text-base font-bold text-slate-600 bg-slate-100 px-3 sm:px-5 py-2 sm:py-2.5 rounded-xl">
+                            বিল প্রতি জন: <span className="text-slate-900 font-black">{formatCurrency(utilityPerMember)}</span>
                         </span>
                         <button onClick={() => generateMonthlyReport({
                             monthLabel: getBanglaMonthYear(selectedMonth),
@@ -118,8 +118,8 @@ export default function Summary() {
                         <div key={stat.id} className="p-3 rounded-xl border border-slate-100 bg-slate-50/50">
                             <div className="flex items-center justify-between mb-2">
                                 <span className="font-bold text-slate-900 text-sm truncate">{stat.name}</span>
-                                <span className={`font-black text-base ${stat.balance >= 0 ? 'text-emerald-600' : 'text-rose-500'}`}>
-                                    {stat.balance >= 0 ? '+' : '-'}৳{englishToBangla(Math.abs(stat.balance).toFixed(0))}
+                                <span className={`font-black  text-base ${stat.balance >= 0 ? 'text-emerald-600' : 'text-rose-500'}`}>
+                                    {stat.balance >= 0 ? '+' : '-'}৳{englishToBangla(Math.abs(stat.balance).toFixed(2))}
                                 </span>
                             </div>
                             <div className="grid grid-cols-2 gap-x-4 gap-y-1.5 text-[11px] text-slate-500 font-medium">
@@ -158,19 +158,19 @@ export default function Summary() {
                                         <span className="text-slate-400 text-sm ml-0.5">মিল</span>
                                     </td>
                                     <td className="py-4 text-center">
-                                        <span className="font-black text-slate-800">৳{englishToBangla(stat.foodCost.toFixed(0))}</span>
+                                        <span className="font-black text-slate-800">৳{englishToBangla(stat.foodCost.toFixed(2))}</span>
                                     </td>
                                     <td className="py-4 text-center">
-                                        <span className="font-black text-slate-800">৳{englishToBangla(stat.utilityCost.toFixed(0))}</span>
+                                        <span className="font-black text-slate-800">৳{englishToBangla(stat.utilityCost.toFixed(2))}</span>
                                     </td>
                                     <td className="py-4 text-center">
-                                        <span className="font-black text-amber-600">৳{englishToBangla(stat.additionalExpense.toFixed(0))}</span>
+                                        <span className="font-black text-amber-600">৳{englishToBangla(stat.additionalExpense.toFixed(2))}</span>
                                     </td>
                                     <td className="py-4 text-center">
-                                        <span className="font-black text-slate-800">৳{englishToBangla(stat.totalContribution.toFixed(0))}</span>
+                                        <span className="font-black text-slate-800">৳{englishToBangla(stat.totalContribution.toFixed(2))}</span>
                                     </td>
                                     <td className={`py-4 text-right pr-3 font-black text-xl tracking-tight ${stat.balance >= 0 ? 'text-emerald-600' : 'text-rose-500'}`}>
-                                        {stat.balance >= 0 ? '+ ' : '- '}৳{englishToBangla(Math.abs(stat.balance).toFixed(0))}
+                                        {stat.balance >= 0 ? '+ ' : '- '}৳{englishToBangla(Math.abs(stat.balance).toFixed(2))}
                                     </td>
                                 </tr>
                             ))}
