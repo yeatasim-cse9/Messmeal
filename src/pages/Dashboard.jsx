@@ -2,18 +2,18 @@ import React from 'react';
 import { useData } from '../contexts/DataContext';
 import { useAuth } from '../contexts/AuthContext';
 import { formatCurrency, englishToBangla } from '../utils/helpers';
-import { TrendingUp, AlertTriangle, ShoppingBag, Utensils, Wallet, User as UserIcon } from 'lucide-react';
+import { TrendingUp, AlertTriangle, ShoppingBag, Utensils, Wallet, User as UserIcon, Receipt } from 'lucide-react';
 
 export default function Dashboard() {
     const { userProfile } = useAuth();
     const {
-        members, totalMeals, mealRate, totalMessFoodCost, totalBakiExpense, totalDeposit, managerCashInHand, memberStats
+        members, totalMeals, mealRate, totalMessFoodCost, totalBakiExpense, totalDeposit, managerCashInHand, totalAdditionalExpense, memberStats
     } = useData();
 
     return (
         <div className="space-y-6 sm:space-y-8 lg:space-y-10">
             {/* Stat Cards - Top Row */}
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
+            <div className="grid grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-4 lg:gap-5">
 
                 {/* Card 1: Mill Rate */}
                 <div className="bg-white p-4 sm:p-6 lg:p-8 rounded-2xl sm:rounded-[24px] shadow-[0_2px_12px_rgba(0,0,0,0.02)] border border-slate-100 flex flex-col justify-between min-h-[120px] sm:min-h-[150px] lg:min-h-[180px]">
@@ -45,6 +45,17 @@ export default function Dashboard() {
                     </p>
                     <div className="flex items-center text-slate-400 font-medium text-[11px] sm:text-[13px] lg:text-[14px]">
                         <ShoppingBag size={14} className="mr-1 shrink-0" /> বাজার + বকেয়া
+                    </div>
+                </div>
+
+                {/* Card 4: Additional Expenses */}
+                <div className="bg-white p-4 sm:p-6 lg:p-8 rounded-2xl sm:rounded-[24px] shadow-[0_2px_12px_rgba(0,0,0,0.02)] border border-amber-100 flex flex-col justify-between min-h-[120px] sm:min-h-[150px] lg:min-h-[180px]">
+                    <h3 className="text-slate-400 font-medium text-[11px] sm:text-[13px] lg:text-[15px]">অতিরিক্ত খরচ</h3>
+                    <p className="text-[24px] sm:text-[32px] lg:text-[42px] font-black text-amber-600 leading-none tracking-tight">
+                        {englishToBangla(totalAdditionalExpense.toLocaleString('en-IN'))}
+                    </p>
+                    <div className="flex items-center text-amber-500 font-bold text-[11px] sm:text-[13px] lg:text-[14px]">
+                        <Receipt size={14} className="mr-1 shrink-0" /> মোট অতিরিক্ত
                     </div>
                 </div>
 

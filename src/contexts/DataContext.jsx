@@ -54,6 +54,7 @@ export function DataProvider({ children }) {
             .reduce((sum, e) => sum + Number(e.amount), 0);
 
         const totalUtilityCost = extraUtilities + totalAdditionalExpense;
+        const additionalExpensePerMember = members.length > 0 ? totalAdditionalExpense / members.length : 0;
 
         const totalMessFoodCost = expenses
             .filter(e => e.type === 'regular')
@@ -95,6 +96,7 @@ export function DataProvider({ children }) {
                 totalMeals: mMeals,
                 foodCost: mCost,
                 utilityCost: utilityPerMember,
+                additionalExpense: additionalExpensePerMember,
                 totalContribution: mTotalContribution,
                 balance: balance
             };
@@ -108,6 +110,7 @@ export function DataProvider({ children }) {
             mealRate,
             managerCashInHand,
             totalUtilityCost: extraUtilities,
+            totalAdditionalExpense,
             utilityPerMember,
             memberStats: stats,
             daysInCurrentMonth

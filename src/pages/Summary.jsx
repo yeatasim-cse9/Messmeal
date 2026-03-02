@@ -12,7 +12,7 @@ export default function Summary() {
         members, billCategories, utilities, setUtility, selectedMonth,
         memberStats, mealRate, totalMessFoodCost, totalDeposit,
         managerCashInHand, totalBakiExpense, totalUtilityCost,
-        utilityPerMember, expenses, deposits, updateSettings
+        totalAdditionalExpense, utilityPerMember, expenses, deposits, updateSettings
     } = useData();
     const { showPrompt, showConfirm } = useDialog();
 
@@ -99,7 +99,7 @@ export default function Summary() {
                     <h3 className="text-base sm:text-lg lg:text-xl font-bold text-slate-900">ফাইনাল রিপোর্ট</h3>
                     <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
                         <span className="text-[11px] sm:text-sm font-medium text-slate-400 bg-slate-50 px-2.5 sm:px-4 py-1.5 sm:py-2 rounded-lg truncate">
-                            প্রতি জন: {formatCurrency(utilityPerMember)}
+                            বিল প্রতি জন: {formatCurrency(utilityPerMember)}
                         </span>
                         <button onClick={() => generateMonthlyReport({
                             monthLabel: getBanglaMonthYear(selectedMonth),
@@ -118,15 +118,16 @@ export default function Summary() {
                         <div key={stat.id} className="p-3 rounded-xl border border-slate-100 bg-slate-50/50">
                             <div className="flex items-center justify-between mb-2">
                                 <span className="font-bold text-slate-900 text-sm truncate">{stat.name}</span>
-                                <span className={`font-black text-base ${stat.balance >= 0 ? 'text-slate-900' : 'text-rose-500'}`}>
-                                    {stat.balance >= 0 ? '+' : '-'}{formatCurrency(Math.abs(stat.balance))}
+                                <span className={`font-black text-base ${stat.balance >= 0 ? 'text-emerald-600' : 'text-rose-500'}`}>
+                                    {stat.balance >= 0 ? '+' : '-'}৳{englishToBangla(Math.abs(stat.balance).toFixed(0))}
                                 </span>
                             </div>
-                            <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-[11px] text-slate-500 font-medium">
-                                <span>মিল: {englishToBangla(stat.totalMeals)}</span>
-                                <span className="text-right">খাবার: {formatCurrency(stat.foodCost)}</span>
-                                <span>বিল: {formatCurrency(stat.utilityCost)}</span>
-                                <span className="text-right">জমা: {formatCurrency(stat.totalContribution)}</span>
+                            <div className="grid grid-cols-2 gap-x-4 gap-y-1.5 text-[11px] text-slate-500 font-medium">
+                                <span>মিল: <strong className="text-slate-700">{englishToBangla(stat.totalMeals)}</strong></span>
+                                <span className="text-right">খাবার: <strong className="text-slate-700">{formatCurrency(stat.foodCost)}</strong></span>
+                                <span>বিল: <strong className="text-slate-700">{formatCurrency(stat.utilityCost)}</strong></span>
+                                <span className="text-right">অতিরিক্ত: <strong className="text-amber-600">{formatCurrency(stat.additionalExpense)}</strong></span>
+                                <span>জমা: <strong className="text-slate-700">{formatCurrency(stat.totalContribution)}</strong></span>
                             </div>
                         </div>
                     ))}
@@ -134,32 +135,67 @@ export default function Summary() {
 
                 {/* Desktop Table View */}
                 <div className="hidden sm:block overflow-x-auto -mx-2 px-2">
-                    <table className="w-full text-left border-collapse min-w-[600px]">
+                    <table className="w-full text-left border-collapse min-w-[700px]">
                         <thead>
-                            <tr className="border-b-2 border-slate-100 text-slate-500 text-xs lg:text-sm">
-                                <th className="pb-3 sm:pb-4 font-bold pl-2">মেম্বারের নাম</th>
-                                <th className="pb-3 sm:pb-4 font-bold text-center">মিল</th>
-                                <th className="pb-3 sm:pb-4 font-bold text-right">খাবার খরচ</th>
-                                <th className="pb-3 sm:pb-4 font-bold text-right">ফিক্সড বিল</th>
-                                <th className="pb-3 sm:pb-4 font-bold text-right">মোট জমা</th>
-                                <th className="pb-3 sm:pb-4 font-bold text-right pr-4">ব্যালেন্স</th>
+                            <tr className="border-b-2 border-slate-100 text-slate-400 text-[11px] lg:text-xs uppercase tracking-wider font-bold">
+                                <th className="pb-4 pl-3">মেম্বার</th>
+                                <th className="pb-4 text-center">মোট মিল</th>
+                                <th className="pb-4 text-center">খাবার খরচ</th>
+                                <th className="pb-4 text-center">ফিক্সড বিল</th>
+                                <th className="pb-4 text-center">অতিরিক্ত খরচ</th>
+                                <th className="pb-4 text-center">মোট জমা</th>
+                                <th className="pb-4 text-right pr-3">ব্যালেন্স</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-50">
                             {memberStats.map(stat => (
                                 <tr key={stat.id} className="hover:bg-slate-50/50 transition-colors">
-                                    <td className="py-3 sm:py-4 font-bold text-slate-900 pl-2 text-sm lg:text-base">{stat.name}</td>
-                                    <td className="py-3 sm:py-4 text-center font-medium text-slate-600 text-sm">{englishToBangla(stat.totalMeals)}</td>
-                                    <td className="py-3 sm:py-4 text-right font-medium text-slate-600 text-sm">{formatCurrency(stat.foodCost)}</td>
-                                    <td className="py-3 sm:py-4 text-right font-medium text-slate-600 text-sm">{formatCurrency(stat.utilityCost)}</td>
-                                    <td className="py-3 sm:py-4 text-right font-medium text-slate-600 text-sm">{formatCurrency(stat.totalContribution)}</td>
-                                    <td className={`py-3 sm:py-4 text-right pr-4 font-black text-base lg:text-lg ${stat.balance >= 0 ? 'text-slate-900' : 'text-rose-500'}`}>
-                                        {stat.balance >= 0 ? '+ ' : '- '}{formatCurrency(Math.abs(stat.balance))}
+                                    <td className="py-4 pl-3">
+                                        <span className="font-bold text-slate-900 text-[15px]">{stat.name}</span>
+                                    </td>
+                                    <td className="py-4 text-center">
+                                        <span className="font-black text-lg text-slate-800">{englishToBangla(stat.totalMeals)}</span>
+                                        <span className="text-slate-400 text-sm ml-0.5">মিল</span>
+                                    </td>
+                                    <td className="py-4 text-center">
+                                        <span className="font-black text-slate-800">৳{englishToBangla(stat.foodCost.toFixed(0))}</span>
+                                    </td>
+                                    <td className="py-4 text-center">
+                                        <span className="font-black text-slate-800">৳{englishToBangla(stat.utilityCost.toFixed(0))}</span>
+                                    </td>
+                                    <td className="py-4 text-center">
+                                        <span className="font-black text-amber-600">৳{englishToBangla(stat.additionalExpense.toFixed(0))}</span>
+                                    </td>
+                                    <td className="py-4 text-center">
+                                        <span className="font-black text-slate-800">৳{englishToBangla(stat.totalContribution.toFixed(0))}</span>
+                                    </td>
+                                    <td className={`py-4 text-right pr-3 font-black text-xl tracking-tight ${stat.balance >= 0 ? 'text-emerald-600' : 'text-rose-500'}`}>
+                                        {stat.balance >= 0 ? '+ ' : '- '}৳{englishToBangla(Math.abs(stat.balance).toFixed(0))}
                                     </td>
                                 </tr>
                             ))}
                         </tbody>
                     </table>
+                </div>
+
+                {/* Summary Info Row */}
+                <div className="mt-4 sm:mt-6 pt-4 sm:pt-6 border-t-2 border-slate-100 grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 text-center">
+                    <div className="bg-slate-50 p-3 sm:p-4 rounded-xl">
+                        <div className="text-[10px] sm:text-xs text-slate-400 font-medium mb-1">মিল রেট</div>
+                        <div className="text-lg sm:text-xl font-black text-slate-900">৳{englishToBangla(mealRate.toFixed(2))}</div>
+                    </div>
+                    <div className="bg-slate-50 p-3 sm:p-4 rounded-xl">
+                        <div className="text-[10px] sm:text-xs text-slate-400 font-medium mb-1">মোট বাজার</div>
+                        <div className="text-lg sm:text-xl font-black text-slate-900">{formatCurrency(totalMessFoodCost)}</div>
+                    </div>
+                    <div className="bg-amber-50 p-3 sm:p-4 rounded-xl border border-amber-100">
+                        <div className="text-[10px] sm:text-xs text-amber-500 font-medium mb-1">মোট অতিরিক্ত খরচ</div>
+                        <div className="text-lg sm:text-xl font-black text-amber-600">{formatCurrency(totalAdditionalExpense)}</div>
+                    </div>
+                    <div className="bg-emerald-50 p-3 sm:p-4 rounded-xl border border-emerald-100">
+                        <div className="text-[10px] sm:text-xs text-emerald-500 font-medium mb-1">হাতে আছে</div>
+                        <div className="text-lg sm:text-xl font-black text-emerald-700">{formatCurrency(managerCashInHand)}</div>
+                    </div>
                 </div>
             </div>
         </div>

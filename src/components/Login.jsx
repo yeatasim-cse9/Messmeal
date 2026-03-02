@@ -114,7 +114,7 @@ export default function Login() {
                                         type="text"
                                         value={name}
                                         onChange={(e) => setName(e.target.value)}
-                                        placeholder="যেমন: রহিম"
+                                        placeholder="আপনার নাম"
                                         required
                                         className="w-full pl-10 sm:pl-12 pr-4 sm:pr-5 py-3 sm:py-4 rounded-lg sm:rounded-xl border border-slate-200 bg-slate-50 focus:ring-2 focus:ring-slate-900 focus:bg-white focus:border-slate-900 font-medium text-slate-800 transition-all text-sm sm:text-base"
                                     />
