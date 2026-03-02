@@ -157,18 +157,6 @@ export function generateMonthlyReport({ monthLabel, memberStats, mealRate, total
         </div>
     </div>
     `;
-
-    // Create a temporary visible container (html2canvas needs it in-viewport)
-    const container = document.createElement('div');
-    container.style.position = 'absolute';
-    container.style.left = '0';
-    container.style.top = '0';
-    container.style.width = '277mm';
-    container.style.zIndex = '-1';
-    container.style.background = 'white';
-    container.innerHTML = html;
-    document.body.appendChild(container);
-
     const opt = {
         margin: [8, 8, 8, 8],
         filename: `mess-hisab-${monthLabel.replace(/[,\s]+/g, '-')}.pdf`,
@@ -177,17 +165,13 @@ export function generateMonthlyReport({ monthLabel, memberStats, mealRate, total
             scale: 2,
             useCORS: true,
             letterRendering: true,
-            scrollY: 0,
-            windowWidth: container.scrollWidth
+            scrollY: 0
         },
         jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' },
         pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
     };
 
-    html2pdf().set(opt).from(container).save().then(() => {
-        document.body.removeChild(container);
-    }).catch((err) => {
+    html2pdf().set(opt).from(html, 'string').save().catch((err) => {
         console.error('PDF generation failed:', err);
-        if (container.parentNode) document.body.removeChild(container);
     });
 }

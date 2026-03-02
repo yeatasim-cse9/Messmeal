@@ -95,10 +95,10 @@ export default function MainLayout() {
             </aside>
 
             {/* Main Content Area */}
-            <main className="flex-1 w-full max-w-[1200px] mx-auto px-4 py-24 md:px-12 md:py-12 overflow-x-hidden">
+            <main className="flex-1 w-full max-w-[1200px] mx-auto px-3 sm:px-4 md:px-8 lg:px-12 py-20 sm:py-24 md:py-12 overflow-x-hidden">
 
                 {/* Header components (Date & Title & Actions) */}
-                <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-10 gap-6">
+                <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-6 sm:mb-8 lg:mb-10 gap-4 sm:gap-6">
                     <div>
                         <div className="relative flex items-center gap-2 mb-2 group cursor-pointer w-max">
                             <p className="text-slate-400 font-medium text-[15px] group-hover:text-slate-600 transition-colors">
@@ -113,7 +113,7 @@ export default function MainLayout() {
                                 title="মাস পরিবর্তন করুন"
                             />
                         </div>
-                        <h2 className="text-[32px] md:text-[40px] font-black text-slate-900 tracking-tight leading-none">
+                        <h2 className="text-[26px] sm:text-[32px] md:text-[40px] font-black text-slate-900 tracking-tight leading-none">
                             {getPageTitle(location.pathname)}
                         </h2>
                     </div>

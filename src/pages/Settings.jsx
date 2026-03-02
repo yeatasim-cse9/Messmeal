@@ -21,9 +21,9 @@ export default function Settings() {
 
     if (!isAdmin) {
         return (
-            <div className="bg-white p-10 rounded-3xl text-center shadow-sm">
-                <h2 className="text-2xl font-bold text-slate-800">অ্যাক্সেস ডিনাইড</h2>
-                <p className="text-slate-500 mt-2">এই পেজটি শুধুমাত্র অ্যাডমিনদের জন্য।</p>
+            <div className="bg-white p-6 sm:p-10 rounded-2xl sm:rounded-3xl text-center shadow-sm">
+                <h2 className="text-xl sm:text-2xl font-bold text-slate-800">অ্যাক্সেস ডিনাইড</h2>
+                <p className="text-slate-500 mt-2 text-sm sm:text-base">এই পেজটি শুধুমাত্র অ্যাডমিনদের জন্য।</p>
             </div>
         );
     }
@@ -43,7 +43,6 @@ export default function Settings() {
             try {
                 const memberRef = doc(db, `months/${selectedMonth}/members`, id);
                 await updateDoc(memberRef, { name: newName });
-                // We don't have updateMember in DataContext, but it listens in real-time, so it will auto-update!
             } catch (err) {
                 console.error(err);
                 showAlert('নাম আপডেট করতে সমস্যা হয়েছে।');
@@ -126,129 +125,179 @@ export default function Settings() {
     };
 
     return (
-        <div className="space-y-8 animate-in fade-in duration-500">
+        <div className="space-y-4 sm:space-y-6 lg:space-y-8 animate-in fade-in duration-500 px-0">
 
             {/* Month Archiving Section */}
-            <div className="bg-gradient-to-br from-indigo-50 to-blue-50 p-6 sm:p-10 rounded-[32px] shadow-sm border border-indigo-100">
-                <h3 className="text-xl font-bold text-indigo-900 mb-2 flex items-center">
-                    <Copy className="mr-3 text-indigo-500" size={24} /> মাস থেকে মেম্বার কপি (আর্কাইভ)
+            <div className="bg-gradient-to-br from-indigo-50 to-blue-50 p-4 sm:p-6 md:p-8 lg:p-10 rounded-2xl sm:rounded-3xl lg:rounded-[32px] shadow-sm border border-indigo-100">
+                <h3 className="text-base sm:text-lg lg:text-xl font-bold text-indigo-900 mb-1.5 sm:mb-2 flex items-center">
+                    <Copy className="mr-2 sm:mr-3 text-indigo-500 shrink-0" size={20} />
+                    <span className="truncate">মাস থেকে মেম্বার কপি</span>
                 </h3>
-                <p className="text-indigo-700 text-sm mb-6 font-medium">আগের কোনো মাস থেকে মেম্বারদের বর্তমান মাসে কপি করুন। এতে বারবার নাম টাইপ করতে হবে না।</p>
+                <p className="text-indigo-700 text-xs sm:text-sm mb-4 sm:mb-6 font-medium leading-relaxed">
+                    আগের কোনো মাস থেকে মেম্বারদের বর্তমান মাসে কপি করুন।
+                </p>
 
-                <div className="flex flex-col sm:flex-row items-center gap-4 bg-white p-4 rounded-2xl shadow-sm border border-indigo-50">
-                    <div className="flex items-center space-x-3 w-full sm:w-auto bg-slate-50 px-4 py-2.5 rounded-xl border border-slate-100">
-                        <Calendar className="text-slate-400" size={18} />
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4 bg-white p-3 sm:p-4 rounded-xl sm:rounded-2xl shadow-sm border border-indigo-50">
+                    <div className="flex items-center space-x-2 sm:space-x-3 w-full sm:w-auto bg-slate-50 px-3 sm:px-4 py-2.5 rounded-lg sm:rounded-xl border border-slate-100">
+                        <Calendar className="text-slate-400 shrink-0" size={16} />
                         <input
                             type="month"
                             value={copyState.sourceMonth}
                             onChange={e => setCopyState(p => ({ ...p, sourceMonth: e.target.value }))}
-                            className="bg-transparent font-bold text-slate-700 focus:outline-none w-full outline-none"
+                            className="bg-transparent font-bold text-slate-700 focus:outline-none w-full outline-none text-sm sm:text-base"
                         />
                     </div>
                     <button
                         onClick={handleCopyMembers}
                         disabled={copyState.loading || !copyState.sourceMonth}
-                        className="w-full sm:w-auto flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-xl font-bold transition-all disabled:opacity-50"
+                        className="w-full sm:w-auto flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 text-white px-4 sm:px-6 py-2.5 sm:py-3 rounded-lg sm:rounded-xl font-bold transition-all disabled:opacity-50 text-sm sm:text-base"
                     >
-                        {copyState.loading ? <Loader2 size={18} className="animate-spin" /> : <Copy size={18} />}
-                        <span>এই মাসে কপি করুন</span>
+                        {copyState.loading ? <Loader2 size={16} className="animate-spin" /> : <Copy size={16} />}
+                        <span>কপি করুন</span>
                     </button>
                 </div>
                 {copyState.status && (
-                    <p className={`mt-4 text-sm font-bold ${copyState.status.includes('সাফল্য') ? 'text-emerald-600' : 'text-rose-500'}`}>
+                    <p className={`mt-3 sm:mt-4 text-xs sm:text-sm font-bold ${copyState.status.includes('সাফল্য') ? 'text-emerald-600' : 'text-rose-500'}`}>
                         {copyState.status}
                     </p>
                 )}
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 lg:gap-8">
 
                 {/* Dynamic Meal Categories */}
-                <div className="bg-white p-6 sm:p-10 rounded-[32px] shadow-sm border border-slate-50">
-                    <h3 className="text-xl font-bold text-slate-900 mb-6 flex items-center">
-                        <Tag className="text-slate-400 mr-3" size={24} /> মিল ক্যাটাগরি
+                <div className="bg-white p-4 sm:p-6 md:p-8 lg:p-10 rounded-2xl sm:rounded-3xl lg:rounded-[32px] shadow-sm border border-slate-50">
+                    <h3 className="text-base sm:text-lg lg:text-xl font-bold text-slate-900 mb-4 sm:mb-6 flex items-center">
+                        <Tag className="text-slate-400 mr-2 sm:mr-3 shrink-0" size={20} /> মিল ক্যাটাগরি
                     </h3>
-                    <div className="space-y-4 mb-6">
+                    <div className="space-y-2.5 sm:space-y-4 mb-4 sm:mb-6">
                         {mealCategories.map(cat => (
-                            <div key={cat.id} className={`flex items-center justify-between p-4 rounded-xl border bg-${cat.color}-50 border-${cat.color}-100`}>
-                                <span className={`font-bold text-${cat.color}-700`}>{cat.label}</span>
-                                <button onClick={() => removeMealCategory(cat.id)} className={`text-${cat.color}-400 hover:text-rose-500 transition-colors`}>
-                                    <Trash2 size={18} />
+                            <div key={cat.id} className={`flex items-center justify-between p-3 sm:p-4 rounded-lg sm:rounded-xl border bg-${cat.color}-50 border-${cat.color}-100`}>
+                                <span className={`font-bold text-${cat.color}-700 text-sm sm:text-base truncate mr-2`}>{cat.label}</span>
+                                <button onClick={() => removeMealCategory(cat.id)} className={`text-${cat.color}-400 hover:text-rose-500 transition-colors shrink-0 p-1`}>
+                                    <Trash2 size={16} />
                                 </button>
                             </div>
                         ))}
                     </div>
-                    <div className="flex flex-col sm:flex-row gap-3">
-                        <input type="text" placeholder="যেমন: শুক্রবার স্পেশাল" value={newMealCat.label} onChange={e => setNewMealCat({ ...newMealCat, label: e.target.value })} className="flex-1 px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-slate-900 bg-slate-50 font-medium text-slate-700" />
-                        <select value={newMealCat.color} onChange={e => setNewMealCat({ ...newMealCat, color: e.target.value })} className="px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 font-bold">
-                            <option value="slate">সাদা</option><option value="indigo">নীল</option><option value="emerald">সবুজ</option><option value="amber">হলুদ</option>
-                        </select>
-                        <button onClick={addMealCategory} className="bg-slate-900 text-white px-4 py-3 rounded-xl hover:bg-slate-800 transition-all font-bold flex items-center justify-center shrink-0">
-                            <Plus size={20} />
-                        </button>
+                    <div className="flex flex-col xs:flex-row gap-2 sm:gap-3">
+                        <input
+                            type="text"
+                            placeholder="যেমন: শুক্রবার স্পেশাল"
+                            value={newMealCat.label}
+                            onChange={e => setNewMealCat({ ...newMealCat, label: e.target.value })}
+                            className="flex-1 min-w-0 px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg sm:rounded-xl border border-slate-200 focus:ring-2 focus:ring-slate-900 bg-slate-50 font-medium text-slate-700 text-sm sm:text-base"
+                        />
+                        <div className="flex gap-2 sm:gap-3">
+                            <select
+                                value={newMealCat.color}
+                                onChange={e => setNewMealCat({ ...newMealCat, color: e.target.value })}
+                                className="flex-1 xs:flex-initial px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg sm:rounded-xl border border-slate-200 bg-slate-50 font-bold text-sm sm:text-base"
+                            >
+                                <option value="slate">সাদা</option>
+                                <option value="indigo">নীল</option>
+                                <option value="emerald">সবুজ</option>
+                                <option value="amber">হলুদ</option>
+                            </select>
+                            <button onClick={addMealCategory} className="bg-slate-900 text-white px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg sm:rounded-xl hover:bg-slate-800 active:bg-slate-700 transition-all font-bold flex items-center justify-center shrink-0">
+                                <Plus size={18} />
+                            </button>
+                        </div>
                     </div>
                 </div>
 
                 {/* Dynamic Bill Categories */}
-                <div className="bg-white p-6 sm:p-10 rounded-[32px] shadow-sm border border-slate-50">
-                    <h3 className="text-xl font-bold text-slate-900 mb-6 flex items-center">
-                        <Calculator className="text-slate-400 mr-3" size={24} /> ফিক্সড বিল ক্যাটাগরি
+                <div className="bg-white p-4 sm:p-6 md:p-8 lg:p-10 rounded-2xl sm:rounded-3xl lg:rounded-[32px] shadow-sm border border-slate-50">
+                    <h3 className="text-base sm:text-lg lg:text-xl font-bold text-slate-900 mb-4 sm:mb-6 flex items-center">
+                        <Calculator className="text-slate-400 mr-2 sm:mr-3 shrink-0" size={20} /> ফিক্সড বিল ক্যাটাগরি
                     </h3>
-                    <div className="space-y-4 mb-6">
+                    <div className="space-y-2.5 sm:space-y-4 mb-4 sm:mb-6">
                         {billCategories.map(cat => {
                             const Icon = IconMap[cat.icon] || Calculator;
                             return (
-                                <div key={cat.id} className="flex items-center justify-between p-4 rounded-xl border border-slate-100 bg-slate-50">
-                                    <div className="flex items-center text-slate-700 font-bold">
-                                        <Icon size={18} className="mr-3 text-slate-400" /> {cat.label}
+                                <div key={cat.id} className="flex items-center justify-between p-3 sm:p-4 rounded-lg sm:rounded-xl border border-slate-100 bg-slate-50">
+                                    <div className="flex items-center text-slate-700 font-bold text-sm sm:text-base truncate mr-2">
+                                        <Icon size={16} className="mr-2 sm:mr-3 text-slate-400 shrink-0" /> <span className="truncate">{cat.label}</span>
                                     </div>
-                                    <button onClick={() => removeBillCategory(cat.id)} className="text-slate-400 hover:text-rose-500 transition-colors">
-                                        <Trash2 size={18} />
+                                    <button onClick={() => removeBillCategory(cat.id)} className="text-slate-400 hover:text-rose-500 transition-colors shrink-0 p-1">
+                                        <Trash2 size={16} />
                                     </button>
                                 </div>
                             );
                         })}
                     </div>
-                    <div className="flex flex-col sm:flex-row gap-3">
-                        <input type="text" placeholder="যেমন: গ্যাস বিল" value={newBillCat.label} onChange={e => setNewBillCat({ ...newBillCat, label: e.target.value })} className="flex-1 px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-slate-900 bg-slate-50 font-medium text-slate-700" />
-                        <select value={newBillCat.icon} onChange={e => setNewBillCat({ ...newBillCat, icon: e.target.value })} className="px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 font-bold max-w-[120px]">
-                            {Object.keys(IconMap).map(iconName => <option key={iconName} value={iconName}>{iconName}</option>)}
-                        </select>
-                        <button onClick={addBillCategory} className="bg-slate-900 text-white px-4 py-3 rounded-xl hover:bg-slate-800 transition-all font-bold flex items-center justify-center shrink-0">
-                            <Plus size={20} />
-                        </button>
+                    <div className="flex flex-col xs:flex-row gap-2 sm:gap-3">
+                        <input
+                            type="text"
+                            placeholder="যেমন: গ্যাস বিল"
+                            value={newBillCat.label}
+                            onChange={e => setNewBillCat({ ...newBillCat, label: e.target.value })}
+                            className="flex-1 min-w-0 px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg sm:rounded-xl border border-slate-200 focus:ring-2 focus:ring-slate-900 bg-slate-50 font-medium text-slate-700 text-sm sm:text-base"
+                        />
+                        <div className="flex gap-2 sm:gap-3">
+                            <select
+                                value={newBillCat.icon}
+                                onChange={e => setNewBillCat({ ...newBillCat, icon: e.target.value })}
+                                className="flex-1 xs:flex-initial px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg sm:rounded-xl border border-slate-200 bg-slate-50 font-bold text-sm sm:text-base max-w-[100px] sm:max-w-[120px]"
+                            >
+                                {Object.keys(IconMap).map(iconName => <option key={iconName} value={iconName}>{iconName}</option>)}
+                            </select>
+                            <button onClick={addBillCategory} className="bg-slate-900 text-white px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg sm:rounded-xl hover:bg-slate-800 active:bg-slate-700 transition-all font-bold flex items-center justify-center shrink-0">
+                                <Plus size={18} />
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
 
             {/* Member Management */}
-            <div className="bg-white p-6 sm:p-10 rounded-[32px] shadow-sm border border-slate-50">
-                <h3 className="text-xl font-bold text-slate-900 mb-8 flex items-center justify-between">
-                    <span>মেম্বার ম্যানেজমেন্ট</span>
-                    <span className="text-sm font-medium text-slate-400 bg-slate-50 px-4 py-2 rounded-lg">{englishToBangla(members.length)} জন</span>
+            <div className="bg-white p-4 sm:p-6 md:p-8 lg:p-10 rounded-2xl sm:rounded-3xl lg:rounded-[32px] shadow-sm border border-slate-50">
+                <h3 className="text-base sm:text-lg lg:text-xl font-bold text-slate-900 mb-4 sm:mb-6 lg:mb-8 flex items-center justify-between flex-wrap gap-2">
+                    <span className="flex items-center">
+                        <User className="mr-2 sm:mr-3 text-slate-400 shrink-0" size={20} />
+                        মেম্বার ম্যানেজমেন্ট
+                    </span>
+                    <span className="text-xs sm:text-sm font-medium text-slate-400 bg-slate-50 px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg">{englishToBangla(members.length)} জন</span>
                 </h3>
 
-                <form onSubmit={handleAddMember} className="flex flex-col sm:flex-row gap-4 mb-10">
-                    <input type="text" name="name" placeholder="সদস্যের নাম লিখুন" required className="flex-1 px-5 py-4 rounded-xl border border-slate-200 focus:ring-2 focus:ring-slate-900 bg-slate-50 font-medium text-slate-700 text-lg" />
-                    <button type="submit" className="bg-slate-900 hover:bg-slate-800 text-white px-8 py-4 rounded-xl font-bold shadow-lg shadow-slate-900/20 transition-all flex items-center justify-center shrink-0">
-                        <UserPlus className="mr-2" size={20} /> যুক্ত করুন
+                <form onSubmit={handleAddMember} className="flex flex-col sm:flex-row gap-3 sm:gap-4 mb-6 sm:mb-8 lg:mb-10">
+                    <input
+                        type="text"
+                        name="name"
+                        placeholder="সদস্যের নাম লিখুন"
+                        required
+                        className="flex-1 min-w-0 px-4 sm:px-5 py-3 sm:py-4 rounded-xl border border-slate-200 focus:ring-2 focus:ring-slate-900 bg-slate-50 font-medium text-slate-700 text-base sm:text-lg"
+                    />
+                    <button type="submit" className="bg-slate-900 hover:bg-slate-800 active:bg-slate-700 text-white px-5 sm:px-8 py-3 sm:py-4 rounded-xl font-bold shadow-lg shadow-slate-900/20 transition-all flex items-center justify-center shrink-0 text-sm sm:text-base">
+                        <UserPlus className="mr-2" size={18} /> যুক্ত করুন
                     </button>
                 </form>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2.5 sm:gap-3 lg:gap-4">
                     {members.map(member => (
-                        <div key={member.id} className="flex items-center justify-between p-4 rounded-2xl border border-slate-100 hover:border-slate-300 hover:shadow-md bg-white transition-all group">
-                            <div className="flex items-center space-x-3 truncate pl-1">
-                                <div className="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center border border-slate-100 shrink-0"><User size={18} className="text-slate-400" /></div>
-                                <span className="font-bold text-slate-800 truncate">{member.name}</span>
+                        <div key={member.id} className="flex items-center justify-between p-3 sm:p-4 rounded-xl sm:rounded-2xl border border-slate-100 hover:border-slate-300 hover:shadow-md bg-white transition-all group">
+                            <div className="flex items-center space-x-2 sm:space-x-3 truncate pl-0.5 sm:pl-1 min-w-0">
+                                <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-slate-50 flex items-center justify-center border border-slate-100 shrink-0">
+                                    <User size={14} className="text-slate-400 sm:hidden" />
+                                    <User size={18} className="text-slate-400 hidden sm:block" />
+                                </div>
+                                <span className="font-bold text-slate-800 truncate text-sm sm:text-base">{member.name}</span>
                             </div>
-                            <div className="flex items-center gap-1 opacity-100 sm:opacity-0 group-hover:opacity-100 transition-opacity">
-                                <button onClick={() => handleEditMember(member.id, member.name)} className="p-2 text-slate-300 hover:text-blue-500 hover:bg-blue-50 rounded-lg transition-colors" title="এডিট করুন"><Edit2 size={16} /></button>
-                                <button onClick={() => handleRemoveMember(member.id, member.name)} className="p-2 text-slate-300 hover:text-rose-500 hover:bg-rose-50 rounded-lg transition-colors" title="ডিলিট করুন"><Trash2 size={16} /></button>
+                            <div className="flex items-center gap-0.5 sm:gap-1 opacity-100 sm:opacity-0 group-hover:opacity-100 transition-opacity shrink-0 ml-1">
+                                <button onClick={() => handleEditMember(member.id, member.name)} className="p-1.5 sm:p-2 text-slate-300 hover:text-blue-500 hover:bg-blue-50 rounded-lg transition-colors" title="এডিট করুন">
+                                    <Edit2 size={14} />
+                                </button>
+                                <button onClick={() => handleRemoveMember(member.id, member.name)} className="p-1.5 sm:p-2 text-slate-300 hover:text-rose-500 hover:bg-rose-50 rounded-lg transition-colors" title="ডিলিট করুন">
+                                    <Trash2 size={14} />
+                                </button>
                             </div>
                         </div>
                     ))}
-                    {members.length === 0 && <div className="col-span-full text-center py-10 text-slate-400 font-medium bg-slate-50 rounded-2xl border border-dashed border-slate-200">কোনো মেম্বার নেই</div>}
+                    {members.length === 0 && (
+                        <div className="col-span-full text-center py-8 sm:py-10 text-slate-400 font-medium bg-slate-50 rounded-xl sm:rounded-2xl border border-dashed border-slate-200 text-sm sm:text-base">
+                            কোনো মেম্বার নেই
+                        </div>
+                    )}
                 </div>
             </div>
 
