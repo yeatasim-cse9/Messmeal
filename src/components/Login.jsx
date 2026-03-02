@@ -66,7 +66,7 @@ export default function Login() {
                         <Utensils size={28} className="sm:hidden" />
                         <Utensils size={32} className="hidden sm:block" />
                     </div>
-                    <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">মেস হিসাব</h1>
+                    <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">মেস হিসাব BU Hunters</h1>
                     <p className="text-slate-400 mt-1.5 sm:mt-2 font-medium text-sm sm:text-base">মেসের সব হিসাব এক জায়গায়</p>
                 </div>
 
