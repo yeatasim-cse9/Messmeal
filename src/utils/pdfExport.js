@@ -1,178 +1,193 @@
-import jsPDF from 'jspdf';
-import autoTable from 'jspdf-autotable';
-import { banglaFontBase64 } from './banglaFont';
-
-// Bangla Unicode font — Noto Sans Bengali (base64) is embedded for native Bengali rendering.
-
-const englishToBangla = (str) => {
-    if (str === null || str === undefined) return '';
-    const banglaDigits = { '0': '০', '1': '১', '2': '২', '3': '৩', '4': '৪', '5': '৫', '6': '৬', '7': '৭', '8': '৮', '9': '৯' };
-    return str.toString().replace(/[0-9]/g, match => banglaDigits[match]);
-};
+import html2pdf from 'html2pdf.js';
 
 const formatNum = (n, decimals = false) => {
     const num = Number(n || 0);
     return decimals ? num.toFixed(2) : (num % 1 === 0 ? num.toString() : num.toFixed(2));
 };
 
+const toBanglaNum = (str) => {
+    if (str === null || str === undefined) return '';
+    const d = { '0': '০', '1': '১', '2': '২', '3': '৩', '4': '৪', '5': '৫', '6': '৬', '7': '৭', '8': '৮', '9': '৯' };
+    return str.toString().replace(/[0-9]/g, m => d[m]);
+};
+
+const fmt = (amount) => {
+    if (!amount || isNaN(amount)) return '০ ৳';
+    const num = Number(amount);
+    const s = num % 1 === 0 ? num.toString() : num.toFixed(2);
+    return `${toBanglaNum(s)} ৳`;
+};
+
 export function generateMonthlyReport({ monthLabel, memberStats, mealRate, totalMessFoodCost, totalDeposit, managerCashInHand, totalBakiExpense, totalUtilityCost, utilityPerMember, expenses, deposits, members }) {
-    const doc = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
 
-    const pageWidth = doc.internal.pageSize.getWidth();
-    const pageHeight = doc.internal.pageSize.getHeight();
+    // Build member rows
+    const memberRows = memberStats.map(s => `
+        <tr>
+            <td style="padding:10px 14px; font-weight:700; color:#0f172a;">${s.name}</td>
+            <td style="padding:10px 14px; text-align:center;">${toBanglaNum(s.totalMeals)}</td>
+            <td style="padding:10px 14px; text-align:right;">${fmt(s.foodCost)}</td>
+            <td style="padding:10px 14px; text-align:right;">${fmt(s.utilityCost)}</td>
+            <td style="padding:10px 14px; text-align:right;">${fmt(s.totalContribution)}</td>
+            <td style="padding:10px 14px; text-align:right; font-weight:800; font-size:15px; color:${s.balance >= 0 ? '#0f172a' : '#ef4444'};">
+                ${s.balance >= 0 ? '+ ' : '- '}${fmt(Math.abs(s.balance))}
+            </td>
+        </tr>
+    `).join('');
 
-    // Setup custom Bengali font with safe fallback
-    let fontName = 'helvetica';
-    try {
-        if (banglaFontBase64 && banglaFontBase64.length > 100) {
-            doc.addFileToVFS('NotoSansBengali.ttf', banglaFontBase64);
-            doc.addFont('NotoSansBengali.ttf', 'NotoSansBengali', 'normal', 'Identity-H');
-            fontName = 'NotoSansBengali';
-        }
-    } catch (err) {
-        console.warn('Bengali font load failed, using helvetica fallback:', err);
-        fontName = 'helvetica';
-    }
+    // Build expense rows
+    const expenseRows = (expenses || []).map(ex => {
+        const member = members?.find(m => m.id === ex.memberId);
+        const isBaki = ex.type === 'baki';
+        const isAdditional = ex.type === 'additional';
+        let byLabel = member?.name || '?';
+        if (isBaki) byLabel = 'দোকান';
+        if (isAdditional) byLabel = 'সবার মাঝে ভাগ';
+        return `
+            <tr>
+                <td style="padding:8px 12px;">${toBanglaNum(ex.date || '')}</td>
+                <td style="padding:8px 12px;">${ex.description || ''}</td>
+                <td style="padding:8px 12px; text-align:right; font-weight:700;">${fmt(ex.amount)}</td>
+                <td style="padding:8px 12px;">${isBaki ? 'বাকি' : isAdditional ? 'অতিরিক্ত' : ex.fundSource === 'own' ? 'নিজের টাকা' : 'ফান্ড'}</td>
+                <td style="padding:8px 12px;">${byLabel}</td>
+            </tr>
+        `;
+    }).join('');
 
-    // Title
-    doc.setFontSize(20);
-    doc.setFont(fontName, 'normal');
-    doc.text(`Mess Hisab - ${monthLabel}`, pageWidth / 2, 18, { align: 'center' });
+    // Build deposit rows
+    const depositRows = (deposits || []).map(dep => {
+        const member = members?.find(m => m.id === dep.memberId);
+        return `
+            <tr>
+                <td style="padding:8px 12px;">${toBanglaNum(dep.date || '')}</td>
+                <td style="padding:8px 12px; font-weight:600;">${member?.name || '?'}</td>
+                <td style="padding:8px 12px; text-align:right; font-weight:700;">${fmt(dep.amount)}</td>
+            </tr>
+        `;
+    }).join('');
 
-    // Summary Stats
-    doc.setFontSize(10);
-    doc.setFont(fontName, 'normal');
-    const summaryData = [
-        `Meal Rate: ${formatNum(mealRate, true)} Tk/meal`,
-        `Total Food Cost: ${formatNum(totalMessFoodCost)} Tk`,
-        `Total Deposit: ${formatNum(totalDeposit)} Tk`,
-        `Cash in Hand: ${formatNum(managerCashInHand)} Tk`,
-        `Baki (Due): ${formatNum(totalBakiExpense)} Tk`,
-        `Utility/Member: ${formatNum(utilityPerMember)} Tk`,
-    ];
-    doc.text(summaryData.join('   |   '), pageWidth / 2, 26, { align: 'center' });
+    const html = `
+    <div style="font-family: 'Noto Sans Bengali', 'Segoe UI', Tahoma, sans-serif; color:#1e293b; padding:20px;">
+        <!-- Header -->
+        <div style="text-align:center; margin-bottom:24px;">
+            <h1 style="font-size:28px; font-weight:900; color:#0f172a; margin:0;">মেস হিসাব</h1>
+            <p style="font-size:14px; color:#64748b; margin:6px 0 0;">${monthLabel}</p>
+        </div>
 
-    // Member Summary Table
-    const tableHead = [['Name', 'Total Meals', 'Food Cost', 'Utility', 'Total Deposit', 'Balance']];
-    const tableBody = memberStats.map(s => [
-        s.name,
-        formatNum(s.totalMeals),
-        `${formatNum(s.foodCost)} Tk`,
-        `${formatNum(s.utilityCost)} Tk`,
-        `${formatNum(s.totalContribution)} Tk`,
-        `${s.balance >= 0 ? '+' : ''}${formatNum(s.balance)} Tk`
-    ]);
+        <!-- Summary Cards -->
+        <div style="display:flex; flex-wrap:wrap; gap:10px; margin-bottom:28px; justify-content:center;">
+            <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:12px; padding:12px 18px; text-align:center; min-width:120px;">
+                <div style="font-size:11px; color:#94a3b8; font-weight:600;">মিল রেট</div>
+                <div style="font-size:18px; font-weight:800; color:#0f172a;">${fmt(mealRate)}</div>
+            </div>
+            <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:12px; padding:12px 18px; text-align:center; min-width:120px;">
+                <div style="font-size:11px; color:#94a3b8; font-weight:600;">মোট খাবার খরচ</div>
+                <div style="font-size:18px; font-weight:800; color:#0f172a;">${fmt(totalMessFoodCost)}</div>
+            </div>
+            <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:12px; padding:12px 18px; text-align:center; min-width:120px;">
+                <div style="font-size:11px; color:#94a3b8; font-weight:600;">মোট জমা</div>
+                <div style="font-size:18px; font-weight:800; color:#059669;">${fmt(totalDeposit)}</div>
+            </div>
+            <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:12px; padding:12px 18px; text-align:center; min-width:120px;">
+                <div style="font-size:11px; color:#94a3b8; font-weight:600;">ক্যাশ ইন হ্যান্ড</div>
+                <div style="font-size:18px; font-weight:800; color:#0f172a;">${fmt(managerCashInHand)}</div>
+            </div>
+            <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:12px; padding:12px 18px; text-align:center; min-width:120px;">
+                <div style="font-size:11px; color:#94a3b8; font-weight:600;">বাকি</div>
+                <div style="font-size:18px; font-weight:800; color:#ef4444;">${fmt(totalBakiExpense)}</div>
+            </div>
+            <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:12px; padding:12px 18px; text-align:center; min-width:120px;">
+                <div style="font-size:11px; color:#94a3b8; font-weight:600;">মেম্বার প্রতি বিল</div>
+                <div style="font-size:18px; font-weight:800; color:#0f172a;">${fmt(utilityPerMember)}</div>
+            </div>
+        </div>
 
-    autoTable(doc, {
-        head: tableHead,
-        body: tableBody,
-        startY: 32,
-        theme: 'grid',
-        styles: { font: fontName, fontSize: 8.5 },
-        headStyles: { fillColor: [15, 23, 42], textColor: [255, 255, 255], fontStyle: 'bold', fontSize: 9 },
-        columnStyles: {
-            0: { fontStyle: 'bold' },
-            1: { halign: 'center' },
-            2: { halign: 'right' },
-            3: { halign: 'right' },
-            4: { halign: 'right' },
-            5: { halign: 'right', fontStyle: 'bold' },
+        <!-- Member Summary Table -->
+        <h2 style="font-size:18px; font-weight:800; color:#0f172a; margin-bottom:12px; border-bottom:2px solid #e2e8f0; padding-bottom:8px;">📊 ফাইনাল রিপোর্ট</h2>
+        <table style="width:100%; border-collapse:collapse; margin-bottom:32px; font-size:13px;">
+            <thead>
+                <tr style="background:#0f172a; color:white;">
+                    <th style="padding:10px 14px; text-align:left; font-weight:700;">মেম্বারের নাম</th>
+                    <th style="padding:10px 14px; text-align:center; font-weight:700;">মিল</th>
+                    <th style="padding:10px 14px; text-align:right; font-weight:700;">খাবার খরচ</th>
+                    <th style="padding:10px 14px; text-align:right; font-weight:700;">ফিক্সড বিল</th>
+                    <th style="padding:10px 14px; text-align:right; font-weight:700;">মোট জমা</th>
+                    <th style="padding:10px 14px; text-align:right; font-weight:700;">ব্যালেন্স</th>
+                </tr>
+            </thead>
+            <tbody>
+                ${memberRows}
+            </tbody>
+        </table>
+
+        ${expenses && expenses.length > 0 ? `
+        <!-- Expense Details -->
+        <h2 style="font-size:18px; font-weight:800; color:#0f172a; margin-bottom:12px; border-bottom:2px solid #e2e8f0; padding-bottom:8px;">🛒 খরচের বিবরণ</h2>
+        <table style="width:100%; border-collapse:collapse; margin-bottom:32px; font-size:12px;">
+            <thead>
+                <tr style="background:#0f172a; color:white;">
+                    <th style="padding:8px 12px; text-align:left;">তারিখ</th>
+                    <th style="padding:8px 12px; text-align:left;">বিবরণ</th>
+                    <th style="padding:8px 12px; text-align:right;">টাকা</th>
+                    <th style="padding:8px 12px; text-align:left;">ধরন</th>
+                    <th style="padding:8px 12px; text-align:left;">কে করেছে</th>
+                </tr>
+            </thead>
+            <tbody>${expenseRows}</tbody>
+        </table>
+        ` : ''}
+
+        ${deposits && deposits.length > 0 ? `
+        <!-- Deposit Details -->
+        <h2 style="font-size:18px; font-weight:800; color:#1a3a2a; margin-bottom:12px; border-bottom:2px solid #d1fae5; padding-bottom:8px;">💰 জমার বিবরণ</h2>
+        <table style="width:100%; border-collapse:collapse; margin-bottom:32px; font-size:12px;">
+            <thead>
+                <tr style="background:#1a3a2a; color:white;">
+                    <th style="padding:8px 12px; text-align:left;">তারিখ</th>
+                    <th style="padding:8px 12px; text-align:left;">মেম্বার</th>
+                    <th style="padding:8px 12px; text-align:right;">টাকা</th>
+                </tr>
+            </thead>
+            <tbody>${depositRows}</tbody>
+        </table>
+        ` : ''}
+
+        <!-- Footer -->
+        <div style="text-align:center; color:#94a3b8; font-size:10px; margin-top:20px; border-top:1px solid #e2e8f0; padding-top:10px;">
+            মেস হিসাব | তৈরি: ${new Date().toLocaleDateString('bn-BD')} | ${monthLabel}
+        </div>
+    </div>
+    `;
+
+    // Create a temporary visible container (html2canvas needs it in-viewport)
+    const container = document.createElement('div');
+    container.style.position = 'absolute';
+    container.style.left = '0';
+    container.style.top = '0';
+    container.style.width = '277mm';
+    container.style.zIndex = '-1';
+    container.style.background = 'white';
+    container.innerHTML = html;
+    document.body.appendChild(container);
+
+    const opt = {
+        margin: [8, 8, 8, 8],
+        filename: `mess-hisab-${monthLabel.replace(/[,\s]+/g, '-')}.pdf`,
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: {
+            scale: 2,
+            useCORS: true,
+            letterRendering: true,
+            scrollY: 0,
+            windowWidth: container.scrollWidth
         },
-        alternateRowStyles: { fillColor: [248, 250, 252] },
-        margin: { left: 14, right: 14 },
-        didParseCell: function (data) {
-            if (data.section === 'body' && data.column.index === 5) {
-                const val = parseFloat(data.cell.raw);
-                if (val < 0) {
-                    data.cell.styles.textColor = [239, 68, 68];
-                }
-            }
-        }
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' },
+        pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
+    };
+
+    html2pdf().set(opt).from(container).save().then(() => {
+        document.body.removeChild(container);
+    }).catch((err) => {
+        console.error('PDF generation failed:', err);
+        if (container.parentNode) document.body.removeChild(container);
     });
-
-    // Expense List (Page 2)
-    if (expenses && expenses.length > 0) {
-        doc.addPage();
-        doc.setFontSize(16);
-        doc.setFont(fontName, 'normal');
-        doc.text('Expense Details', 14, 18);
-
-        const expHead = [['Date', 'Description', 'Amount', 'Type', 'By']];
-        const expBody = expenses.map(ex => {
-            const isBaki = ex.type === 'baki';
-            const isAdditional = ex.type === 'additional';
-            const member = members?.find(m => m.id === ex.memberId);
-
-            let byLabel = member?.name || '?';
-            if (isBaki) byLabel = 'Shop';
-            if (isAdditional) byLabel = 'Shared';
-
-            let sourceLabel = 'Fund';
-            if (isBaki) sourceLabel = 'Baki';
-            else if (isAdditional) sourceLabel = 'Shared';
-            else if (ex.fundSource === 'own') sourceLabel = 'Own Money';
-
-            return [
-                ex.date || '',
-                ex.description || '',
-                `${formatNum(ex.amount)} Tk`,
-                sourceLabel,
-                byLabel
-            ];
-        });
-
-        autoTable(doc, {
-            head: expHead,
-            body: expBody,
-            startY: 24,
-            theme: 'grid',
-            styles: { font: fontName, fontSize: 8.5 },
-            headStyles: { fillColor: [15, 23, 42], textColor: [255, 255, 255], fontStyle: 'bold', fontSize: 9 },
-            columnStyles: { 2: { halign: 'right', fontStyle: 'bold' } },
-            alternateRowStyles: { fillColor: [248, 250, 252] },
-            margin: { left: 14, right: 14 },
-        });
-    }
-
-    // Deposit List (same page or new)
-    if (deposits && deposits.length > 0) {
-        const currentY = doc.lastAutoTable ? doc.lastAutoTable.finalY + 14 : 24;
-        if (currentY > pageHeight - 40) doc.addPage();
-
-        doc.setFontSize(16);
-        doc.setFont(fontName, 'normal');
-        doc.text('Deposit Details', 14, doc.lastAutoTable ? doc.lastAutoTable.finalY + 14 : 18);
-
-        const depHead = [['Date', 'Member', 'Amount']];
-        const depBody = deposits.map(dep => {
-            const member = members?.find(m => m.id === dep.memberId);
-            return [dep.date || '', member?.name || '?', `${formatNum(dep.amount)} Tk`];
-        });
-
-        autoTable(doc, {
-            head: depHead,
-            body: depBody,
-            startY: (doc.lastAutoTable ? doc.lastAutoTable.finalY + 20 : 24),
-            theme: 'grid',
-            styles: { font: fontName, fontSize: 8.5 },
-            headStyles: { fillColor: [26, 58, 42], textColor: [255, 255, 255], fontStyle: 'bold', fontSize: 9 },
-            columnStyles: { 2: { halign: 'right', fontStyle: 'bold' } },
-            alternateRowStyles: { fillColor: [248, 250, 252] },
-            margin: { left: 14, right: 14 },
-        });
-    }
-
-    // Footer on all pages
-    const totalPages = doc.internal.getNumberOfPages();
-    for (let i = 1; i <= totalPages; i++) {
-        doc.setPage(i);
-        doc.setFontSize(8);
-        doc.setFont(fontName, 'normal');
-        doc.setTextColor(150);
-        doc.text(`Mess Hisab | Generated: ${new Date().toLocaleDateString()}`, 14, pageHeight - 8);
-        doc.text(`Page ${i} of ${totalPages}`, pageWidth - 14, pageHeight - 8, { align: 'right' });
-    }
-
-    // Save
-    doc.save(`mess-report-${monthLabel.replace(/\s+/g, '-')}.pdf`);
 }
