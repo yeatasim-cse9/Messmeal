@@ -68,21 +68,20 @@ export default function Dashboard() {
             <div>
                 <div className="flex justify-between items-end mb-4 sm:mb-6">
                     <h3 className="text-lg sm:text-xl lg:text-2xl font-black text-slate-900">মেম্বারদের তালিকা</h3>
-                    <button className="text-slate-400 font-medium text-xs sm:text-[15px] hover:text-slate-900 transition-colors">সব দেখুন</button>
                 </div>
 
                 {/* Table Header Row — hidden on mobile */}
-                <div className="hidden sm:grid grid-cols-4 px-4 sm:px-6 mb-3 text-[11px] sm:text-[13px] font-bold text-slate-400 uppercase tracking-wider">
+                <div className="hidden sm:grid grid-cols-[1.5fr_1fr_1fr_1fr] px-4 sm:px-6 mb-3 text-[11px] sm:text-[13px] font-bold text-slate-400 uppercase tracking-wider">
                     <div>মেম্বার</div>
-                    <div className="text-center">মিল সংখ্যা</div>
-                    <div className="text-center">জমা</div>
+                    <div className="text-center">মোট মিল</div>
+                    <div className="text-center">মোট জমা</div>
                     <div className="text-right">ব্যালেন্স</div>
                 </div>
 
                 {/* Member Rows */}
                 <div className="space-y-2 sm:space-y-3">
                     {memberStats.map(stat => (
-                        <div key={stat.id} className="flex flex-col sm:grid sm:grid-cols-4 items-start sm:items-center bg-white p-4 sm:p-5 rounded-xl sm:rounded-[20px] shadow-[0_2px_12px_rgba(0,0,0,0.02)] border border-slate-100 hover:border-slate-200 transition-colors gap-2 sm:gap-0">
+                        <div key={stat.id} className="flex flex-col sm:grid sm:grid-cols-[1.5fr_1fr_1fr_1fr] items-start sm:items-center bg-white p-4 sm:p-5 rounded-xl sm:rounded-[20px] shadow-[0_2px_12px_rgba(0,0,0,0.02)] border border-slate-100 hover:border-slate-200 transition-colors gap-2 sm:gap-0">
                             {/* Member Info */}
                             <div className="flex items-center space-x-3 sm:space-x-4 w-full sm:w-auto">
                                 <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-slate-50 flex items-center justify-center border border-slate-100 shrink-0">
@@ -91,31 +90,30 @@ export default function Dashboard() {
                                 <span className="font-bold text-slate-900 text-sm sm:text-[17px] truncate">{stat.name}</span>
                                 {/* Mobile-only balance */}
                                 <span className={`sm:hidden ml-auto font-black text-base ${stat.balance >= 0 ? 'text-slate-900' : 'text-rose-500'}`}>
-                                    {stat.balance >= 0 ? '+' : '-'}{englishToBangla(Math.abs(stat.balance).toLocaleString('en-IN'))}
+                                    {stat.balance >= 0 ? '+' : '-'}৳{englishToBangla(Math.abs(stat.balance).toLocaleString('en-IN'))}
                                 </span>
                             </div>
 
                             {/* Mobile: stats row */}
                             <div className="flex sm:hidden items-center gap-4 text-xs text-slate-500 font-medium ml-11">
                                 <span className="flex items-center gap-1"><Utensils size={12} className="text-slate-300" />{englishToBangla(stat.totalMeals.toFixed(1))} মিল</span>
-                                <span className="flex items-center gap-1"><Wallet size={12} className="text-slate-300" />৳{englishToBangla(stat.totalContribution.toLocaleString('en-IN'))}</span>
+                                <span className="flex items-center gap-1"><Wallet size={12} className="text-slate-300" />জমা ৳{englishToBangla(stat.totalContribution.toLocaleString('en-IN'))}</span>
                             </div>
 
-                            {/* Desktop: Total Meals */}
-                            <div className="hidden sm:flex items-center justify-center space-x-2 text-slate-500 font-medium text-sm">
-                                <Utensils size={16} className="text-slate-300" />
-                                <span>{englishToBangla(stat.totalMeals.toFixed(1))} টি মিল</span>
+                            {/* Desktop: Total Meals  */}
+                            <div className="hidden sm:block text-center">
+                                <span className="text-lg font-black text-slate-800">{englishToBangla(stat.totalMeals.toFixed(1))}</span>
+                                <span className="text-slate-400 font-medium text-sm ml-1">মিল</span>
                             </div>
 
-                            {/* Desktop: Contributions */}
-                            <div className="hidden sm:flex items-center justify-center space-x-2 text-slate-500 font-medium text-sm">
-                                <Wallet size={16} className="text-slate-300" />
-                                <span>৳ {englishToBangla(stat.totalContribution.toLocaleString('en-IN'))}</span>
+                            {/* Desktop: Total Deposit */}
+                            <div className="hidden sm:block text-center">
+                                <span className="text-lg font-black text-slate-800">৳{englishToBangla(stat.totalContribution.toLocaleString('en-IN'))}</span>
                             </div>
 
                             {/* Desktop: Balance */}
-                            <div className={`hidden sm:block text-right font-black text-lg sm:text-xl tracking-tight ${stat.balance >= 0 ? 'text-slate-900' : 'text-rose-500'}`}>
-                                {stat.balance >= 0 ? '+ ' : '- '}{englishToBangla(Math.abs(stat.balance).toLocaleString('en-IN'))}
+                            <div className={`hidden sm:block text-right font-black text-xl tracking-tight ${stat.balance >= 0 ? 'text-emerald-600' : 'text-rose-500'}`}>
+                                {stat.balance >= 0 ? '+ ' : '- '}৳{englishToBangla(Math.abs(stat.balance).toLocaleString('en-IN'))}
                             </div>
                         </div>
                     ))}
