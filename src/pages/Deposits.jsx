@@ -3,13 +3,13 @@ import { useData } from '../contexts/DataContext';
 import { useAuth } from '../contexts/AuthContext';
 import { useDialog } from '../contexts/DialogContext';
 import { formatCurrency, englishToBangla, banglaToEnglish } from '../utils/helpers';
-import { Wallet, User, Trash2 } from 'lucide-react';
+import { Wallet, User, Trash2, TrendingUp } from 'lucide-react';
 
 const getTodayString = () => new Date().toISOString().split('T')[0];
 
 export default function Deposits() {
     const { isAdmin } = useAuth();
-    const { members, deposits, addDeposit, removeDeposit, selectedMonth } = useData();
+    const { members, deposits, addDeposit, removeDeposit, selectedMonth, memberStats } = useData();
     const { showAlert, showConfirm } = useDialog();
     const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -49,8 +49,53 @@ export default function Deposits() {
         }
     };
 
+    // Calculate per-member deposit totals
+    const memberDepositTotals = {};
+    deposits.forEach(d => {
+        if (!memberDepositTotals[d.memberId]) memberDepositTotals[d.memberId] = 0;
+        memberDepositTotals[d.memberId] += Number(d.amount);
+    });
+
     return (
         <div className="space-y-4 sm:space-y-6">
+
+            {/* Member Deposit Summary Cards */}
+            <div className="bg-white p-4 sm:p-6 lg:p-10 rounded-2xl sm:rounded-3xl lg:rounded-[32px] shadow-sm border border-slate-50">
+                <h3 className="text-base sm:text-lg lg:text-xl font-bold text-slate-900 mb-4 sm:mb-6 flex items-center">
+                    <TrendingUp className="text-emerald-500 mr-2 sm:mr-3 shrink-0" size={20} />
+                    সদস্যদের জমা সারাংশ
+                </h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 lg:gap-5">
+                    {members.map(m => {
+                        const total = memberDepositTotals[m.id] || 0;
+                        const stat = memberStats?.find(s => s.id === m.id);
+                        const totalContribution = stat?.totalContribution || 0;
+                        return (
+                            <div key={m.id} className="group flex flex-col justify-between p-4 sm:p-5 lg:p-6 rounded-2xl sm:rounded-[20px] shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] border border-slate-100 bg-white hover:bg-emerald-50/30 transition-all duration-300 relative overflow-hidden">
+                                <div className="absolute -right-6 -top-6 w-24 h-24 bg-emerald-50 rounded-full blur-2xl group-hover:bg-emerald-100/50 transition-colors duration-500"></div>
+                                <div className="relative z-10 flex items-center gap-3 mb-3 sm:mb-4">
+                                    <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0 border border-emerald-100/50 shadow-sm">
+                                        <User size={18} className="sm:hidden" />
+                                        <User size={22} className="hidden sm:block" />
+                                    </div>
+                                    <span className="font-black text-slate-800 text-base sm:text-lg md:text-xl truncate">{m.name}</span>
+                                </div>
+                                <div className="relative z-10">
+                                    <p className="font-black text-emerald-600 text-2xl sm:text-3xl md:text-4xl tracking-tight mb-2 break-words">
+                                        ৳{englishToBangla(total.toFixed(2))}
+                                    </p>
+                                    {stat?.ownExpense > 0 && (
+                                        <div className="inline-flex items-center text-emerald-600 bg-emerald-50 px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg font-bold text-xs sm:text-sm border border-emerald-100/50 max-w-full">
+                                            <span>পকেট: <span className="mr-1">৳{englishToBangla(stat.ownExpense.toFixed(0))}</span><span className="text-emerald-700 font-black">মোট: ৳{englishToBangla(totalContribution.toFixed(0))}</span></span>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        );
+                    })}
+                </div>
+            </div>
+
             {/* Form — Admin Only */}
             {isAdmin && (
                 <div className="bg-white p-4 sm:p-6 lg:p-10 rounded-2xl sm:rounded-3xl lg:rounded-[32px] shadow-sm border border-slate-50">
@@ -65,9 +110,14 @@ export default function Deposits() {
                                 <label className="block text-xs sm:text-sm font-medium text-slate-400 mb-1.5 sm:mb-2">সদস্যের নাম</label>
                                 <select name="memberId" required className="w-full px-3 sm:px-5 py-2.5 sm:py-3.5 rounded-lg sm:rounded-xl border border-slate-200 focus:ring-2 focus:ring-slate-900 bg-slate-50 font-bold text-slate-800 text-sm sm:text-base">
                                     <option value="">নির্বাচন করুন</option>
-                                    {members.map(m => (
-                                        <option key={m.id} value={m.id}>{m.name}</option>
-                                    ))}
+                                    {members.map(m => {
+                                        const total = memberDepositTotals[m.id] || 0;
+                                        return (
+                                            <option key={m.id} value={m.id}>
+                                                {m.name} — জমা: ৳{total.toFixed(0)}
+                                            </option>
+                                        );
+                                    })}
                                 </select>
                             </div>
                             <div>
@@ -101,6 +151,7 @@ export default function Deposits() {
                     <div className="grid grid-cols-1 gap-2.5 sm:gap-4">
                         {deposits.sort((a, b) => new Date(b.date) - new Date(a.date)).map(deposit => {
                             const member = members.find(m => m.id === deposit.memberId);
+                            const memberTotal = memberDepositTotals[deposit.memberId] || 0;
                             return (
                                 <div key={deposit.id} className="flex items-center justify-between p-3 sm:p-5 lg:p-6 rounded-xl sm:rounded-2xl border border-slate-100 hover:border-slate-200 hover:shadow-sm bg-white transition-all group gap-3 sm:gap-4">
                                     <div className="flex items-center space-x-3 sm:space-x-4 min-w-0">
@@ -108,7 +159,12 @@ export default function Deposits() {
                                             <User size={16} className="text-emerald-500" />
                                         </div>
                                         <div className="min-w-0">
-                                            <h4 className="font-bold text-slate-900 text-sm sm:text-lg mb-0.5 truncate">{member?.name || 'অজ্ঞাত সদস্য'}</h4>
+                                            <h4 className="font-bold text-slate-900 text-sm sm:text-lg mb-0.5 truncate">
+                                                {member?.name || 'অজ্ঞাত সদস্য'}
+                                                <span className="ml-2 text-xs sm:text-sm font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-lg border border-emerald-100">
+                                                    মোট: ৳{englishToBangla(memberTotal.toFixed(0))}
+                                                </span>
+                                            </h4>
                                             <p className="text-slate-500 font-medium text-[11px] sm:text-sm">
                                                 {englishToBangla(deposit.date)}
                                             </p>

@@ -17,7 +17,7 @@ export function DataProvider({ children }) {
     const [selectedDate, setSelectedDate] = useState(getTodayString());
 
     // Firestore hooks
-    const { members, loading: membersLoading, addMember, removeMember } = useMembers(selectedMonth);
+    const { members, loading: membersLoading, addMember, removeMember, updateMember } = useMembers(selectedMonth);
     const { meals, loading: mealsLoading, setMealValue } = useMeals(selectedMonth);
     const { expenses, loading: expensesLoading, addExpense, removeExpense } = useExpenses(selectedMonth);
     const { deposits, loading: depositsLoading, addDeposit, removeDeposit } = useDeposits(selectedMonth);
@@ -65,6 +65,7 @@ export function DataProvider({ children }) {
             .reduce((sum, e) => sum + Number(e.amount), 0);
 
         const totalDeposit = deposits.reduce((sum, e) => sum + Number(e.amount), 0);
+        const totalHouseRent = members.reduce((sum, m) => sum + (Number(m.houseRent) || 0), 0);
         const mealRate = totalMeals > 0 ? (totalMessFoodCost + totalBakiExpense) / totalMeals : 0;
         const memberCount = members.length;
         const utilityPerMember = memberCount > 0 ? totalUtilityCost / memberCount : 0;
@@ -78,6 +79,7 @@ export function DataProvider({ children }) {
         const stats = members.map(m => {
             const mMeals = mealsByMember[m.id] || 0;
             const mCost = mMeals * mealRate;
+            const mHouseRent = Number(m.houseRent) || 0;
 
             const mDeposit = deposits
                 .filter(d => d.memberId === m.id)
@@ -88,7 +90,7 @@ export function DataProvider({ children }) {
                 .reduce((sum, e) => sum + Number(e.amount), 0);
 
             const mTotalContribution = mDeposit + mOwnExpense;
-            const balance = mTotalContribution - (mCost + utilityPerMember);
+            const balance = mTotalContribution - (mCost + utilityPerMember + mHouseRent);
 
             return {
                 id: m.id,
@@ -97,7 +99,10 @@ export function DataProvider({ children }) {
                 foodCost: mCost,
                 utilityCost: utilityPerMember,
                 additionalExpense: additionalExpensePerMember,
+                houseRent: mHouseRent,
                 totalContribution: mTotalContribution,
+                deposit: mDeposit,
+                ownExpense: mOwnExpense,
                 balance: balance
             };
         });
@@ -107,6 +112,7 @@ export function DataProvider({ children }) {
             totalMessFoodCost,
             totalBakiExpense,
             totalDeposit,
+            totalHouseRent,
             mealRate,
             managerCashInHand,
             totalUtilityCost: extraUtilities,
@@ -127,6 +133,7 @@ export function DataProvider({ children }) {
         members,
         addMember,
         removeMember,
+        updateMember,
         meals,
         setMealValue,
         expenses,

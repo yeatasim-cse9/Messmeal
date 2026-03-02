@@ -1,10 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useData } from '../contexts/DataContext';
 import { useAuth } from '../contexts/AuthContext';
 import { useDialog } from '../contexts/DialogContext';
 import { formatCurrency, englishToBangla, getBanglaMonthYear, IconMap, banglaToEnglish } from '../utils/helpers';
 import { generateMonthlyReport } from '../utils/pdfExport';
-import { Calculator, Download, Trash2, Edit2, Plus } from 'lucide-react';
+import { Calculator, Download, Trash2, Edit2, Plus, Home, User } from 'lucide-react';
 
 export default function Summary() {
     const { isAdmin } = useAuth();
@@ -12,7 +12,8 @@ export default function Summary() {
         members, billCategories, utilities, setUtility, selectedMonth,
         memberStats, mealRate, totalMessFoodCost, totalDeposit,
         managerCashInHand, totalBakiExpense, totalUtilityCost,
-        totalAdditionalExpense, utilityPerMember, expenses, deposits, updateSettings
+        totalAdditionalExpense, utilityPerMember, expenses, deposits,
+        updateSettings, updateMember, totalHouseRent
     } = useData();
     const { showPrompt, showConfirm } = useDialog();
 
@@ -37,8 +38,66 @@ export default function Summary() {
         }
     };
 
+    const handleUpdateHouseRent = async (memberId, currentRent) => {
+        const newRent = await showPrompt('মাসিক বাসা ভাড়ার পরিমাণ দিন:', currentRent?.toString() || '0');
+        if (newRent === null || newRent === undefined) return;
+        const rentValue = Number(banglaToEnglish(newRent));
+        if (isNaN(rentValue) || rentValue < 0) return;
+        try {
+            await updateMember(memberId, { houseRent: rentValue }, selectedMonth);
+        } catch (err) {
+            console.error('Failed to update house rent:', err);
+        }
+    };
+
     return (
         <div className="space-y-4 sm:space-y-6 lg:space-y-8 animate-in fade-in duration-500">
+
+            {/* House Rent Section */}
+            <div className="bg-white p-4 sm:p-6 lg:p-10 rounded-2xl sm:rounded-3xl lg:rounded-[32px] shadow-sm border border-slate-50">
+                <div className="flex flex-col sm:flex-row justify-between sm:items-center mb-4 sm:mb-6 gap-3 sm:gap-4">
+                    <h3 className="text-base sm:text-lg lg:text-xl font-bold text-slate-900 flex items-center">
+                        <Home className="text-indigo-500 mr-2 sm:mr-3 shrink-0" size={20} /> মাসিক বাসা ভাড়া
+                    </h3>
+                    {totalHouseRent > 0 && (
+                        <span className="text-sm sm:text-base font-bold text-indigo-600 bg-indigo-50 px-3 sm:px-5 py-2 sm:py-2.5 rounded-xl border border-indigo-100 self-start sm:self-auto">
+                            মোট: <span className="font-black">{formatCurrency(totalHouseRent)}</span>
+                        </span>
+                    )}
+                </div>
+
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2.5 sm:gap-3 lg:gap-4">
+                    {members.map(m => {
+                        const rent = Number(m.houseRent) || 0;
+                        return (
+                            <div key={m.id} className="group relative p-3 sm:p-4 rounded-xl sm:rounded-2xl border border-slate-100 hover:border-indigo-200 bg-gradient-to-br from-indigo-50/30 to-white transition-all">
+                                <div className="flex items-center gap-2 mb-2">
+                                    <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-indigo-100 flex items-center justify-center shrink-0">
+                                        <User size={13} className="text-indigo-600" />
+                                    </div>
+                                    <span className="font-bold text-slate-800 text-xs sm:text-sm truncate">{m.name}</span>
+                                </div>
+                                <div className="flex items-center justify-between">
+                                    <p className="font-black text-indigo-700 text-base sm:text-lg tracking-tight">
+                                        ৳{englishToBangla(rent.toFixed(0))}
+                                    </p>
+                                    {isAdmin && (
+                                        <button
+                                            onClick={() => handleUpdateHouseRent(m.id, rent)}
+                                            className="p-1.5 sm:p-2 text-slate-300 hover:text-indigo-500 hover:bg-indigo-50 rounded-lg transition-colors"
+                                            title="বাসা ভাড়া আপডেট করুন"
+                                        >
+                                            <Edit2 size={14} />
+                                        </button>
+                                    )}
+                                </div>
+                                <p className="text-[10px] sm:text-[11px] text-slate-400 font-medium mt-0.5">মাসিক</p>
+                            </div>
+                        );
+                    })}
+                </div>
+            </div>
+
             {/* Fixed Bills */}
             <div className="bg-white p-4 sm:p-6 lg:p-10 rounded-2xl sm:rounded-3xl lg:rounded-[32px] shadow-sm border border-slate-50">
                 <div className="flex flex-col sm:flex-row justify-between sm:items-center mb-4 sm:mb-6 gap-3 sm:gap-4">
@@ -127,7 +186,8 @@ export default function Summary() {
                                 <span className="text-right">খাবার: <strong className="text-slate-700">{formatCurrency(stat.foodCost)}</strong></span>
                                 <span>বিল: <strong className="text-slate-700">{formatCurrency(stat.utilityCost)}</strong></span>
                                 <span className="text-right">অতিরিক্ত: <strong className="text-amber-600">{formatCurrency(stat.additionalExpense)}</strong></span>
-                                <span>জমা: <strong className="text-slate-700">{formatCurrency(stat.totalContribution)}</strong></span>
+                                <span>ভাড়া: <strong className="text-indigo-600">{formatCurrency(stat.houseRent)}</strong></span>
+                                <span className="text-right">জমা: <strong className="text-slate-700">{formatCurrency(stat.totalContribution)}</strong></span>
                             </div>
                         </div>
                     ))}
@@ -135,13 +195,14 @@ export default function Summary() {
 
                 {/* Desktop Table View */}
                 <div className="hidden sm:block overflow-x-auto -mx-2 px-2">
-                    <table className="w-full text-left border-collapse min-w-[700px]">
+                    <table className="w-full text-left border-collapse min-w-[800px]">
                         <thead>
                             <tr className="border-b-2 border-slate-100 text-slate-400 text-[11px] lg:text-xs uppercase tracking-wider font-bold">
                                 <th className="pb-4 pl-3">মেম্বার</th>
                                 <th className="pb-4 text-center">মোট মিল</th>
                                 <th className="pb-4 text-center">খাবার খরচ</th>
                                 <th className="pb-4 text-center">ফিক্সড বিল</th>
+                                <th className="pb-4 text-center">বাসা ভাড়া</th>
                                 <th className="pb-4 text-center">অতিরিক্ত খরচ</th>
                                 <th className="pb-4 text-center">মোট জমা</th>
                                 <th className="pb-4 text-right pr-3">ব্যালেন্স</th>
@@ -164,6 +225,9 @@ export default function Summary() {
                                         <span className="font-black text-slate-800">৳{englishToBangla(stat.utilityCost.toFixed(2))}</span>
                                     </td>
                                     <td className="py-4 text-center">
+                                        <span className="font-black text-indigo-600">৳{englishToBangla(stat.houseRent.toFixed(2))}</span>
+                                    </td>
+                                    <td className="py-4 text-center">
                                         <span className="font-black text-amber-600">৳{englishToBangla(stat.additionalExpense.toFixed(2))}</span>
                                     </td>
                                     <td className="py-4 text-center">
@@ -179,7 +243,7 @@ export default function Summary() {
                 </div>
 
                 {/* Summary Info Row */}
-                <div className="mt-4 sm:mt-6 pt-4 sm:pt-6 border-t-2 border-slate-100 grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 text-center">
+                <div className="mt-4 sm:mt-6 pt-4 sm:pt-6 border-t-2 border-slate-100 grid grid-cols-2 sm:grid-cols-5 gap-3 sm:gap-4 text-center">
                     <div className="bg-slate-50 p-3 sm:p-4 rounded-xl">
                         <div className="text-[10px] sm:text-xs text-slate-400 font-medium mb-1">মিল রেট</div>
                         <div className="text-lg sm:text-xl font-black text-slate-900">৳{englishToBangla(mealRate.toFixed(2))}</div>
@@ -187,6 +251,10 @@ export default function Summary() {
                     <div className="bg-slate-50 p-3 sm:p-4 rounded-xl">
                         <div className="text-[10px] sm:text-xs text-slate-400 font-medium mb-1">মোট বাজার</div>
                         <div className="text-lg sm:text-xl font-black text-slate-900">{formatCurrency(totalMessFoodCost)}</div>
+                    </div>
+                    <div className="bg-indigo-50 p-3 sm:p-4 rounded-xl border border-indigo-100">
+                        <div className="text-[10px] sm:text-xs text-indigo-500 font-medium mb-1">মোট বাসা ভাড়া</div>
+                        <div className="text-lg sm:text-xl font-black text-indigo-600">{formatCurrency(totalHouseRent || 0)}</div>
                     </div>
                     <div className="bg-amber-50 p-3 sm:p-4 rounded-xl border border-amber-100">
                         <div className="text-[10px] sm:text-xs text-amber-500 font-medium mb-1">মোট অতিরিক্ত খরচ</div>

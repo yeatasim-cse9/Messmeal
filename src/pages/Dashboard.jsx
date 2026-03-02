@@ -13,63 +13,112 @@ export default function Dashboard() {
     return (
         <div className="space-y-6 sm:space-y-8 lg:space-y-10">
             {/* Stat Cards - Top Row */}
-            <div className="grid grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-4 lg:gap-5">
+            <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-3 sm:gap-4 lg:gap-5">
 
                 {/* Card 1: Mill Rate */}
-                <div className="bg-white p-4 sm:p-6 lg:p-8 rounded-2xl sm:rounded-[24px] shadow-[0_2px_12px_rgba(0,0,0,0.02)] border border-slate-100 flex flex-col justify-between min-h-[120px] sm:min-h-[150px] lg:min-h-[180px]">
-                    <h3 className="text-slate-400 font-medium text-[11px] sm:text-[13px] lg:text-[15px]">বর্তমান মিল রেট</h3>
-                    <p className="text-[24px] sm:text-[32px] lg:text-[42px] font-black text-slate-900 leading-none tracking-tight">
-                        {englishToBangla(mealRate.toFixed(2))}
-                    </p>
-                    <div className="flex items-center text-emerald-500 font-bold text-[11px] sm:text-[13px] lg:text-[14px]">
-                        <TrendingUp size={14} className="mr-1 shrink-0" /> প্রতি মিল
+                <div className="group bg-white hover:bg-slate-50/50 p-4 sm:p-5 lg:p-6 rounded-2xl sm:rounded-[24px] shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] border border-slate-100 flex flex-col justify-between min-h-[140px] relative overflow-hidden transition-all duration-300">
+                    <div className="absolute -right-8 -top-8 w-32 h-32 bg-emerald-50 rounded-full blur-3xl group-hover:bg-emerald-100/60 transition-colors duration-500"></div>
+                    <div className="relative z-10">
+                        <div className="flex items-center gap-2.5 mb-2.5">
+                            <div className="w-7 h-7 rounded-full bg-emerald-50 text-emerald-500 flex items-center justify-center shrink-0 border border-emerald-100/50">
+                                <TrendingUp size={14} />
+                            </div>
+                            <h3 className="text-slate-500 font-bold text-[11px] sm:text-xs md:text-[13px] uppercase tracking-wider truncate">বর্তমান মিল রেট</h3>
+                        </div>
+                        <p className="text-2xl sm:text-3xl lg:text-3xl xl:text-4xl font-black text-slate-800 tracking-tight break-words">
+                            ৳{englishToBangla(mealRate.toFixed(2))}
+                        </p>
+                    </div>
+                    <div className="relative z-10 mt-3 sm:mt-4">
+                        <span className="inline-flex items-center bg-emerald-50 text-emerald-600 px-2 sm:px-2.5 py-1 rounded-lg font-bold text-[10px] sm:text-[11px] border border-emerald-100/50 truncate">
+                            বর্তমান খরচ
+                        </span>
                     </div>
                 </div>
 
                 {/* Card 2: Baki */}
-                <div className="bg-white p-4 sm:p-6 lg:p-8 rounded-2xl sm:rounded-[24px] shadow-[0_2px_12px_rgba(0,0,0,0.02)] border border-slate-100 flex flex-col justify-between min-h-[120px] sm:min-h-[150px] lg:min-h-[180px]">
-                    <h3 className="text-slate-400 font-medium text-[11px] sm:text-[13px] lg:text-[15px]">দোকানে বকেয়া</h3>
-                    <p className="text-[24px] sm:text-[32px] lg:text-[42px] font-black text-slate-900 leading-none tracking-tight">
-                        {englishToBangla(totalBakiExpense.toFixed(2))}
-                    </p>
-                    <div className="flex items-center text-rose-500 font-bold text-[11px] sm:text-[13px] lg:text-[14px]">
-                        <AlertTriangle size={14} className="mr-1 shrink-0" fill="currentColor" /> দিতে হবে
+                <div className="group bg-white hover:bg-slate-50/50 p-4 sm:p-5 lg:p-6 rounded-2xl sm:rounded-[24px] shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] border border-slate-100 flex flex-col justify-between min-h-[140px] relative overflow-hidden transition-all duration-300">
+                    <div className="absolute -right-8 -top-8 w-32 h-32 bg-rose-50 rounded-full blur-3xl group-hover:bg-rose-100/60 transition-colors duration-500"></div>
+                    <div className="relative z-10">
+                        <div className="flex items-center gap-2.5 mb-2.5">
+                            <div className="w-7 h-7 rounded-full bg-rose-50 text-rose-500 flex items-center justify-center shrink-0 border border-rose-100/50">
+                                <AlertTriangle size={14} />
+                            </div>
+                            <h3 className="text-slate-500 font-bold text-[11px] sm:text-xs md:text-[13px] uppercase tracking-wider truncate">দোকানে বকেয়া</h3>
+                        </div>
+                        <p className="text-2xl sm:text-3xl lg:text-3xl xl:text-4xl font-black text-slate-800 tracking-tight break-words">
+                            ৳{englishToBangla(totalBakiExpense.toFixed(2))}
+                        </p>
+                    </div>
+                    <div className="relative z-10 mt-3 sm:mt-4">
+                        <span className="inline-flex items-center bg-rose-50 text-rose-600 px-2 sm:px-2.5 py-1 rounded-lg font-bold text-[10px] sm:text-[11px] border border-rose-100/50 truncate">
+                            দোকানে দিতে হবে
+                        </span>
                     </div>
                 </div>
 
                 {/* Card 3: Total Mess Cost */}
-                <div className="bg-white p-4 sm:p-6 lg:p-8 rounded-2xl sm:rounded-[24px] shadow-[0_2px_12px_rgba(0,0,0,0.02)] border border-slate-100 flex flex-col justify-between min-h-[120px] sm:min-h-[150px] lg:min-h-[180px]">
-                    <h3 className="text-slate-400 font-medium text-[11px] sm:text-[13px] lg:text-[15px]">মোট মেস খরচ</h3>
-                    <p className="text-[24px] sm:text-[32px] lg:text-[42px] font-black text-slate-900 leading-none tracking-tight">
-                        {englishToBangla((totalMessFoodCost + totalBakiExpense).toFixed(2))}
-                    </p>
-                    <div className="flex items-center text-slate-400 font-medium text-[11px] sm:text-[13px] lg:text-[14px]">
-                        <ShoppingBag size={14} className="mr-1 shrink-0" /> বাজার + বকেয়া
+                <div className="group bg-white hover:bg-slate-50/50 p-4 sm:p-5 lg:p-6 rounded-2xl sm:rounded-[24px] shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] border border-slate-100 flex flex-col justify-between min-h-[140px] relative overflow-hidden transition-all duration-300">
+                    <div className="absolute -right-8 -top-8 w-32 h-32 bg-blue-50 rounded-full blur-3xl group-hover:bg-blue-100/60 transition-colors duration-500"></div>
+                    <div className="relative z-10">
+                        <div className="flex items-center gap-2.5 mb-2.5">
+                            <div className="w-7 h-7 rounded-full bg-blue-50 text-blue-500 flex items-center justify-center shrink-0 border border-blue-100/50">
+                                <ShoppingBag size={14} />
+                            </div>
+                            <h3 className="text-slate-500 font-bold text-[11px] sm:text-xs md:text-[13px] uppercase tracking-wider truncate">মোট মেস খরচ</h3>
+                        </div>
+                        <p className="text-2xl sm:text-3xl lg:text-3xl xl:text-4xl font-black text-slate-800 tracking-tight break-words">
+                            ৳{englishToBangla((totalMessFoodCost + totalBakiExpense).toFixed(2))}
+                        </p>
+                    </div>
+                    <div className="relative z-10 mt-3 sm:mt-4">
+                        <span className="inline-flex items-center bg-blue-50 text-blue-600 px-2 sm:px-2.5 py-1 rounded-lg font-bold text-[10px] sm:text-[11px] border border-blue-100/50 truncate">
+                            বাজার + বকেয়া
+                        </span>
                     </div>
                 </div>
 
                 {/* Card 4: Additional Expenses */}
-                <div className="bg-white p-4 sm:p-6 lg:p-8 rounded-2xl sm:rounded-[24px] shadow-[0_2px_12px_rgba(0,0,0,0.02)] border border-amber-100 flex flex-col justify-between min-h-[120px] sm:min-h-[150px] lg:min-h-[180px]">
-                    <h3 className="text-slate-400 font-medium text-[11px] sm:text-[13px] lg:text-[15px]">অতিরিক্ত খরচ</h3>
-                    <p className="text-[24px] sm:text-[32px] lg:text-[42px] font-black text-amber-600 leading-none tracking-tight">
-                        {englishToBangla(totalAdditionalExpense.toFixed(2))}
-                    </p>
-                    <div className="flex items-center text-amber-500 font-bold text-[11px] sm:text-[13px] lg:text-[14px]">
-                        <Receipt size={14} className="mr-1 shrink-0" /> মোট অতিরিক্ত
+                <div className="group bg-white hover:bg-slate-50/50 p-4 sm:p-5 lg:p-6 rounded-2xl sm:rounded-[24px] shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] border border-slate-100 flex flex-col justify-between min-h-[140px] relative overflow-hidden transition-all duration-300">
+                    <div className="absolute -right-8 -top-8 w-32 h-32 bg-amber-50 rounded-full blur-3xl group-hover:bg-amber-100/60 transition-colors duration-500"></div>
+                    <div className="relative z-10">
+                        <div className="flex items-center gap-2.5 mb-2.5">
+                            <div className="w-7 h-7 rounded-full bg-amber-50 text-amber-500 flex items-center justify-center shrink-0 border border-amber-100/50">
+                                <Receipt size={14} />
+                            </div>
+                            <h3 className="text-slate-500 font-bold text-[11px] sm:text-xs md:text-[13px] uppercase tracking-wider truncate">অতিরিক্ত খরচ</h3>
+                        </div>
+                        <p className="text-2xl sm:text-3xl lg:text-3xl xl:text-4xl font-black text-slate-800 tracking-tight break-words">
+                            ৳{englishToBangla(totalAdditionalExpense.toFixed(2))}
+                        </p>
+                    </div>
+                    <div className="relative z-10 mt-3 sm:mt-4">
+                        <span className="inline-flex items-center bg-amber-50 text-amber-600 px-2 sm:px-2.5 py-1 rounded-lg font-bold text-[10px] sm:text-[11px] border border-amber-100/50 truncate">
+                            সবার মাঝে ভাগ
+                        </span>
                     </div>
                 </div>
 
-                {/* Card 4: Total Deposit & Cash */}
-                <div className="bg-[#1A3A2A] p-4 sm:p-6 lg:p-8 rounded-2xl sm:rounded-[24px] shadow-xl shadow-[#1A3A2A]/20 flex flex-col justify-between min-h-[120px] sm:min-h-[150px] lg:min-h-[180px] text-white overflow-hidden relative">
-                    <div className="absolute top-0 right-0 w-24 sm:w-32 h-24 sm:h-32 bg-white opacity-5 rounded-full blur-2xl -mr-10 -mt-10"></div>
+                {/* Card 5: Total Deposit & Cash */}
+                <div className="col-span-2 lg:col-span-3 xl:col-span-1 bg-gradient-to-br from-[#0F172A] to-[#1E293B] hover:to-[#0F172A] p-4 sm:p-5 lg:p-6 rounded-2xl sm:rounded-[24px] shadow-[0_8px_30px_rgba(15,23,42,0.2)] flex flex-col justify-between min-h-[140px] relative overflow-hidden transition-all duration-500 group">
+                    <div className="absolute -right-12 -top-12 w-40 h-40 bg-indigo-500/20 rounded-full blur-3xl group-hover:bg-indigo-500/30 transition-colors duration-500"></div>
+                    <div className="absolute -left-12 -bottom-12 w-32 h-32 bg-emerald-500/20 rounded-full blur-3xl group-hover:bg-emerald-500/30 transition-colors duration-500"></div>
+
                     <div className="relative z-10">
-                        <h3 className="text-[#A2C2B2] font-medium text-[11px] sm:text-[13px] lg:text-[15px] mb-1 sm:mb-2">ফান্ডে মোট জমা</h3>
-                        <p className="text-[24px] sm:text-[32px] lg:text-[42px] font-black leading-none tracking-tight">
-                            {englishToBangla(totalDeposit.toFixed(2))}
+                        <div className="flex items-center gap-2.5 mb-2.5">
+                            <div className="w-7 h-7 rounded-full bg-white/10 text-white flex items-center justify-center shrink-0 border border-white/5">
+                                <Wallet size={14} />
+                            </div>
+                            <h3 className="text-slate-300 font-bold text-[11px] sm:text-xs md:text-[13px] uppercase tracking-wider truncate">ফান্ডে মোট জমা</h3>
+                        </div>
+                        <p className="text-2xl sm:text-3xl lg:text-3xl xl:text-4xl font-black text-white tracking-tight break-words">
+                            ৳{englishToBangla(totalDeposit.toFixed(2))}
                         </p>
                     </div>
-                    <div className="relative z-10 flex items-center text-[#A2C2B2] font-medium text-[11px] sm:text-[13px] lg:text-[14px]">
-                        হাতে <span className="text-white font-bold ml-1 sm:ml-2">{englishToBangla(managerCashInHand.toFixed(2))}</span>
+                    <div className="relative z-10 mt-3 sm:mt-4">
+                        <span className="inline-flex items-center bg-white/10 backdrop-blur-sm text-slate-200 px-2.5 py-1.5 rounded-lg font-bold text-[10px] sm:text-[11px] border border-white/10 max-w-full">
+                            হাতে: <span className="text-emerald-400 ml-1 break-words">৳{englishToBangla(managerCashInHand.toFixed(2))}</span>
+                        </span>
                     </div>
                 </div>
 
