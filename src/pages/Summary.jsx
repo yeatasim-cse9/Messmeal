@@ -1,10 +1,24 @@
 import React, { useState } from 'react';
+import { motion } from 'framer-motion';
 import { useData } from '../contexts/DataContext';
 import { useAuth } from '../contexts/AuthContext';
 import { useDialog } from '../contexts/DialogContext';
 import { formatCurrency, englishToBangla, getBanglaMonthYear, IconMap, banglaToEnglish } from '../utils/helpers';
 import { generateMonthlyReport } from '../utils/pdfExport';
 import { Calculator, Download, Trash2, Edit2, Plus, Home, User } from 'lucide-react';
+
+const containerVariants = {
+    hidden: { opacity: 0 },
+    show: {
+        opacity: 1,
+        transition: { staggerChildren: 0.1 }
+    }
+};
+
+const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 300, damping: 24 } }
+};
 
 export default function Summary() {
     const { isAdmin } = useAuth();
@@ -51,10 +65,15 @@ export default function Summary() {
     };
 
     return (
-        <div className="space-y-4 sm:space-y-6 lg:space-y-8 animate-in fade-in duration-500">
+        <motion.div
+            variants={containerVariants}
+            initial="hidden"
+            animate="show"
+            className="space-y-4 sm:space-y-6 lg:space-y-8 animate-in fade-in duration-500"
+        >
 
             {/* House Rent Section */}
-            <div className="bg-white p-4 sm:p-6 lg:p-10 rounded-2xl sm:rounded-3xl lg:rounded-[32px] shadow-sm border border-slate-50">
+            <motion.div variants={itemVariants} className="bg-white p-4 sm:p-6 lg:p-10 rounded-2xl sm:rounded-3xl lg:rounded-[32px] shadow-sm border border-slate-50">
                 <div className="flex flex-col sm:flex-row justify-between sm:items-center mb-4 sm:mb-6 gap-3 sm:gap-4">
                     <h3 className="text-base sm:text-lg lg:text-xl font-bold text-slate-900 flex items-center">
                         <Home className="text-indigo-500 mr-2 sm:mr-3 shrink-0" size={20} /> মাসিক বাসা ভাড়া
@@ -70,7 +89,12 @@ export default function Summary() {
                     {members.map(m => {
                         const rent = Number(m.houseRent) || 0;
                         return (
-                            <div key={m.id} className="group relative p-3 sm:p-4 rounded-xl sm:rounded-2xl border border-slate-100 hover:border-indigo-200 bg-gradient-to-br from-indigo-50/30 to-white transition-all">
+                            <motion.div
+                                variants={itemVariants}
+                                whileHover={{ y: -4, transition: { duration: 0.2 } }}
+                                key={m.id}
+                                className="group relative p-3 sm:p-4 rounded-xl sm:rounded-2xl border border-slate-100 hover:border-indigo-200 bg-gradient-to-br from-indigo-50/30 to-white transition-all"
+                            >
                                 <div className="flex items-center gap-2 mb-2">
                                     <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-indigo-100 flex items-center justify-center shrink-0">
                                         <User size={13} className="text-indigo-600" />
@@ -92,14 +116,14 @@ export default function Summary() {
                                     )}
                                 </div>
                                 <p className="text-[10px] sm:text-[11px] text-slate-400 font-medium mt-0.5">মাসিক</p>
-                            </div>
+                            </motion.div>
                         );
                     })}
                 </div>
-            </div>
+            </motion.div>
 
             {/* Fixed Bills */}
-            <div className="bg-white p-4 sm:p-6 lg:p-10 rounded-2xl sm:rounded-3xl lg:rounded-[32px] shadow-sm border border-slate-50">
+            <motion.div variants={itemVariants} className="bg-white p-4 sm:p-6 lg:p-10 rounded-2xl sm:rounded-3xl lg:rounded-[32px] shadow-sm border border-slate-50">
                 <div className="flex flex-col sm:flex-row justify-between sm:items-center mb-4 sm:mb-6 gap-3 sm:gap-4">
                     <h3 className="text-base sm:text-lg lg:text-xl font-bold text-slate-900 flex items-center">
                         <Calculator className="text-slate-400 mr-2 sm:mr-3 shrink-0" size={20} /> ফিক্সড বিল {!isAdmin && '(শুধু দেখা)'}
@@ -115,7 +139,7 @@ export default function Summary() {
                     {billCategories.map(cat => {
                         const CatIcon = IconMap[cat.icon] || Calculator;
                         return (
-                            <div key={cat.id} className="group">
+                            <motion.div variants={itemVariants} key={cat.id} className="group">
                                 <label className="flex items-center justify-between text-[11px] sm:text-xs lg:text-sm font-medium text-slate-400 mb-1.5 sm:mb-2">
                                     <span className="flex items-center truncate"><CatIcon size={14} className="mr-1.5 sm:mr-2 shrink-0" /> <span className="truncate">{cat.label}</span></span>
                                     {isAdmin && (
@@ -146,14 +170,14 @@ export default function Summary() {
                                         className="w-full pl-7 sm:pl-9 pr-3 sm:pr-4 py-2.5 sm:py-3 rounded-lg sm:rounded-xl border border-slate-200 focus:ring-2 focus:ring-slate-900 bg-slate-50 font-black text-slate-800 text-sm sm:text-base disabled:opacity-70 disabled:bg-slate-100"
                                     />
                                 </div>
-                            </div>
+                            </motion.div>
                         );
                     })}
                 </div>
-            </div>
+            </motion.div>
 
             {/* Final Report Table */}
-            <div className="bg-white rounded-2xl sm:rounded-3xl lg:rounded-[32px] shadow-sm border border-slate-50 overflow-hidden p-4 sm:p-6 lg:p-10">
+            <motion.div variants={itemVariants} className="bg-white rounded-2xl sm:rounded-3xl lg:rounded-[32px] shadow-sm border border-slate-50 overflow-hidden p-4 sm:p-6 lg:p-10">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 sm:mb-6 lg:mb-8 gap-3">
                     <h3 className="text-base sm:text-lg lg:text-xl font-bold text-slate-900">ফাইনাল রিপোর্ট</h3>
                     <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
@@ -174,7 +198,12 @@ export default function Summary() {
                 {/* Mobile Card View */}
                 <div className="sm:hidden space-y-3">
                     {memberStats.map(stat => (
-                        <div key={stat.id} className="p-3 rounded-xl border border-slate-100 bg-slate-50/50">
+                        <motion.div
+                            variants={itemVariants}
+                            whileHover={{ scale: 1.02 }}
+                            key={stat.id}
+                            className="p-3 rounded-xl border border-slate-100 bg-slate-50/50"
+                        >
                             <div className="flex items-center justify-between mb-2">
                                 <span className="font-bold text-slate-900 text-sm truncate">{stat.name}</span>
                                 <span className={`font-black  text-base ${stat.balance >= 0 ? 'text-emerald-600' : 'text-rose-500'}`}>
@@ -189,12 +218,12 @@ export default function Summary() {
                                 <span>ভাড়া: <strong className="text-indigo-600">{formatCurrency(stat.houseRent)}</strong></span>
                                 <span className="text-right">জমা: <strong className="text-slate-700">{formatCurrency(stat.totalContribution)}</strong></span>
                             </div>
-                        </div>
+                        </motion.div>
                     ))}
                 </div>
 
                 {/* Desktop Table View */}
-                <div className="hidden sm:block overflow-x-auto -mx-2 px-2">
+                <motion.div variants={itemVariants} className="hidden sm:block overflow-x-auto -mx-2 px-2">
                     <table className="w-full text-left border-collapse min-w-[800px]">
                         <thead>
                             <tr className="border-b-2 border-slate-100 text-slate-400 text-[11px] lg:text-xs uppercase tracking-wider font-bold">
@@ -240,7 +269,7 @@ export default function Summary() {
                             ))}
                         </tbody>
                     </table>
-                </div>
+                </motion.div>
 
                 {/* Summary Info Row */}
                 <div className="mt-4 sm:mt-6 pt-4 sm:pt-6 border-t-2 border-slate-100 grid grid-cols-2 sm:grid-cols-5 gap-3 sm:gap-4 text-center">
@@ -265,7 +294,7 @@ export default function Summary() {
                         <div className="text-lg sm:text-xl font-black text-emerald-700">{formatCurrency(managerCashInHand)}</div>
                     </div>
                 </div>
-            </div>
-        </div>
+            </motion.div>
+        </motion.div>
     );
 }

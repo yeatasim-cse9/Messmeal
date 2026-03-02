@@ -1,8 +1,22 @@
 import React from 'react';
+import { motion } from 'framer-motion';
 import { useData } from '../contexts/DataContext';
 import { useAuth } from '../contexts/AuthContext';
 import { englishToBangla, banglaToEnglish } from '../utils/helpers';
 import { User, Calendar } from 'lucide-react';
+
+const containerVariants = {
+    hidden: { opacity: 0 },
+    show: {
+        opacity: 1,
+        transition: { staggerChildren: 0.1 }
+    }
+};
+
+const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 300, damping: 24 } }
+};
 
 const getMealInputClass = (color) => {
     const map = {
@@ -36,8 +50,13 @@ export default function Meals() {
     };
 
     return (
-        <div className="bg-white p-4 sm:p-6 lg:p-8 rounded-2xl sm:rounded-3xl lg:rounded-[32px] shadow-sm border border-slate-50">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-5 sm:mb-8 gap-3 sm:gap-4">
+        <motion.div
+            variants={containerVariants}
+            initial="hidden"
+            animate="show"
+            className="bg-white p-4 sm:p-6 lg:p-8 rounded-2xl sm:rounded-3xl lg:rounded-[32px] shadow-sm border border-slate-50"
+        >
+            <motion.div variants={itemVariants} className="flex flex-col sm:flex-row sm:items-center justify-between mb-5 sm:mb-8 gap-3 sm:gap-4">
                 <h3 className="text-base sm:text-lg lg:text-xl font-bold text-slate-900">তারিখ অনুযায়ী মিল {isAdmin ? 'আপডেট' : 'দেখুন'}</h3>
                 <div className="flex items-center bg-white border border-slate-200 shadow-[0_2px_8px_rgba(0,0,0,0.04)] pl-3 sm:pl-4 pr-2 sm:pr-3 py-2 sm:py-2.5 rounded-lg sm:rounded-xl hover:border-slate-300 transition-all focus-within:ring-4 focus-within:ring-blue-500/10 focus-within:border-blue-500">
                     <Calendar className="text-slate-400 mr-2 sm:mr-3 shrink-0" size={16} />
@@ -48,7 +67,7 @@ export default function Meals() {
                         className="bg-transparent font-bold text-blue-600 focus:outline-none cursor-pointer outline-none text-sm sm:text-base w-[120px] sm:w-[140px]"
                     />
                 </div>
-            </div>
+            </motion.div>
 
             {/* Mobile Card View */}
             <div className="sm:hidden space-y-3">
@@ -58,7 +77,12 @@ export default function Meals() {
                     mealCategories.forEach(cat => { totalDaily += Number(dayData[cat.id] || 0); });
 
                     return (
-                        <div key={member.id} className="p-3 rounded-xl border border-slate-100 bg-slate-50/50">
+                        <motion.div
+                            variants={itemVariants}
+                            whileHover={{ scale: 1.02 }}
+                            key={member.id}
+                            className="p-3 rounded-xl border border-slate-100 bg-slate-50/50"
+                        >
                             <div className="flex items-center justify-between mb-2.5">
                                 <div className="flex items-center space-x-2">
                                     <div className="w-7 h-7 rounded-full bg-slate-100 flex items-center justify-center">
@@ -87,13 +111,13 @@ export default function Meals() {
                                     </div>
                                 ))}
                             </div>
-                        </div>
+                        </motion.div>
                     );
                 })}
             </div>
 
             {/* Desktop Table View */}
-            <div className="hidden sm:block overflow-x-auto">
+            <motion.div variants={itemVariants} className="hidden sm:block overflow-x-auto">
                 <table className="w-full text-left border-collapse min-w-[500px]">
                     <thead>
                         <tr className="border-b border-slate-100 text-slate-400 text-xs sm:text-sm">
@@ -144,7 +168,7 @@ export default function Meals() {
                         })}
                     </tbody>
                 </table>
-            </div>
-        </div>
+            </motion.div>
+        </motion.div>
     );
 }

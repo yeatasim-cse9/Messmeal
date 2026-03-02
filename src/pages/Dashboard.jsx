@@ -1,8 +1,22 @@
 import React from 'react';
+import { motion } from 'framer-motion';
 import { useData } from '../contexts/DataContext';
 import { useAuth } from '../contexts/AuthContext';
 import { formatCurrency, englishToBangla } from '../utils/helpers';
 import { TrendingUp, AlertTriangle, ShoppingBag, Utensils, Wallet, User as UserIcon, Receipt } from 'lucide-react';
+
+const containerVariants = {
+    hidden: { opacity: 0 },
+    show: {
+        opacity: 1,
+        transition: { staggerChildren: 0.1 }
+    }
+};
+
+const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 300, damping: 24 } }
+};
 
 export default function Dashboard() {
     const { userProfile } = useAuth();
@@ -11,12 +25,17 @@ export default function Dashboard() {
     } = useData();
 
     return (
-        <div className="space-y-6 sm:space-y-8 lg:space-y-10">
+        <motion.div
+            variants={containerVariants}
+            initial="hidden"
+            animate="show"
+            className="space-y-6 sm:space-y-8 lg:space-y-10"
+        >
             {/* Stat Cards - Top Row */}
             <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-3 sm:gap-4 lg:gap-5">
 
                 {/* Card 1: Mill Rate */}
-                <div className="group bg-white hover:bg-slate-50/50 p-4 sm:p-5 lg:p-6 rounded-2xl sm:rounded-[24px] shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] border border-slate-100 flex flex-col justify-between min-h-[140px] relative overflow-hidden transition-all duration-300">
+                <motion.div variants={itemVariants} whileHover={{ y: -4, transition: { duration: 0.2 } }} className="group bg-white hover:bg-slate-50/50 p-4 sm:p-5 lg:p-6 rounded-2xl sm:rounded-[24px] shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] border border-slate-100 flex flex-col justify-between min-h-[140px] relative overflow-hidden transition-all duration-300">
                     <div className="absolute -right-8 -top-8 w-32 h-32 bg-emerald-50 rounded-full blur-3xl group-hover:bg-emerald-100/60 transition-colors duration-500"></div>
                     <div className="relative z-10">
                         <div className="flex items-center gap-2.5 mb-2.5">
@@ -34,10 +53,10 @@ export default function Dashboard() {
                             বর্তমান খরচ
                         </span>
                     </div>
-                </div>
+                </motion.div>
 
                 {/* Card 2: Baki */}
-                <div className="group bg-white hover:bg-slate-50/50 p-4 sm:p-5 lg:p-6 rounded-2xl sm:rounded-[24px] shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] border border-slate-100 flex flex-col justify-between min-h-[140px] relative overflow-hidden transition-all duration-300">
+                <motion.div variants={itemVariants} whileHover={{ y: -4, transition: { duration: 0.2 } }} className="group bg-white hover:bg-slate-50/50 p-4 sm:p-5 lg:p-6 rounded-2xl sm:rounded-[24px] shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] border border-slate-100 flex flex-col justify-between min-h-[140px] relative overflow-hidden transition-all duration-300">
                     <div className="absolute -right-8 -top-8 w-32 h-32 bg-rose-50 rounded-full blur-3xl group-hover:bg-rose-100/60 transition-colors duration-500"></div>
                     <div className="relative z-10">
                         <div className="flex items-center gap-2.5 mb-2.5">
@@ -55,10 +74,10 @@ export default function Dashboard() {
                             দোকানে দিতে হবে
                         </span>
                     </div>
-                </div>
+                </motion.div>
 
                 {/* Card 3: Total Mess Cost */}
-                <div className="group bg-white hover:bg-slate-50/50 p-4 sm:p-5 lg:p-6 rounded-2xl sm:rounded-[24px] shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] border border-slate-100 flex flex-col justify-between min-h-[140px] relative overflow-hidden transition-all duration-300">
+                <motion.div variants={itemVariants} whileHover={{ y: -4, transition: { duration: 0.2 } }} className="group bg-white hover:bg-slate-50/50 p-4 sm:p-5 lg:p-6 rounded-2xl sm:rounded-[24px] shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] border border-slate-100 flex flex-col justify-between min-h-[140px] relative overflow-hidden transition-all duration-300">
                     <div className="absolute -right-8 -top-8 w-32 h-32 bg-blue-50 rounded-full blur-3xl group-hover:bg-blue-100/60 transition-colors duration-500"></div>
                     <div className="relative z-10">
                         <div className="flex items-center gap-2.5 mb-2.5">
@@ -76,10 +95,10 @@ export default function Dashboard() {
                             বাজার + বকেয়া
                         </span>
                     </div>
-                </div>
+                </motion.div>
 
                 {/* Card 4: Additional Expenses */}
-                <div className="group bg-white hover:bg-slate-50/50 p-4 sm:p-5 lg:p-6 rounded-2xl sm:rounded-[24px] shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] border border-slate-100 flex flex-col justify-between min-h-[140px] relative overflow-hidden transition-all duration-300">
+                <motion.div variants={itemVariants} whileHover={{ y: -4, transition: { duration: 0.2 } }} className="group bg-white hover:bg-slate-50/50 p-4 sm:p-5 lg:p-6 rounded-2xl sm:rounded-[24px] shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] border border-slate-100 flex flex-col justify-between min-h-[140px] relative overflow-hidden transition-all duration-300">
                     <div className="absolute -right-8 -top-8 w-32 h-32 bg-amber-50 rounded-full blur-3xl group-hover:bg-amber-100/60 transition-colors duration-500"></div>
                     <div className="relative z-10">
                         <div className="flex items-center gap-2.5 mb-2.5">
@@ -97,10 +116,10 @@ export default function Dashboard() {
                             সবার মাঝে ভাগ
                         </span>
                     </div>
-                </div>
+                </motion.div>
 
                 {/* Card 5: Total Deposit & Cash */}
-                <div className="col-span-2 lg:col-span-3 xl:col-span-1 bg-gradient-to-br from-[#0F172A] to-[#1E293B] hover:to-[#0F172A] p-4 sm:p-5 lg:p-6 rounded-2xl sm:rounded-[24px] shadow-[0_8px_30px_rgba(15,23,42,0.2)] flex flex-col justify-between min-h-[140px] relative overflow-hidden transition-all duration-500 group">
+                <motion.div variants={itemVariants} whileHover={{ y: -4, transition: { duration: 0.2 } }} className="col-span-2 lg:col-span-3 xl:col-span-1 bg-gradient-to-br from-[#0F172A] to-[#1E293B] hover:to-[#0F172A] p-4 sm:p-5 lg:p-6 rounded-2xl sm:rounded-[24px] shadow-[0_8px_30px_rgba(15,23,42,0.2)] flex flex-col justify-between min-h-[140px] relative overflow-hidden transition-all duration-500 group">
                     <div className="absolute -right-12 -top-12 w-40 h-40 bg-indigo-500/20 rounded-full blur-3xl group-hover:bg-indigo-500/30 transition-colors duration-500"></div>
                     <div className="absolute -left-12 -bottom-12 w-32 h-32 bg-emerald-500/20 rounded-full blur-3xl group-hover:bg-emerald-500/30 transition-colors duration-500"></div>
 
@@ -120,12 +139,12 @@ export default function Dashboard() {
                             হাতে: <span className="text-emerald-400 ml-1 break-words">৳{englishToBangla(managerCashInHand.toFixed(2))}</span>
                         </span>
                     </div>
-                </div>
+                </motion.div>
 
             </div>
 
             {/* Member List Section */}
-            <div>
+            <motion.div variants={itemVariants}>
                 <div className="flex justify-between items-end mb-4 sm:mb-6">
                     <h3 className="text-lg sm:text-xl lg:text-2xl font-black text-slate-900">মেম্বারদের তালিকা</h3>
                 </div>
@@ -141,7 +160,12 @@ export default function Dashboard() {
                 {/* Member Rows */}
                 <div className="space-y-2 sm:space-y-3">
                     {memberStats.map(stat => (
-                        <div key={stat.id} className="flex flex-col sm:grid sm:grid-cols-[1.5fr_1fr_1fr_1fr] items-start sm:items-center bg-white p-4 sm:p-5 rounded-xl sm:rounded-[20px] shadow-[0_2px_12px_rgba(0,0,0,0.02)] border border-slate-100 hover:border-slate-200 transition-colors gap-2 sm:gap-0">
+                        <motion.div
+                            variants={itemVariants}
+                            whileHover={{ scale: 1.01, transition: { duration: 0.2 } }}
+                            key={stat.id}
+                            className="flex flex-col sm:grid sm:grid-cols-[1.5fr_1fr_1fr_1fr] items-start sm:items-center bg-white p-4 sm:p-5 rounded-xl sm:rounded-[20px] shadow-[0_2px_12px_rgba(0,0,0,0.02)] border border-slate-100 hover:border-slate-200 transition-colors gap-2 sm:gap-0"
+                        >
                             {/* Member Info */}
                             <div className="flex items-center space-x-3 sm:space-x-4 w-full sm:w-auto">
                                 <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-slate-50 flex items-center justify-center border border-slate-100 shrink-0">
@@ -175,7 +199,7 @@ export default function Dashboard() {
                             <div className={`hidden sm:block text-right font-black text-xl tracking-tight ${stat.balance >= 0 ? 'text-emerald-600' : 'text-rose-500'}`}>
                                 {stat.balance >= 0 ? '+ ' : '- '}৳{englishToBangla(Math.abs(stat.balance).toFixed(2))}
                             </div>
-                        </div>
+                        </motion.div>
                     ))}
 
                     {memberStats.length === 0 && (
@@ -184,7 +208,7 @@ export default function Dashboard() {
                         </div>
                     )}
                 </div>
-            </div>
-        </div>
+            </motion.div>
+        </motion.div>
     );
 }

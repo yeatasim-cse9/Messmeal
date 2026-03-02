@@ -1,9 +1,23 @@
 import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useData } from '../contexts/DataContext';
 import { useAuth } from '../contexts/AuthContext';
 import { useDialog } from '../contexts/DialogContext';
 import { formatCurrency, englishToBangla, banglaToEnglish } from '../utils/helpers';
 import { Receipt, Store, User, Trash2, Calendar, Wallet } from 'lucide-react';
+
+const containerVariants = {
+    hidden: { opacity: 0 },
+    show: {
+        opacity: 1,
+        transition: { staggerChildren: 0.1 }
+    }
+};
+
+const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 300, damping: 24 } }
+};
 
 const getTodayString = () => new Date().toISOString().split('T')[0];
 
@@ -71,10 +85,15 @@ export default function Expenses() {
     };
 
     return (
-        <div className="space-y-4 sm:space-y-6 animate-in fade-in duration-500">
+        <motion.div
+            variants={containerVariants}
+            initial="hidden"
+            animate="show"
+            className="space-y-4 sm:space-y-6 animate-in fade-in duration-500"
+        >
 
             {/* Member Contribution Summary */}
-            <div className="bg-white p-4 sm:p-6 lg:p-10 rounded-2xl sm:rounded-3xl lg:rounded-[32px] shadow-sm border border-slate-50">
+            <motion.div variants={itemVariants} className="bg-white p-4 sm:p-6 lg:p-10 rounded-2xl sm:rounded-3xl lg:rounded-[32px] shadow-sm border border-slate-50">
                 <h3 className="text-base sm:text-lg lg:text-xl font-bold text-slate-900 mb-4 sm:mb-6 flex items-center">
                     <Wallet className="text-emerald-500 mr-2 sm:mr-3 shrink-0" size={20} />
                     সদস্যদের মোট জমা
@@ -86,41 +105,46 @@ export default function Expenses() {
                         const ownExpense = stat?.ownExpense || 0;
                         const totalContribution = stat?.totalContribution || 0;
                         return (
-                            <div key={m.id} className="group flex flex-col justify-between p-4 sm:p-5 lg:p-6 rounded-2xl sm:rounded-[20px] shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] border border-slate-100 bg-white hover:bg-emerald-50/30 transition-all duration-300 relative overflow-hidden">
+                            <motion.div
+                                variants={itemVariants}
+                                whileHover={{ y: -4, transition: { duration: 0.2 } }}
+                                key={m.id}
+                                className="group flex flex-col justify-between p-3 sm:p-4 lg:p-5 rounded-xl sm:rounded-2xl shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] border border-slate-100 bg-white hover:bg-emerald-50/30 transition-all duration-300 relative overflow-hidden"
+                            >
                                 <div className="absolute -right-6 -top-6 w-24 h-24 bg-emerald-50 rounded-full blur-2xl group-hover:bg-emerald-100/50 transition-colors duration-500"></div>
-                                <div className="relative z-10 flex items-center gap-3 mb-3 sm:mb-4">
-                                    <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0 border border-emerald-100/50 shadow-sm">
-                                        <User size={18} className="sm:hidden" />
-                                        <User size={22} className="hidden sm:block" />
+                                <div className="relative z-10 flex items-center gap-2 sm:gap-3 mb-2 sm:mb-3">
+                                    <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0 border border-emerald-100/50 shadow-sm">
+                                        <User size={16} className="sm:hidden" />
+                                        <User size={18} className="hidden sm:block" />
                                     </div>
-                                    <span className="font-black text-slate-800 text-base sm:text-lg md:text-xl truncate">{m.name}</span>
+                                    <span className="font-black text-slate-800 text-sm sm:text-base md:text-lg truncate">{m.name}</span>
                                 </div>
                                 <div className="relative z-10">
-                                    <p className="font-black text-emerald-600 text-2xl sm:text-3xl md:text-4xl tracking-tight mb-2 break-words">
+                                    <p className="font-black text-emerald-600 text-xl sm:text-2xl md:text-3xl tracking-tight mb-2 break-words">
                                         ৳{englishToBangla(totalContribution.toFixed(2))}
                                     </p>
-                                    <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
+                                    <div className="flex flex-wrap items-center gap-1 sm:gap-1.5">
                                         {(totalDeposit > 0 || ownExpense === 0) && (
-                                            <span className="inline-flex items-center text-slate-500 bg-slate-50 px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg font-bold text-xs sm:text-sm border border-slate-100">
+                                            <span className="inline-flex items-center text-slate-500 bg-slate-50 px-2 py-1 rounded-md font-bold text-[10px] sm:text-xs border border-slate-100">
                                                 জমা: <span className="text-slate-700 ml-1">৳{englishToBangla(totalDeposit.toFixed(0))}</span>
                                             </span>
                                         )}
                                         {ownExpense > 0 && (
-                                            <span className="inline-flex items-center text-emerald-600 bg-emerald-50 px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg font-bold text-xs sm:text-sm border border-emerald-100/50">
+                                            <span className="inline-flex items-center text-emerald-600 bg-emerald-50 px-2 py-1 rounded-md font-bold text-[10px] sm:text-xs border border-emerald-100/50">
                                                 পকেট: <span className="ml-1">৳{englishToBangla(ownExpense.toFixed(0))}</span>
                                             </span>
                                         )}
                                     </div>
                                 </div>
-                            </div>
+                            </motion.div>
                         );
                     })}
                 </div>
-            </div>
+            </motion.div>
 
             {/* Form — Admin Only */}
             {isAdmin && (
-                <div className="bg-white p-4 sm:p-6 lg:p-10 rounded-2xl sm:rounded-3xl lg:rounded-[32px] shadow-sm border border-slate-50">
+                <motion.div variants={itemVariants} className="bg-white p-4 sm:p-6 lg:p-10 rounded-2xl sm:rounded-3xl lg:rounded-[32px] shadow-sm border border-slate-50">
                     <h3 className="text-base sm:text-lg lg:text-xl font-bold text-slate-900 mb-4 sm:mb-6 lg:mb-8">নতুন খরচ যুক্ত করুন</h3>
                     <form onSubmit={handleAddExpense} className="flex flex-col gap-4 sm:gap-6">
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
@@ -169,11 +193,11 @@ export default function Expenses() {
                             <Receipt className="mr-2" size={18} /> খরচ যোগ করুন
                         </button>
                     </form>
-                </div>
+                </motion.div>
             )}
 
             {/* List */}
-            <div className="bg-white p-4 sm:p-6 lg:p-10 rounded-2xl sm:rounded-3xl lg:rounded-[32px] shadow-sm border border-slate-50">
+            <motion.div variants={itemVariants} className="bg-white p-4 sm:p-6 lg:p-10 rounded-2xl sm:rounded-3xl lg:rounded-[32px] shadow-sm border border-slate-50">
                 <h3 className="text-base sm:text-lg lg:text-xl font-bold text-slate-900 mb-4 sm:mb-6 lg:mb-8 flex items-center flex-wrap gap-2">
                     বাজার ও খরচের তালিকা
                     <span className="bg-slate-50 text-slate-400 text-xs sm:text-sm px-2.5 sm:px-3 py-0.5 sm:py-1 rounded-full">{englishToBangla(expenses.length)} টি</span>
@@ -186,71 +210,79 @@ export default function Expenses() {
                     </div>
                 ) : (
                     <div className="grid grid-cols-1 gap-2.5 sm:gap-4">
-                        {expenses.sort((a, b) => new Date(b.date) - new Date(a.date)).map(expense => {
-                            const isBaki = expense.type === 'baki';
-                            const isAdditional = expense.type === 'additional';
-                            const member = members.find(m => m.id === expense.memberId);
+                        <AnimatePresence>
+                            {expenses.sort((a, b) => new Date(b.date) - new Date(a.date)).map(expense => {
+                                const isBaki = expense.type === 'baki';
+                                const isAdditional = expense.type === 'additional';
+                                const member = members.find(m => m.id === expense.memberId);
 
-                            let title = member?.name || 'অজ্ঞাত সদস্য';
-                            if (isBaki) title = 'দোকানে বকেয়া';
-                            if (isAdditional) title = 'অতিরিক্ত খরচ';
+                                let title = member?.name || 'অজ্ঞাত সদস্য';
+                                if (isBaki) title = 'দোকানে বকেয়া';
+                                if (isAdditional) title = 'অতিরিক্ত খরচ';
 
-                            let sourceLabel = 'ফান্ডের টাকা';
-                            if (isBaki) sourceLabel = 'বকেয়া';
-                            else if (isAdditional) sourceLabel = 'সবার মাঝে ভাগ';
-                            else if (expense.fundSource === 'own') sourceLabel = 'নিজের টাকা';
+                                let sourceLabel = 'ফান্ডের টাকা';
+                                if (isBaki) sourceLabel = 'বকেয়া';
+                                else if (isAdditional) sourceLabel = 'সবার মাঝে ভাগ';
+                                else if (expense.fundSource === 'own') sourceLabel = 'নিজের টাকা';
 
-                            let sourceColor = 'bg-blue-50 text-blue-600 border-blue-100';
-                            if (isBaki) sourceColor = 'bg-rose-50 text-rose-600 border-rose-100';
-                            else if (isAdditional) sourceColor = 'bg-amber-50 text-amber-600 border-amber-100';
-                            else if (expense.fundSource === 'own') sourceColor = 'bg-emerald-50 text-emerald-600 border-emerald-100';
+                                let sourceColor = 'bg-blue-50 text-blue-600 border-blue-100';
+                                if (isBaki) sourceColor = 'bg-rose-50 text-rose-600 border-rose-100';
+                                else if (isAdditional) sourceColor = 'bg-amber-50 text-amber-600 border-amber-100';
+                                else if (expense.fundSource === 'own') sourceColor = 'bg-emerald-50 text-emerald-600 border-emerald-100';
 
-                            // Show contribution info for own-pocket expenses
-                            const memberStat = memberStats?.find(s => s.id === expense.memberId);
+                                // Show contribution info for own-pocket expenses
+                                const memberStat = memberStats?.find(s => s.id === expense.memberId);
 
-                            return (
-                                <div key={expense.id} className="flex items-start sm:items-center justify-between p-3 sm:p-5 lg:p-6 rounded-xl sm:rounded-2xl border border-slate-100 hover:border-slate-200 bg-white transition-colors group gap-2 sm:gap-4">
-                                    <div className="flex items-start sm:items-center space-x-3 sm:space-x-4 min-w-0 flex-1">
-                                        <div className={`w-9 h-9 sm:w-12 sm:h-12 rounded-full shrink-0 flex items-center justify-center border ${isBaki ? 'bg-rose-50 border-rose-100' : isAdditional ? 'bg-amber-50 border-amber-100' : expense.fundSource === 'own' ? 'bg-emerald-50 border-emerald-100' : 'bg-slate-50 border-slate-100'}`}>
-                                            {isBaki ? <Store size={16} className="text-rose-500" /> : isAdditional ? <Receipt size={16} className="text-amber-500" /> : expense.fundSource === 'own' ? <Wallet size={16} className="text-emerald-500" /> : <User size={16} className="text-slate-400" />}
+                                return (
+                                    <motion.div
+                                        initial={{ opacity: 0, scale: 0.95 }}
+                                        animate={{ opacity: 1, scale: 1 }}
+                                        exit={{ opacity: 0, scale: 0.95, transition: { duration: 0.2 } }}
+                                        key={expense.id}
+                                        className="flex items-start sm:items-center justify-between p-3 sm:p-5 lg:p-6 rounded-xl sm:rounded-2xl border border-slate-100 hover:border-slate-200 bg-white transition-colors group gap-2 sm:gap-4"
+                                    >
+                                        <div className="flex items-start sm:items-center space-x-3 sm:space-x-4 min-w-0 flex-1">
+                                            <div className={`w-9 h-9 sm:w-12 sm:h-12 rounded-full shrink-0 flex items-center justify-center border ${isBaki ? 'bg-rose-50 border-rose-100' : isAdditional ? 'bg-amber-50 border-amber-100' : expense.fundSource === 'own' ? 'bg-emerald-50 border-emerald-100' : 'bg-slate-50 border-slate-100'}`}>
+                                                {isBaki ? <Store size={16} className="text-rose-500" /> : isAdditional ? <Receipt size={16} className="text-amber-500" /> : expense.fundSource === 'own' ? <Wallet size={16} className="text-emerald-500" /> : <User size={16} className="text-slate-400" />}
+                                            </div>
+                                            <div className="min-w-0">
+                                                <h4 className="font-bold text-slate-900 text-sm sm:text-lg mb-0.5 sm:mb-1 truncate">
+                                                    {title}
+                                                    {expense.fundSource === 'own' && memberStat && (
+                                                        <span className="ml-2 text-xs sm:text-sm font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-lg border border-emerald-100">
+                                                            মোট জমা: ৳{englishToBangla(memberStat.totalContribution.toFixed(0))}
+                                                        </span>
+                                                    )}
+                                                </h4>
+                                                <p className="text-slate-500 font-medium text-[11px] sm:text-sm flex items-center flex-wrap gap-x-2">
+                                                    <span>{englishToBangla(expense.date)}</span>
+                                                    <span className="hidden sm:inline">•</span>
+                                                    <span className="truncate">{expense.description}</span>
+                                                </p>
+                                            </div>
                                         </div>
-                                        <div className="min-w-0">
-                                            <h4 className="font-bold text-slate-900 text-sm sm:text-lg mb-0.5 sm:mb-1 truncate">
-                                                {title}
-                                                {expense.fundSource === 'own' && memberStat && (
-                                                    <span className="ml-2 text-xs sm:text-sm font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-lg border border-emerald-100">
-                                                        মোট জমা: ৳{englishToBangla(memberStat.totalContribution.toFixed(0))}
-                                                    </span>
-                                                )}
-                                            </h4>
-                                            <p className="text-slate-500 font-medium text-[11px] sm:text-sm flex items-center flex-wrap gap-x-2">
-                                                <span>{englishToBangla(expense.date)}</span>
-                                                <span className="hidden sm:inline">•</span>
-                                                <span className="truncate">{expense.description}</span>
-                                            </p>
+                                        <div className="flex items-center gap-2 sm:gap-6 lg:gap-8 shrink-0">
+                                            <div className="text-right">
+                                                <p className={`font-black tracking-tight text-base sm:text-xl lg:text-2xl ${isBaki ? 'text-rose-600' : expense.fundSource === 'own' ? 'text-emerald-600' : 'text-slate-900'}`}>
+                                                    {formatCurrency(expense.amount)}
+                                                </p>
+                                                <span className={`hidden sm:inline-block mt-1 px-2 py-0.5 rounded text-[10px] sm:text-[11px] font-bold border uppercase tracking-wider ${sourceColor}`}>
+                                                    {sourceLabel}
+                                                </span>
+                                            </div>
+                                            {isAdmin && (
+                                                <button onClick={() => handleRemoveExpense(expense.id)} className="p-2 sm:p-3 text-slate-300 hover:text-rose-500 hover:bg-rose-50 rounded-lg sm:rounded-xl transition-colors shrink-0">
+                                                    <Trash2 size={16} />
+                                                </button>
+                                            )}
                                         </div>
-                                    </div>
-                                    <div className="flex items-center gap-2 sm:gap-6 lg:gap-8 shrink-0">
-                                        <div className="text-right">
-                                            <p className={`font-black tracking-tight text-base sm:text-xl lg:text-2xl ${isBaki ? 'text-rose-600' : expense.fundSource === 'own' ? 'text-emerald-600' : 'text-slate-900'}`}>
-                                                {formatCurrency(expense.amount)}
-                                            </p>
-                                            <span className={`hidden sm:inline-block mt-1 px-2 py-0.5 rounded text-[10px] sm:text-[11px] font-bold border uppercase tracking-wider ${sourceColor}`}>
-                                                {sourceLabel}
-                                            </span>
-                                        </div>
-                                        {isAdmin && (
-                                            <button onClick={() => handleRemoveExpense(expense.id)} className="p-2 sm:p-3 text-slate-300 hover:text-rose-500 hover:bg-rose-50 rounded-lg sm:rounded-xl transition-colors shrink-0">
-                                                <Trash2 size={16} />
-                                            </button>
-                                        )}
-                                    </div>
-                                </div>
-                            );
-                        })}
+                                    </motion.div>
+                                );
+                            })}
+                        </AnimatePresence>
                     </div>
                 )}
-            </div>
-        </div>
+            </motion.div>
+        </motion.div>
     );
 }
