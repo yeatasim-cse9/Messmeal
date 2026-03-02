@@ -106,13 +106,20 @@ export default function Deposits() {
                                 </div>
                                 <div className="relative z-10">
                                     <p className="font-black text-emerald-600 text-xl sm:text-2xl md:text-3xl tracking-tight mb-2 break-words">
-                                        ৳{englishToBangla(total.toFixed(2))}
+                                        ৳{englishToBangla(totalContribution.toFixed(2))}
                                     </p>
-                                    {stat?.ownExpense > 0 && (
-                                        <div className="inline-flex items-center text-emerald-600 bg-emerald-50 px-2 py-1 rounded-md font-bold text-[10px] sm:text-xs border border-emerald-100/50 max-w-full">
-                                            <span>পকেট: <span className="mr-1">৳{englishToBangla(stat.ownExpense.toFixed(0))}</span><span className="text-emerald-700 font-black">মোট: ৳{englishToBangla(totalContribution.toFixed(0))}</span></span>
-                                        </div>
-                                    )}
+                                    <div className="flex flex-wrap items-center gap-1 sm:gap-1.5">
+                                        {(total > 0 || !stat?.ownExpense) && (
+                                            <span className="inline-flex items-center text-slate-500 bg-slate-50 px-2 py-1 rounded-md font-bold text-[10px] sm:text-xs border border-slate-100">
+                                                জমা: <span className="text-slate-700 ml-1">৳{englishToBangla(total.toFixed(0))}</span>
+                                            </span>
+                                        )}
+                                        {stat?.ownExpense > 0 && (
+                                            <span className="inline-flex items-center text-emerald-600 bg-emerald-50 px-2 py-1 rounded-md font-bold text-[10px] sm:text-xs border border-emerald-100/50">
+                                                পকেট: <span className="ml-1">৳{englishToBangla(stat.ownExpense.toFixed(0))}</span>
+                                            </span>
+                                        )}
+                                    </div>
                                 </div>
                             </motion.div>
                         );
