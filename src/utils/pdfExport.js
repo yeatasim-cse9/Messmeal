@@ -2,7 +2,7 @@ import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import { banglaFontBase64 } from './banglaFont';
 
-// Bangla Unicode font — Kalpurush (base64) is embedded for native Bengali rendering.
+// Bangla Unicode font — Noto Sans Bengali (base64) is embedded for native Bengali rendering.
 
 const englishToBangla = (str) => {
     if (str === null || str === undefined) return '';
@@ -21,18 +21,27 @@ export function generateMonthlyReport({ monthLabel, memberStats, mealRate, total
     const pageWidth = doc.internal.pageSize.getWidth();
     const pageHeight = doc.internal.pageSize.getHeight();
 
-    // Setup custom Bengali font
-    doc.addFileToVFS('Kalpurush.ttf', banglaFontBase64);
-    doc.addFont('Kalpurush.ttf', 'Kalpurush', 'normal', 'Identity-H');
+    // Setup custom Bengali font with safe fallback
+    let fontName = 'helvetica';
+    try {
+        if (banglaFontBase64 && banglaFontBase64.length > 100) {
+            doc.addFileToVFS('NotoSansBengali.ttf', banglaFontBase64);
+            doc.addFont('NotoSansBengali.ttf', 'NotoSansBengali', 'normal', 'Identity-H');
+            fontName = 'NotoSansBengali';
+        }
+    } catch (err) {
+        console.warn('Bengali font load failed, using helvetica fallback:', err);
+        fontName = 'helvetica';
+    }
 
     // Title
     doc.setFontSize(20);
-    doc.setFont('Kalpurush', 'normal');
+    doc.setFont(fontName, 'normal');
     doc.text(`Mess Hisab - ${monthLabel}`, pageWidth / 2, 18, { align: 'center' });
 
     // Summary Stats
     doc.setFontSize(10);
-    doc.setFont('Kalpurush', 'normal');
+    doc.setFont(fontName, 'normal');
     const summaryData = [
         `Meal Rate: ${formatNum(mealRate, true)} Tk/meal`,
         `Total Food Cost: ${formatNum(totalMessFoodCost)} Tk`,
@@ -59,7 +68,7 @@ export function generateMonthlyReport({ monthLabel, memberStats, mealRate, total
         body: tableBody,
         startY: 32,
         theme: 'grid',
-        styles: { font: 'Kalpurush', fontSize: 8.5 },
+        styles: { font: fontName, fontSize: 8.5 },
         headStyles: { fillColor: [15, 23, 42], textColor: [255, 255, 255], fontStyle: 'bold', fontSize: 9 },
         columnStyles: {
             0: { fontStyle: 'bold' },
@@ -85,7 +94,7 @@ export function generateMonthlyReport({ monthLabel, memberStats, mealRate, total
     if (expenses && expenses.length > 0) {
         doc.addPage();
         doc.setFontSize(16);
-        doc.setFont('Kalpurush', 'normal');
+        doc.setFont(fontName, 'normal');
         doc.text('Expense Details', 14, 18);
 
         const expHead = [['Date', 'Description', 'Amount', 'Type', 'By']];
@@ -117,7 +126,7 @@ export function generateMonthlyReport({ monthLabel, memberStats, mealRate, total
             body: expBody,
             startY: 24,
             theme: 'grid',
-            styles: { font: 'Kalpurush', fontSize: 8.5 },
+            styles: { font: fontName, fontSize: 8.5 },
             headStyles: { fillColor: [15, 23, 42], textColor: [255, 255, 255], fontStyle: 'bold', fontSize: 9 },
             columnStyles: { 2: { halign: 'right', fontStyle: 'bold' } },
             alternateRowStyles: { fillColor: [248, 250, 252] },
@@ -131,7 +140,7 @@ export function generateMonthlyReport({ monthLabel, memberStats, mealRate, total
         if (currentY > pageHeight - 40) doc.addPage();
 
         doc.setFontSize(16);
-        doc.setFont('Kalpurush', 'normal');
+        doc.setFont(fontName, 'normal');
         doc.text('Deposit Details', 14, doc.lastAutoTable ? doc.lastAutoTable.finalY + 14 : 18);
 
         const depHead = [['Date', 'Member', 'Amount']];
@@ -145,7 +154,7 @@ export function generateMonthlyReport({ monthLabel, memberStats, mealRate, total
             body: depBody,
             startY: (doc.lastAutoTable ? doc.lastAutoTable.finalY + 20 : 24),
             theme: 'grid',
-            styles: { font: 'Kalpurush', fontSize: 8.5 },
+            styles: { font: fontName, fontSize: 8.5 },
             headStyles: { fillColor: [26, 58, 42], textColor: [255, 255, 255], fontStyle: 'bold', fontSize: 9 },
             columnStyles: { 2: { halign: 'right', fontStyle: 'bold' } },
             alternateRowStyles: { fillColor: [248, 250, 252] },
@@ -158,7 +167,7 @@ export function generateMonthlyReport({ monthLabel, memberStats, mealRate, total
     for (let i = 1; i <= totalPages; i++) {
         doc.setPage(i);
         doc.setFontSize(8);
-        doc.setFont('Kalpurush', 'normal');
+        doc.setFont(fontName, 'normal');
         doc.setTextColor(150);
         doc.text(`Mess Hisab | Generated: ${new Date().toLocaleDateString()}`, 14, pageHeight - 8);
         doc.text(`Page ${i} of ${totalPages}`, pageWidth - 14, pageHeight - 8, { align: 'right' });
