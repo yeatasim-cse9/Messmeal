@@ -4,7 +4,7 @@ import { useData } from '../contexts/DataContext';
 import { useAuth } from '../contexts/AuthContext';
 import { useDialog } from '../contexts/DialogContext';
 import { formatCurrency, englishToBangla, getBanglaMonthYear, IconMap } from '../utils/helpers';
-import { UserPlus, User, Trash2, Calendar, Copy, Tag, Plus, Loader2, Calculator, Edit2 } from 'lucide-react';
+import { UserPlus, User, Trash2, Calendar, Copy, Tag, Plus, Loader2, Calculator, Edit2, ShieldOff, ShieldCheck } from 'lucide-react';
 import { collection, getDocs, doc, setDoc, updateDoc } from 'firebase/firestore';
 
 const containerVariants = {
@@ -24,14 +24,14 @@ import { db } from '../lib/firebase';
 export default function Settings() {
     const { isAdmin } = useAuth();
     const {
-        members, addMember, removeMember, selectedMonth,
+        members, addMember, removeMember, updateMember, selectedMonth,
         mealCategories, billCategories, updateSettings
     } = useData();
     const { showAlert, showConfirm, showPrompt } = useDialog();
 
     const [copyState, setCopyState] = useState({ loading: false, sourceMonth: '', status: '' });
     const [newMealCat, setNewMealCat] = useState({ label: '', color: 'slate' });
-    const [newBillCat, setNewBillCat] = useState({ label: '', icon: 'Calculator' });
+    const [newBillCat, setNewBillCat] = useState({ label: '', icon: 'Calculator', billType: 'fixed' });
 
     if (!isAdmin) {
         return (
@@ -128,7 +128,7 @@ export default function Settings() {
         if (!newBillCat.label) return;
         const newCat = { id: `bill_${Date.now()}`, ...newBillCat };
         await updateSettings({ billCategories: [...billCategories, newCat] });
-        setNewBillCat({ label: '', icon: 'Calculator' });
+        setNewBillCat({ label: '', icon: 'Calculator', billType: 'fixed' });
     };
 
     const removeBillCategory = async (id) => {
@@ -251,7 +251,11 @@ export default function Settings() {
                                         className="flex items-center justify-between p-3 sm:p-4 rounded-lg sm:rounded-xl border border-slate-100 bg-slate-50"
                                     >
                                         <div className="flex items-center text-slate-700 font-bold text-sm sm:text-base truncate mr-2">
-                                            <Icon size={16} className="mr-2 sm:mr-3 text-slate-400 shrink-0" /> <span className="truncate">{cat.label}</span>
+                                            <Icon size={16} className="mr-2 sm:mr-3 text-slate-400 shrink-0" />
+                                            <span className="truncate">{cat.label}</span>
+                                            <span className={`ml-2 px-1.5 py-0.5 rounded text-[9px] sm:text-[10px] font-bold border ${(cat.billType === 'advance') ? 'bg-amber-50 text-amber-600 border-amber-200' : 'bg-slate-100 text-slate-500 border-slate-200'}`}>
+                                                {(cat.billType === 'advance') ? 'অগ্রিম' : 'ফিক্সড'}
+                                            </span>
                                         </div>
                                         <button onClick={() => removeBillCategory(cat.id)} className="text-slate-400 hover:text-rose-500 transition-colors shrink-0 p-1">
                                             <Trash2 size={16} />
@@ -270,6 +274,14 @@ export default function Settings() {
                             className="flex-1 min-w-0 px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg sm:rounded-xl border border-slate-200 focus:ring-2 focus:ring-slate-900 bg-slate-50 font-medium text-slate-700 text-sm sm:text-base"
                         />
                         <div className="flex gap-2 sm:gap-3">
+                            <select
+                                value={newBillCat.billType}
+                                onChange={e => setNewBillCat({ ...newBillCat, billType: e.target.value })}
+                                className="flex-1 xs:flex-initial px-2 sm:px-3 py-2.5 sm:py-3 rounded-lg sm:rounded-xl border border-slate-200 bg-slate-50 font-bold text-xs sm:text-sm max-w-[90px] sm:max-w-[110px]"
+                            >
+                                <option value="fixed">ফিক্সড</option>
+                                <option value="advance">অগ্রিম</option>
+                            </select>
                             <select
                                 value={newBillCat.icon}
                                 onChange={e => setNewBillCat({ ...newBillCat, icon: e.target.value })}
@@ -327,6 +339,21 @@ export default function Settings() {
                                     <span className="font-bold text-slate-900 text-base sm:text-[17px] truncate">{member.name}</span>
                                 </div>
                                 <div className="flex items-center gap-1 sm:gap-2 shrink-0 ml-2">
+                                    <button
+                                        onClick={async () => {
+                                            await updateMember(member.id, { billExempt: !member.billExempt }, selectedMonth);
+                                        }}
+                                        className={`px-2.5 sm:px-3 py-2 sm:py-2.5 font-bold border rounded-lg sm:rounded-xl transition-all flex items-center gap-1.5 text-[10px] sm:text-xs ${member.billExempt
+                                                ? 'text-amber-700 bg-amber-50 border-amber-200 hover:bg-amber-100'
+                                                : 'text-slate-400 bg-slate-50 border-slate-100 hover:bg-slate-100 hover:text-slate-600'
+                                            }`}
+                                        title={member.billExempt ? 'অগ্রিম বিল থেকে বাদ' : 'অগ্রিম বিল থেকে বাদ করুন'}
+                                    >
+                                        {member.billExempt
+                                            ? <><ShieldOff size={14} /> <span className="hidden xs:inline">বিল ছাড়</span></>
+                                            : <><ShieldCheck size={14} /> <span className="hidden xs:inline">সক্রিয়</span></>
+                                        }
+                                    </button>
                                     <button onClick={() => handleEditMember(member.id, member.name)} className="px-3 sm:px-4 py-2 sm:py-2.5 text-slate-500 hover:text-blue-600 hover:bg-blue-50 font-bold border border-transparent hover:border-blue-100 rounded-lg sm:rounded-xl transition-all flex items-center gap-1.5 text-xs sm:text-sm" title="এডিট করুন">
                                         <Edit2 size={16} /> <span className="hidden sm:inline">এডিট</span>
                                     </button>

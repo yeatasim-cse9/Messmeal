@@ -45,9 +45,32 @@ export function DataProvider({ children }) {
         });
 
         // Extract utility values safely
-        const extraUtilities = Object.entries(utilities)
-            .filter(([key]) => !key.startsWith('bazaar_'))
+        // Split utilities into fixed and advance based on bill category type
+        const fixedUtilities = Object.entries(utilities)
+            .filter(([key]) => !key.startsWith('bazaar_') && !key.endsWith('_paid'))
+            .filter(([key]) => {
+                const cat = billCategories.find(c => c.id === key);
+                return !cat || cat.billType !== 'advance'; // default to fixed
+            })
             .reduce((sum, [_, val]) => sum + (Number(val) || 0), 0);
+
+        const advanceUtilities = Object.entries(utilities)
+            .filter(([key]) => !key.startsWith('bazaar_') && !key.endsWith('_paid'))
+            .filter(([key]) => {
+                const cat = billCategories.find(c => c.id === key);
+                return cat && cat.billType === 'advance';
+            })
+            .reduce((sum, [_, val]) => sum + (Number(val) || 0), 0);
+
+        const extraUtilities = fixedUtilities + advanceUtilities;
+
+        // Calculate total of utilities paid from the mess fund
+        const paidFromFundUtilities = Object.entries(utilities)
+            .filter(([key]) => key.endsWith('_paid') && utilities[key] === true)
+            .reduce((sum, [key]) => {
+                const billKey = key.replace('_paid', '');
+                return sum + (Number(utilities[billKey]) || 0);
+            }, 0);
 
         const totalAdditionalExpense = expenses
             .filter(e => e.type === 'additional')
@@ -68,18 +91,37 @@ export function DataProvider({ children }) {
         const totalHouseRent = members.reduce((sum, m) => sum + (Number(m.houseRent) || 0), 0);
         const mealRate = totalMeals > 0 ? (totalMessFoodCost + totalBakiExpense) / totalMeals : 0;
         const memberCount = members.length;
+
+        // Billable = non-exempt members (will pay advance bills)
+        const billableMembers = members.filter(m => !m.billExempt);
+        const billableMemberCount = billableMembers.length;
+
+        // Fixed bills → all members; Advance bills → only billable members
+        const fixedUtilityPerMember = memberCount > 0 ? fixedUtilities / memberCount : 0;
+        const advanceUtilityPerBillable = billableMemberCount > 0 ? advanceUtilities / billableMemberCount : 0;
         const utilityPerMember = memberCount > 0 ? totalUtilityCost / memberCount : 0;
+
+        // Exempt members' house rent redistributed to billable members
+        const exemptRent = members
+            .filter(m => m.billExempt)
+            .reduce((sum, m) => sum + (Number(m.houseRent) || 0), 0);
+        const extraRentPerBillable = billableMemberCount > 0 ? exemptRent / billableMemberCount : 0;
 
         // Subtract all non-baki expenses that were paid from the mess fund
         const messFundExpenses = expenses
             .filter(e => e.type !== 'baki' && e.fundSource !== 'own')
             .reduce((sum, e) => sum + Number(e.amount), 0);
-        const managerCashInHand = totalDeposit - messFundExpenses;
+        const managerCashInHand = totalDeposit - messFundExpenses - paidFromFundUtilities;
 
         const stats = members.map(m => {
             const mMeals = mealsByMember[m.id] || 0;
             const mCost = mMeals * mealRate;
-            const mHouseRent = Number(m.houseRent) || 0;
+
+            // Exempt members pay 0 for advance bills and house rent
+            const mHouseRent = m.billExempt ? 0 : (Number(m.houseRent) || 0) + extraRentPerBillable;
+            const mUtilityCost = m.billExempt
+                ? fixedUtilityPerMember + additionalExpensePerMember
+                : fixedUtilityPerMember + advanceUtilityPerBillable + additionalExpensePerMember;
 
             const mDeposit = deposits
                 .filter(d => d.memberId === m.id)
@@ -90,14 +132,15 @@ export function DataProvider({ children }) {
                 .reduce((sum, e) => sum + Number(e.amount), 0);
 
             const mTotalContribution = mDeposit + mOwnExpense;
-            const balance = mTotalContribution - (mCost + utilityPerMember + mHouseRent);
+            const balance = mTotalContribution - (mCost + mUtilityCost + mHouseRent);
 
             return {
                 id: m.id,
                 name: m.name,
+                billExempt: m.billExempt || false,
                 totalMeals: mMeals,
                 foodCost: mCost,
-                utilityCost: utilityPerMember,
+                utilityCost: mUtilityCost,
                 additionalExpense: additionalExpensePerMember,
                 houseRent: mHouseRent,
                 totalContribution: mTotalContribution,
@@ -105,6 +148,7 @@ export function DataProvider({ children }) {
                 ownExpense: mOwnExpense,
                 balance: balance
             };
+
         });
 
         return {
@@ -116,6 +160,7 @@ export function DataProvider({ children }) {
             mealRate,
             managerCashInHand,
             totalUtilityCost: extraUtilities,
+            paidFromFundUtilities,
             totalAdditionalExpense,
             utilityPerMember,
             memberStats: stats,
