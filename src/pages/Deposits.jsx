@@ -1,23 +1,9 @@
 import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
 import { useData } from '../contexts/DataContext';
 import { useAuth } from '../contexts/AuthContext';
 import { useDialog } from '../contexts/DialogContext';
 import { formatCurrency, englishToBangla, banglaToEnglish } from '../utils/helpers';
 import { Wallet, User, Trash2, TrendingUp } from 'lucide-react';
-
-const containerVariants = {
-    hidden: { opacity: 0 },
-    show: {
-        opacity: 1,
-        transition: { staggerChildren: 0.1 }
-    }
-};
-
-const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 300, damping: 24 } }
-};
 
 const getTodayString = () => new Date().toISOString().split('T')[0];
 
@@ -71,15 +57,10 @@ export default function Deposits() {
     });
 
     return (
-        <motion.div
-            variants={containerVariants}
-            initial="hidden"
-            animate="show"
-            className="space-y-4 sm:space-y-6"
-        >
+        <div className="space-y-4 sm:space-y-6">
 
             {/* Member Deposit Summary Cards */}
-            <motion.div variants={itemVariants} className="bg-white p-4 sm:p-6 lg:p-10 rounded-2xl sm:rounded-3xl lg:rounded-[32px] shadow-sm border border-slate-50">
+            <div className="bg-white p-4 sm:p-6 lg:p-10 rounded-2xl sm:rounded-3xl lg:rounded-[32px] shadow-sm border border-slate-50">
                 <h3 className="text-base sm:text-lg lg:text-xl font-bold text-slate-900 mb-4 sm:mb-6 flex items-center">
                     <TrendingUp className="text-emerald-500 mr-2 sm:mr-3 shrink-0" size={20} />
                     সদস্যদের জমা সারাংশ
@@ -90,9 +71,7 @@ export default function Deposits() {
                         const stat = memberStats?.find(s => s.id === m.id);
                         const totalContribution = stat?.totalContribution || 0;
                         return (
-                            <motion.div
-                                variants={itemVariants}
-                                whileHover={{ y: -4, transition: { duration: 0.2 } }}
+                            <div
                                 key={m.id}
                                 className="group flex flex-col justify-between p-3 sm:p-4 lg:p-5 rounded-xl sm:rounded-2xl shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] border border-slate-100 bg-white hover:bg-emerald-50/30 transition-all duration-300 relative overflow-hidden"
                             >
@@ -121,15 +100,15 @@ export default function Deposits() {
                                         )}
                                     </div>
                                 </div>
-                            </motion.div>
+                            </div>
                         );
                     })}
                 </div>
-            </motion.div>
+            </div>
 
             {/* Form — Admin Only */}
             {isAdmin && (
-                <motion.div variants={itemVariants} className="bg-white p-4 sm:p-6 lg:p-10 rounded-2xl sm:rounded-3xl lg:rounded-[32px] shadow-sm border border-slate-50">
+                <div className="bg-white p-4 sm:p-6 lg:p-10 rounded-2xl sm:rounded-3xl lg:rounded-[32px] shadow-sm border border-slate-50">
                     <h3 className="text-base sm:text-lg lg:text-xl font-bold text-slate-900 mb-4 sm:mb-6 lg:mb-8">নতুন জমা যুক্ত করুন</h3>
                     <form onSubmit={handleDeposit} className="flex flex-col gap-4 sm:gap-6">
                         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
@@ -163,11 +142,11 @@ export default function Deposits() {
                             <Wallet className="mr-2" size={18} /> জমা যোগ করুন
                         </button>
                     </form>
-                </motion.div>
+                </div>
             )}
 
             {/* List */}
-            <motion.div variants={itemVariants} className="bg-white p-4 sm:p-6 lg:p-10 rounded-2xl sm:rounded-3xl lg:rounded-[32px] shadow-sm border border-slate-50">
+            <div className="bg-white p-4 sm:p-6 lg:p-10 rounded-2xl sm:rounded-3xl lg:rounded-[32px] shadow-sm border border-slate-50">
                 <h3 className="text-base sm:text-lg lg:text-xl font-bold text-slate-900 mb-4 sm:mb-6 lg:mb-8 flex items-center flex-wrap gap-2">
                     জমার তালিকা
                     <span className="bg-emerald-50 text-emerald-600 text-xs sm:text-sm font-bold px-2.5 sm:px-3 py-0.5 sm:py-1 rounded-full">{englishToBangla(deposits.length)} টি</span>
@@ -180,51 +159,46 @@ export default function Deposits() {
                     </div>
                 ) : (
                     <div className="grid grid-cols-1 gap-2.5 sm:gap-4">
-                        <AnimatePresence>
-                            {deposits.sort((a, b) => new Date(b.date) - new Date(a.date)).map(deposit => {
-                                const member = members.find(m => m.id === deposit.memberId);
-                                const memberTotal = memberDepositTotals[deposit.memberId] || 0;
-                                return (
-                                    <motion.div
-                                        initial={{ opacity: 0, scale: 0.95 }}
-                                        animate={{ opacity: 1, scale: 1 }}
-                                        exit={{ opacity: 0, scale: 0.95, transition: { duration: 0.2 } }}
-                                        key={deposit.id}
-                                        className="flex items-center justify-between p-3 sm:p-5 lg:p-6 rounded-xl sm:rounded-2xl border border-slate-100 hover:border-slate-200 hover:shadow-sm bg-white transition-all group gap-3 sm:gap-4"
-                                    >
-                                        <div className="flex items-center space-x-3 sm:space-x-4 min-w-0">
-                                            <div className="w-9 h-9 sm:w-12 sm:h-12 rounded-full bg-emerald-50 shrink-0 flex items-center justify-center border border-emerald-100">
-                                                <User size={16} className="text-emerald-500" />
-                                            </div>
-                                            <div className="min-w-0">
-                                                <h4 className="font-bold text-slate-900 text-sm sm:text-lg mb-0.5 truncate">
-                                                    {member?.name || 'অজ্ঞাত সদস্য'}
-                                                    <span className="ml-2 text-xs sm:text-sm font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-lg border border-emerald-100">
-                                                        মোট: ৳{englishToBangla(memberTotal.toFixed(0))}
-                                                    </span>
-                                                </h4>
-                                                <p className="text-slate-500 font-medium text-[11px] sm:text-sm">
-                                                    {englishToBangla(deposit.date)}
-                                                </p>
-                                            </div>
+                        {deposits.sort((a, b) => new Date(b.date) - new Date(a.date)).map(deposit => {
+                            const member = members.find(m => m.id === deposit.memberId);
+                            const memberTotal = memberDepositTotals[deposit.memberId] || 0;
+                            return (
+                                <div
+                                    key={deposit.id}
+                                    className="flex items-center justify-between p-3 sm:p-5 lg:p-6 rounded-xl sm:rounded-2xl border border-slate-100 hover:border-slate-200 hover:shadow-sm bg-white transition-all group gap-3 sm:gap-4"
+                                >
+                                    <div className="flex items-center space-x-3 sm:space-x-4 min-w-0">
+                                        <div className="w-9 h-9 sm:w-12 sm:h-12 rounded-full bg-emerald-50 shrink-0 flex items-center justify-center border border-emerald-100">
+                                            <User size={16} className="text-emerald-500" />
                                         </div>
-                                        <div className="flex items-center gap-2 sm:gap-6 lg:gap-8 shrink-0">
-                                            <p className="font-black tracking-tight text-base sm:text-xl lg:text-2xl text-emerald-600">
-                                                + {formatCurrency(deposit.amount)}
+                                        <div className="min-w-0">
+                                            <h4 className="font-bold text-slate-900 text-sm sm:text-lg mb-0.5 truncate">
+                                                {member?.name || 'অজ্ঞাত সদস্য'}
+                                                <span className="ml-2 text-xs sm:text-sm font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-lg border border-emerald-100">
+                                                    মোট: ৳{englishToBangla(memberTotal.toFixed(0))}
+                                                </span>
+                                            </h4>
+                                            <p className="text-slate-500 font-medium text-[11px] sm:text-sm">
+                                                {englishToBangla(deposit.date)}
                                             </p>
-                                            {isAdmin && (
-                                                <button onClick={() => handleRemoveDeposit(deposit.id)} className="p-2 sm:p-3 text-slate-300 hover:text-rose-500 hover:bg-rose-50 rounded-lg sm:rounded-xl transition-colors shrink-0">
-                                                    <Trash2 size={16} />
-                                                </button>
-                                            )}
                                         </div>
-                                    </motion.div>
-                                );
-                            })}
-                        </AnimatePresence>
+                                    </div>
+                                    <div className="flex items-center gap-2 sm:gap-6 lg:gap-8 shrink-0">
+                                        <p className="font-black tracking-tight text-base sm:text-xl lg:text-2xl text-emerald-600">
+                                            + {formatCurrency(deposit.amount)}
+                                        </p>
+                                        {isAdmin && (
+                                            <button onClick={() => handleRemoveDeposit(deposit.id)} className="p-2 sm:p-3 text-slate-300 hover:text-rose-500 hover:bg-rose-50 rounded-lg sm:rounded-xl transition-colors shrink-0">
+                                                <Trash2 size={16} />
+                                            </button>
+                                        )}
+                                    </div>
+                                </div>
+                            );
+                        })}
                     </div>
                 )}
-            </motion.div>
-        </motion.div>
+            </div>
+        </div>
     );
 }

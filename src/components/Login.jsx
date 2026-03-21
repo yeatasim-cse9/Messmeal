@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../contexts/AuthContext';
 import { Utensils, Mail, Lock, User, ArrowRight, Loader2 } from 'lucide-react';
 
@@ -31,7 +30,7 @@ export default function Login() {
         } catch (err) {
             const code = err.code;
             if (code === 'auth/user-not-found' || code === 'auth/invalid-credential') {
-                setError('ইমেইল বা পাসওয়ার্ড ভুল হয়েছে');
+                setError('イমেইল বা পাসওয়ার্ড ভুল হয়েছে');
             } else if (code === 'auth/email-already-in-use') {
                 setError('এই ইমেইল দিয়ে আগেই অ্যাকাউন্ট তৈরি হয়েছে');
             } else if (code === 'auth/weak-password') {
@@ -60,64 +59,32 @@ export default function Login() {
 
     return (
         <div className="min-h-screen bg-[#F8FAFC] flex items-center justify-center px-4 py-8 sm:py-4">
-            <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, ease: 'easeOut' }}
-                className="w-full max-w-md"
-            >
+            <div className="w-full max-w-md">
                 {/* Logo */}
                 <div className="text-center mb-6 sm:mb-10">
-                    <motion.div
-                        initial={{ scale: 0 }}
-                        animate={{ scale: 1 }}
-                        transition={{ type: 'spring', stiffness: 260, damping: 20, delay: 0.1 }}
-                        className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-[#1A3A2A] text-white flex items-center justify-center mx-auto mb-4 sm:mb-5 shadow-xl shadow-[#1A3A2A]/20"
-                    >
+                    <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-[#1A3A2A] text-white flex items-center justify-center mx-auto mb-4 sm:mb-5 shadow-xl shadow-[#1A3A2A]/20">
                         <Utensils size={28} className="sm:hidden" />
                         <Utensils size={32} className="hidden sm:block" />
-                    </motion.div>
-                    <motion.h1
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.5, delay: 0.2 }}
-                        className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight"
-                    >
+                    </div>
+                    <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
                         মেস হিসাব BU Hunters
-                    </motion.h1>
-                    <motion.p
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.5, delay: 0.3 }}
-                        className="text-slate-400 mt-1.5 sm:mt-2 font-medium text-sm sm:text-base"
-                    >
+                    </h1>
+                    <p className="text-slate-400 mt-1.5 sm:mt-2 font-medium text-sm sm:text-base">
                         মেসের সব হিসাব এক জায়গায়
-                    </motion.p>
+                    </p>
                 </div>
 
                 {/* Form Card */}
-                <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5, delay: 0.4 }}
-                    className="bg-white rounded-2xl sm:rounded-[32px] p-6 sm:p-8 lg:p-10 shadow-[0_2px_30px_-8px_rgba(0,0,0,0.06)] border border-slate-50"
-                >
+                <div className="bg-white rounded-2xl sm:rounded-[32px] p-6 sm:p-8 lg:p-10 shadow-[0_2px_30px_-8px_rgba(0,0,0,0.06)] border border-slate-50">
                     <h2 className="text-lg sm:text-xl font-bold text-slate-900 mb-5 sm:mb-8">
                         {isSignup ? 'নতুন অ্যাকাউন্ট তৈরি করুন' : 'লগইন করুন'}
                     </h2>
 
-                    <AnimatePresence>
-                        {error && (
-                            <motion.div
-                                initial={{ opacity: 0, height: 0, mb: 0 }}
-                                animate={{ opacity: 1, height: 'auto', mb: 16 }}
-                                exit={{ opacity: 0, height: 0, mb: 0 }}
-                                className="bg-rose-50 border border-rose-100 text-rose-600 px-4 sm:px-5 py-3 sm:py-4 rounded-lg sm:rounded-xl text-xs sm:text-sm font-medium overflow-hidden"
-                            >
-                                {error}
-                            </motion.div>
-                        )}
-                    </AnimatePresence>
+                    {error && (
+                        <div className="bg-rose-50 border border-rose-100 text-rose-600 px-4 sm:px-5 py-3 sm:py-4 rounded-lg sm:rounded-xl text-xs sm:text-sm font-medium overflow-hidden mb-4">
+                            {error}
+                        </div>
+                    )}
 
                     {/* Google Login Button */}
                     <button
@@ -142,30 +109,24 @@ export default function Login() {
                     </div>
 
                     <form onSubmit={handleSubmit} className="space-y-3.5 sm:space-y-5">
-                        <AnimatePresence mode="popLayout">
-                            {isSignup && (
-                                <motion.div
-                                    initial={{ opacity: 0, height: 0 }}
-                                    animate={{ opacity: 1, height: 'auto' }}
-                                    exit={{ opacity: 0, height: 0 }}
-                                >
-                                    <label className="block text-xs sm:text-sm font-medium text-slate-400 mb-1.5 sm:mb-2">আপনার নাম</label>
-                                    <div className="relative">
-                                        <User size={16} className="absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 text-slate-300" />
-                                        <input
-                                            type="text"
-                                            value={name}
-                                            onChange={(e) => setName(e.target.value)}
-                                            placeholder="আপনার নাম"
-                                            required
-                                            className="w-full pl-10 sm:pl-12 pr-4 sm:pr-5 py-3 sm:py-4 rounded-lg sm:rounded-xl border border-slate-200 bg-slate-50 focus:ring-2 focus:ring-slate-900 focus:bg-white focus:border-slate-900 font-medium text-slate-800 transition-all text-sm sm:text-base"
-                                        />
-                                    </div>
-                                </motion.div>
-                            )}
-                        </AnimatePresence>
+                        {isSignup && (
+                            <div>
+                                <label className="block text-xs sm:text-sm font-medium text-slate-400 mb-1.5 sm:mb-2">আপনার নাম</label>
+                                <div className="relative">
+                                    <User size={16} className="absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 text-slate-300" />
+                                    <input
+                                        type="text"
+                                        value={name}
+                                        onChange={(e) => setName(e.target.value)}
+                                        placeholder="আপনার নাম"
+                                        required
+                                        className="w-full pl-10 sm:pl-12 pr-4 sm:pr-5 py-3 sm:py-4 rounded-lg sm:rounded-xl border border-slate-200 bg-slate-50 focus:ring-2 focus:ring-slate-900 focus:bg-white focus:border-slate-900 font-medium text-slate-800 transition-all text-sm sm:text-base"
+                                    />
+                                </div>
+                            </div>
+                        )}
 
-                        <motion.div layout>
+                        <div>
                             <label className="block text-xs sm:text-sm font-medium text-slate-400 mb-1.5 sm:mb-2">ইমেইল</label>
                             <div className="relative">
                                 <Mail size={16} className="absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 text-slate-300" />
@@ -178,9 +139,9 @@ export default function Login() {
                                     className="w-full pl-10 sm:pl-12 pr-4 sm:pr-5 py-3 sm:py-4 rounded-lg sm:rounded-xl border border-slate-200 bg-slate-50 focus:ring-2 focus:ring-slate-900 focus:bg-white focus:border-slate-900 font-medium text-slate-800 transition-all text-sm sm:text-base"
                                 />
                             </div>
-                        </motion.div>
+                        </div>
 
-                        <motion.div layout>
+                        <div>
                             <label className="block text-xs sm:text-sm font-medium text-slate-400 mb-1.5 sm:mb-2">পাসওয়ার্ড</label>
                             <div className="relative">
                                 <Lock size={16} className="absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 text-slate-300" />
@@ -193,9 +154,9 @@ export default function Login() {
                                     className="w-full pl-10 sm:pl-12 pr-4 sm:pr-5 py-3 sm:py-4 rounded-lg sm:rounded-xl border border-slate-200 bg-slate-50 focus:ring-2 focus:ring-slate-900 focus:bg-white focus:border-slate-900 font-medium text-slate-800 transition-all text-sm sm:text-base"
                                 />
                             </div>
-                        </motion.div>
+                        </div>
 
-                        <motion.button
+                        <button
                             type="submit"
                             disabled={loading}
                             className="w-full bg-[#0F172A] hover:bg-slate-800 active:bg-slate-700 text-white py-3 sm:py-4 rounded-lg sm:rounded-xl font-bold text-base sm:text-lg flex items-center justify-center space-x-2 sm:space-x-3 transition-all shadow-lg shadow-slate-900/10 disabled:opacity-60 disabled:cursor-not-allowed mt-1 sm:mt-2"
@@ -208,7 +169,7 @@ export default function Login() {
                                     <ArrowRight size={18} />
                                 </>
                             )}
-                        </motion.button>
+                        </button>
                     </form>
 
                     <div className="mt-5 sm:mt-8 text-center">
@@ -219,17 +180,12 @@ export default function Login() {
                             {isSignup ? 'আগে থেকেই অ্যাকাউন্ট আছে? লগইন করুন' : 'নতুন অ্যাকাউন্ট তৈরি করুন'}
                         </button>
                     </div>
-                </motion.div>
+                </div>
 
-                <motion.p
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: 0.6 }}
-                    className="text-center text-xs text-slate-300 mt-6 sm:mt-8 font-medium"
-                >
+                <p className="text-center text-xs text-slate-300 mt-6 sm:mt-8 font-medium">
                     মেস হিসাব © {new Date().getFullYear()}
-                </motion.p>
-            </motion.div>
+                </p>
+            </div>
         </div>
     );
 }

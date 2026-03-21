@@ -1,24 +1,10 @@
 import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
 import { useData } from '../contexts/DataContext';
 import { useAuth } from '../contexts/AuthContext';
 import { useDialog } from '../contexts/DialogContext';
 import { formatCurrency, englishToBangla, getBanglaMonthYear, IconMap, banglaToEnglish } from '../utils/helpers';
 import { generateMonthlyReport } from '../utils/pdfExport';
 import { Calculator, Download, Trash2, Edit2, Plus, Home, User, Check, X } from 'lucide-react';
-
-const containerVariants = {
-    hidden: { opacity: 0 },
-    show: {
-        opacity: 1,
-        transition: { staggerChildren: 0.1 }
-    }
-};
-
-const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 300, damping: 24 } }
-};
 
 export default function Summary() {
     const { isAdmin } = useAuth();
@@ -82,15 +68,10 @@ export default function Summary() {
     };
 
     return (
-        <motion.div
-            variants={containerVariants}
-            initial="hidden"
-            animate="show"
-            className="space-y-4 sm:space-y-6 lg:space-y-8 animate-in fade-in duration-500"
-        >
+        <div className="space-y-4 sm:space-y-6 lg:space-y-8">
 
             {/* House Rent Section */}
-            <motion.div variants={itemVariants} className="bg-white p-4 sm:p-6 lg:p-10 rounded-2xl sm:rounded-3xl lg:rounded-[32px] shadow-sm border border-slate-50">
+            <div className="bg-white p-4 sm:p-6 lg:p-10 rounded-2xl sm:rounded-3xl lg:rounded-[32px] shadow-sm border border-slate-50">
                 <div className="flex flex-col sm:flex-row justify-between sm:items-center mb-4 sm:mb-6 gap-3 sm:gap-4">
                     <h3 className="text-base sm:text-lg lg:text-xl font-bold text-slate-900 flex items-center">
                         <Home className="text-indigo-500 mr-2 sm:mr-3 shrink-0" size={20} /> মাসিক বাসা ভাড়া
@@ -106,9 +87,7 @@ export default function Summary() {
                     {members.map(m => {
                         const rent = Number(m.houseRent) || 0;
                         return (
-                            <motion.div
-                                variants={itemVariants}
-                                whileHover={{ y: -4, transition: { duration: 0.2 } }}
+                            <div
                                 key={m.id}
                                 className="group relative p-3 sm:p-4 rounded-xl sm:rounded-2xl border border-slate-100 hover:border-indigo-200 bg-gradient-to-br from-indigo-50/30 to-white transition-all"
                             >
@@ -133,14 +112,14 @@ export default function Summary() {
                                     )}
                                 </div>
                                 <p className="text-[10px] sm:text-[11px] text-slate-400 font-medium mt-0.5">মাসিক</p>
-                            </motion.div>
+                            </div>
                         );
                     })}
                 </div>
-            </motion.div>
+            </div>
 
             {/* Fixed Bills */}
-            <motion.div variants={itemVariants} className="bg-white p-4 sm:p-6 lg:p-10 rounded-2xl sm:rounded-3xl lg:rounded-[32px] shadow-sm border border-slate-50">
+            <div className="bg-white p-4 sm:p-6 lg:p-10 rounded-2xl sm:rounded-3xl lg:rounded-[32px] shadow-sm border border-slate-50">
                 <div className="flex flex-col sm:flex-row justify-between sm:items-center mb-4 sm:mb-6 gap-3 sm:gap-4">
                     <h3 className="text-base sm:text-lg lg:text-xl font-bold text-slate-900 flex items-center">
                         <Calculator className="text-slate-400 mr-2 sm:mr-3 shrink-0" size={20} /> ফিক্সড বিল {!isAdmin && '(শুধু দেখা)'}
@@ -156,7 +135,7 @@ export default function Summary() {
                     {billCategories.map(cat => {
                         const CatIcon = IconMap[cat.icon] || Calculator;
                         return (
-                            <motion.div variants={itemVariants} key={cat.id} className="group">
+                            <div key={cat.id} className="group">
                                 <label className="flex items-center justify-between text-[11px] sm:text-xs lg:text-sm font-medium text-slate-400 mb-1.5 sm:mb-2">
                                     <span className="flex items-center truncate">
                                         <CatIcon size={14} className="mr-1.5 sm:mr-2 shrink-0" />
@@ -210,14 +189,14 @@ export default function Summary() {
                                     <Check size={12} className={utilities[`${cat.id}_paid`] ? 'text-emerald-500' : 'text-slate-300'} />
                                     {utilities[`${cat.id}_paid`] ? 'ফান্ড থেকে পে ✓' : 'ফান্ড থেকে পে?'}
                                 </button>
-                            </motion.div>
+                            </div>
                         );
                     })}
                 </div>
-            </motion.div>
+            </div>
 
             {/* Final Report Table */}
-            <motion.div variants={itemVariants} className="bg-white rounded-2xl sm:rounded-3xl lg:rounded-[32px] shadow-sm border border-slate-50 overflow-hidden p-4 sm:p-6 lg:p-10">
+            <div className="bg-white rounded-2xl sm:rounded-3xl lg:rounded-[32px] shadow-sm border border-slate-50 overflow-hidden p-4 sm:p-6 lg:p-10">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 sm:mb-6 lg:mb-8 gap-3">
                     <h3 className="text-base sm:text-lg lg:text-xl font-bold text-slate-900">ফাইনাল রিপোর্ট</h3>
                     <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
@@ -236,34 +215,54 @@ export default function Summary() {
                 </div>
 
                 {/* Mobile Card View */}
-                <div className="sm:hidden space-y-3">
+                <div className="sm:hidden space-y-4">
                     {memberStats.map(stat => (
-                        <motion.div
-                            variants={itemVariants}
-                            whileHover={{ scale: 1.02 }}
+                        <div
                             key={stat.id}
-                            className="p-3 rounded-xl border border-slate-100 bg-slate-50/50"
+                            className="p-4 rounded-[24px] border border-slate-100 bg-white shadow-[0_2px_15px_-3px_rgba(0,0,0,0.04)]"
                         >
-                            <div className="flex items-center justify-between mb-2">
-                                <span className="font-bold text-slate-900 text-sm truncate">{stat.name}</span>
-                                <span className={`font-black  text-base ${stat.balance >= 0 ? 'text-emerald-600' : 'text-rose-500'}`}>
-                                    {stat.balance >= 0 ? '+' : '-'}৳{englishToBangla(Math.abs(stat.balance).toFixed(2))}
-                                </span>
+                            <div className="flex items-center justify-between mb-4 pb-3 border-b border-slate-50">
+                                <div className="flex items-center space-x-3">
+                                    <div className="w-9 h-9 rounded-full bg-slate-50 flex items-center justify-center border border-slate-100">
+                                        <User size={16} className="text-slate-400" />
+                                    </div>
+                                    <span className="font-black text-slate-800 text-base truncate">{stat.name}</span>
+                                </div>
+                                <div className={`px-3 py-1 rounded-full border text-base font-black ${stat.balance >= 0 ? 'bg-emerald-50 text-emerald-600 border-emerald-100' : 'bg-rose-50 text-rose-500 border-rose-100'}`}>
+                                    {stat.balance >= 0 ? '+' : '-'}৳{englishToBangla(Math.abs(stat.balance).toFixed(0))}
+                                </div>
                             </div>
-                            <div className="grid grid-cols-2 gap-x-4 gap-y-1.5 text-[11px] text-slate-500 font-medium">
-                                <span>মিল: <strong className="text-slate-700">{englishToBangla(stat.totalMeals)}</strong></span>
-                                <span className="text-right">খাবার: <strong className="text-slate-700">{formatCurrency(stat.foodCost)}</strong></span>
-                                <span>বিল: <strong className="text-slate-700">{formatCurrency(stat.utilityCost)}</strong></span>
-                                <span className="text-right">অতিরিক্ত: <strong className="text-amber-600">{formatCurrency(stat.additionalExpense)}</strong></span>
-                                <span>ভাড়া: <strong className="text-indigo-600">{formatCurrency(stat.houseRent)}</strong></span>
-                                <span className="text-right">জমা: <strong className="text-slate-700">{formatCurrency(stat.totalContribution)}</strong></span>
+                            <div className="grid grid-cols-2 gap-3">
+                                <div className="flex flex-col p-2.5 rounded-2xl bg-slate-50/50 border border-slate-100/30">
+                                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-0.5">মিল ও খাবার</span>
+                                    <div className="flex items-baseline justify-between">
+                                        <span className="font-black text-slate-900 text-sm">{englishToBangla(stat.totalMeals)}<span className="text-[10px] text-slate-400 ml-0.5">টি</span></span>
+                                        <span className="font-black text-slate-700 text-xs">৳{englishToBangla(stat.foodCost.toFixed(0))}</span>
+                                    </div>
+                                </div>
+                                <div className="flex flex-col p-2.5 rounded-2xl bg-slate-50/50 border border-slate-100/30">
+                                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-0.5">ফিক্সড বিল</span>
+                                    <span className="font-black text-slate-900 text-sm">৳{englishToBangla(stat.utilityCost.toFixed(0))}</span>
+                                </div>
+                                <div className="flex flex-col p-2.5 rounded-2xl bg-amber-50/30 border border-amber-100/30">
+                                    <span className="text-[10px] font-bold text-amber-500 uppercase tracking-wider mb-0.5">অতিরিক্ত</span>
+                                    <span className="font-black text-amber-600 text-sm">৳{englishToBangla(stat.additionalExpense.toFixed(0))}</span>
+                                </div>
+                                <div className="flex flex-col p-2.5 rounded-2xl bg-indigo-50/30 border border-indigo-100/30">
+                                    <span className="text-[10px] font-bold text-indigo-500 uppercase tracking-wider mb-0.5">বাসা ভাড়া</span>
+                                    <span className="font-black text-indigo-600 text-sm">৳{englishToBangla(stat.houseRent.toFixed(0))}</span>
+                                </div>
+                                <div className="col-span-2 flex items-center justify-between p-3 rounded-2xl bg-slate-900 text-white shadow-lg shadow-slate-900/10">
+                                    <span className="text-xs font-bold opacity-70">মোট জমা</span>
+                                    <span className="font-black text-base">৳{englishToBangla(stat.totalContribution.toFixed(0))}</span>
+                                </div>
                             </div>
-                        </motion.div>
+                        </div>
                     ))}
                 </div>
 
                 {/* Desktop Table View */}
-                <motion.div variants={itemVariants} className="hidden sm:block overflow-x-auto -mx-2 px-2">
+                <div className="hidden sm:block overflow-x-auto -mx-2 px-2">
                     <table className="w-full text-left border-collapse min-w-[800px]">
                         <thead>
                             <tr className="border-b-2 border-slate-100 text-slate-400 text-[11px] lg:text-xs uppercase tracking-wider font-bold">
@@ -309,7 +308,7 @@ export default function Summary() {
                             ))}
                         </tbody>
                     </table>
-                </motion.div>
+                </div>
 
                 {/* Summary Info Row */}
                 <div className="mt-4 sm:mt-6 pt-4 sm:pt-6 border-t-2 border-slate-100 grid grid-cols-2 sm:grid-cols-5 gap-3 sm:gap-4 text-center">
@@ -340,87 +339,79 @@ export default function Summary() {
                         </div>
                     )}
                 </div>
-            </motion.div>
+            </div>
 
             {/* Custom Modal for Adding Category */}
-            <AnimatePresence>
-                {showCatModal && (
-                    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm">
-                        <motion.div
-                            initial={{ opacity: 0, scale: 0.95 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            exit={{ opacity: 0, scale: 0.95, transition: { duration: 0.2 } }}
-                            className="bg-white rounded-[24px] shadow-2xl w-full max-w-md overflow-hidden border border-slate-100"
-                        >
-                            <div className="p-6 sm:p-8">
-                                <div className="flex items-start justify-between mb-6">
-                                    <h3 className="text-xl font-bold text-slate-900 flex items-center gap-2">
-                                        <Plus size={24} className="text-indigo-500" />
-                                        নতুন ক্যাটাগরি তৈরি
-                                    </h3>
-                                    <button onClick={() => setShowCatModal(false)} className="text-slate-400 hover:text-slate-600 transition-colors p-1.5 bg-slate-50 hover:bg-slate-100 rounded-full">
-                                        <X size={18} />
-                                    </button>
+            {showCatModal && (
+                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm">
+                    <div className="bg-white rounded-[24px] shadow-2xl w-full max-w-md overflow-hidden border border-slate-100">
+                        <div className="p-6 sm:p-8">
+                            <div className="flex items-start justify-between mb-6">
+                                <h3 className="text-xl font-bold text-slate-900 flex items-center gap-2">
+                                    <Plus size={24} className="text-indigo-500" />
+                                    নতুন ক্যাটাগরি তৈরি
+                                </h3>
+                                <button onClick={() => setShowCatModal(false)} className="text-slate-400 hover:text-slate-600 transition-colors p-1.5 bg-slate-50 hover:bg-slate-100 rounded-full">
+                                    <X size={18} />
+                                </button>
+                            </div>
+
+                            <form onSubmit={submitNewCategory} className="space-y-4">
+                                <div>
+                                    <label className="block text-sm font-bold text-slate-700 mb-2">বিলের নাম</label>
+                                    <input
+                                        type="text"
+                                        required
+                                        placeholder="যেমন: ইন্টারনেট বিল"
+                                        value={newCatData.label}
+                                        onChange={e => setNewCatData({ ...newCatData, label: e.target.value })}
+                                        className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-slate-900 bg-slate-50 font-medium text-slate-800 outline-none transition-all"
+                                        autoFocus
+                                    />
                                 </div>
-
-                                <form onSubmit={submitNewCategory} className="space-y-4">
-                                    <div>
-                                        <label className="block text-sm font-bold text-slate-700 mb-2">বিলের নাম</label>
-                                        <input
-                                            type="text"
-                                            required
-                                            placeholder="যেমন: ইন্টারনেট বিল"
-                                            value={newCatData.label}
-                                            onChange={e => setNewCatData({ ...newCatData, label: e.target.value })}
-                                            className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-slate-900 bg-slate-50 font-medium text-slate-800 outline-none transition-all"
-                                            autoFocus
-                                        />
-                                    </div>
-                                    
-                                    <div>
-                                        <label className="block text-sm font-bold text-slate-700 mb-2">বিলের ধরন</label>
-                                        <div className="grid grid-cols-2 gap-3">
-                                            <button
-                                                type="button"
-                                                onClick={() => setNewCatData({ ...newCatData, billType: 'fixed' })}
-                                                className={`p-3 rounded-xl border text-left transition-all ${newCatData.billType === 'fixed' ? 'border-indigo-500 bg-indigo-50/50 ring-1 ring-indigo-500' : 'border-slate-200 bg-white hover:bg-slate-50'}`}
-                                            >
-                                                <div className={`font-bold text-sm ${newCatData.billType === 'fixed' ? 'text-indigo-700' : 'text-slate-700'}`}>ফিক্সড বিল</div>
-                                                <div className={`text-[10px] mt-0.5 ${newCatData.billType === 'fixed' ? 'text-indigo-500' : 'text-slate-400'}`}>সব মেম্বার দেবে</div>
-                                            </button>
-                                            <button
-                                                type="button"
-                                                onClick={() => setNewCatData({ ...newCatData, billType: 'advance' })}
-                                                className={`p-3 rounded-xl border text-left transition-all ${newCatData.billType === 'advance' ? 'border-amber-500 bg-amber-50/50 ring-1 ring-amber-500' : 'border-slate-200 bg-white hover:bg-slate-50'}`}
-                                            >
-                                                <div className={`font-bold text-sm ${newCatData.billType === 'advance' ? 'text-amber-700' : 'text-slate-700'}`}>অগ্রিম বিল</div>
-                                                <div className={`text-[10px] mt-0.5 ${newCatData.billType === 'advance' ? 'text-amber-600' : 'text-slate-400'}`}>চলে যাওয়া মেম্বার বাদে</div>
-                                            </button>
-                                        </div>
-                                    </div>
-
-                                    <div className="pt-4 flex items-center justify-end gap-3 border-t border-slate-100 mt-6">
+                                
+                                <div>
+                                    <label className="block text-sm font-bold text-slate-700 mb-2">বিলের ধরন</label>
+                                    <div className="grid grid-cols-2 gap-3">
                                         <button
                                             type="button"
-                                            onClick={() => setShowCatModal(false)}
-                                            className="px-5 py-2.5 rounded-xl font-bold text-slate-500 hover:bg-slate-100 hover:text-slate-800 transition-all"
+                                            onClick={() => setNewCatData({ ...newCatData, billType: 'fixed' })}
+                                            className={`p-3 rounded-xl border text-left transition-all ${newCatData.billType === 'fixed' ? 'border-indigo-500 bg-indigo-50/50 ring-1 ring-indigo-500' : 'border-slate-200 bg-white hover:bg-slate-50'}`}
                                         >
-                                            বাতিল
+                                            <div className={`font-bold text-sm ${newCatData.billType === 'fixed' ? 'text-indigo-700' : 'text-slate-700'}`}>ফিক্সড বিল</div>
+                                            <div className={`text-[10px] mt-0.5 ${newCatData.billType === 'fixed' ? 'text-indigo-500' : 'text-slate-400'}`}>সব মেম্বার দেবে</div>
                                         </button>
                                         <button
-                                            type="submit"
-                                            className="px-6 py-2.5 rounded-xl font-bold text-white bg-slate-900 hover:bg-slate-800 shadow-lg shadow-slate-900/20 transition-all"
+                                            type="button"
+                                            onClick={() => setNewCatData({ ...newCatData, billType: 'advance' })}
+                                            className={`p-3 rounded-xl border text-left transition-all ${newCatData.billType === 'advance' ? 'border-amber-500 bg-amber-50/50 ring-1 ring-amber-500' : 'border-slate-200 bg-white hover:bg-slate-50'}`}
                                         >
-                                            যুক্ত করুন
+                                            <div className={`font-bold text-sm ${newCatData.billType === 'advance' ? 'text-amber-700' : 'text-slate-700'}`}>অগ্রিম বিল</div>
+                                            <div className={`text-[10px] mt-0.5 ${newCatData.billType === 'advance' ? 'text-amber-600' : 'text-slate-400'}`}>চলে যাওয়া মেম্বার বাদে</div>
                                         </button>
                                     </div>
-                                </form>
-                            </div>
-                        </motion.div>
-                    </div>
-                )}
-            </AnimatePresence>
+                                </div>
 
-        </motion.div>
+                                <div className="pt-4 flex items-center justify-end gap-3 border-t border-slate-100 mt-6">
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowCatModal(false)}
+                                        className="px-5 py-2.5 rounded-xl font-bold text-slate-500 hover:bg-slate-100 hover:text-slate-800 transition-all"
+                                    >
+                                        বাতিল
+                                    </button>
+                                    <button
+                                        type="submit"
+                                        className="px-6 py-2.5 rounded-xl font-bold text-white bg-slate-900 hover:bg-slate-800 shadow-lg shadow-slate-900/20 transition-all"
+                                    >
+                                        যুক্ত করুন
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            )}
+        </div>
     );
 }

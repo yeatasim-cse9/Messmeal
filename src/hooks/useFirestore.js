@@ -206,4 +206,29 @@ export function useSettings() {
     return { settings, loading, updateSettings };
 }
 
+// --- Users (Auth Profiles) ---
+export function useUsers() {
+    const [users, setUsers] = useState([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const ref = collection(db, 'users');
+        const unsub = onSnapshot(ref,
+            (snap) => { setUsers(snap.docs.map(d => ({ id: d.id, ...d.data() }))); setLoading(false); },
+            (err) => { console.error('Users listener error:', err); setLoading(false); }
+        );
+        return () => unsub();
+    }, []);
+
+    const updateUserRole = async (uid, role) => {
+        await updateDoc(doc(db, 'users', uid), { role });
+    };
+
+    const deleteUserRecord = async (uid) => {
+        await deleteDoc(doc(db, 'users', uid));
+    };
+
+    return { users, loading, updateUserRole, deleteUserRecord };
+}
+
 export { getCurrentMonth };

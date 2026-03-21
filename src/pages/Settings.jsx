@@ -1,24 +1,10 @@
 import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
 import { useData } from '../contexts/DataContext';
 import { useAuth } from '../contexts/AuthContext';
 import { useDialog } from '../contexts/DialogContext';
 import { formatCurrency, englishToBangla, getBanglaMonthYear, IconMap } from '../utils/helpers';
 import { UserPlus, User, Trash2, Calendar, Copy, Tag, Plus, Loader2, Calculator, Edit2, ShieldOff, ShieldCheck } from 'lucide-react';
 import { collection, getDocs, doc, setDoc, updateDoc } from 'firebase/firestore';
-
-const containerVariants = {
-    hidden: { opacity: 0 },
-    show: {
-        opacity: 1,
-        transition: { staggerChildren: 0.1 }
-    }
-};
-
-const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 300, damping: 24 } }
-};
 import { db } from '../lib/firebase';
 
 export default function Settings() {
@@ -139,15 +125,10 @@ export default function Settings() {
     };
 
     return (
-        <motion.div
-            variants={containerVariants}
-            initial="hidden"
-            animate="show"
-            className="space-y-4 sm:space-y-6 lg:space-y-8 animate-in fade-in duration-500 px-0"
-        >
+        <div className="space-y-4 sm:space-y-6 lg:space-y-8 px-0">
 
             {/* Month Archiving Section */}
-            <motion.div variants={itemVariants} className="bg-gradient-to-br from-indigo-50 to-blue-50 p-4 sm:p-6 md:p-8 lg:p-10 rounded-2xl sm:rounded-3xl lg:rounded-[32px] shadow-sm border border-indigo-100">
+            <div className="bg-gradient-to-br from-indigo-50 to-blue-50 p-4 sm:p-6 md:p-8 lg:p-10 rounded-2xl sm:rounded-3xl lg:rounded-[32px] shadow-sm border border-indigo-100">
                 <h3 className="text-base sm:text-lg lg:text-xl font-bold text-indigo-900 mb-1.5 sm:mb-2 flex items-center">
                     <Copy className="mr-2 sm:mr-3 text-indigo-500 shrink-0" size={20} />
                     <span className="truncate">মাস থেকে মেম্বার কপি</span>
@@ -180,32 +161,27 @@ export default function Settings() {
                         {copyState.status}
                     </p>
                 )}
-            </motion.div>
+            </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 lg:gap-8">
 
                 {/* Dynamic Meal Categories */}
-                <motion.div variants={itemVariants} className="bg-white p-4 sm:p-6 md:p-8 lg:p-10 rounded-2xl sm:rounded-3xl lg:rounded-[32px] shadow-sm border border-slate-50">
+                <div className="bg-white p-4 sm:p-6 md:p-8 lg:p-10 rounded-2xl sm:rounded-3xl lg:rounded-[32px] shadow-sm border border-slate-50">
                     <h3 className="text-base sm:text-lg lg:text-xl font-bold text-slate-900 mb-4 sm:mb-6 flex items-center">
                         <Tag className="text-slate-400 mr-2 sm:mr-3 shrink-0" size={20} /> মিল ক্যাটাগরি
                     </h3>
                     <div className="space-y-2.5 sm:space-y-4 mb-4 sm:mb-6">
-                        <AnimatePresence>
-                            {mealCategories.map(cat => (
-                                <motion.div
-                                    initial={{ opacity: 0, scale: 0.95 }}
-                                    animate={{ opacity: 1, scale: 1 }}
-                                    exit={{ opacity: 0, scale: 0.95, transition: { duration: 0.2 } }}
-                                    key={cat.id}
-                                    className={`flex items-center justify-between p-3 sm:p-4 rounded-lg sm:rounded-xl border bg-${cat.color}-50 border-${cat.color}-100`}
-                                >
-                                    <span className={`font-bold text-${cat.color}-700 text-sm sm:text-base truncate mr-2`}>{cat.label}</span>
-                                    <button onClick={() => removeMealCategory(cat.id)} className={`text-${cat.color}-400 hover:text-rose-500 transition-colors shrink-0 p-1`}>
-                                        <Trash2 size={16} />
-                                    </button>
-                                </motion.div>
-                            ))}
-                        </AnimatePresence>
+                        {mealCategories.map(cat => (
+                            <div
+                                key={cat.id}
+                                className={`flex items-center justify-between p-3 sm:p-4 rounded-lg sm:rounded-xl border bg-${cat.color}-50 border-${cat.color}-100`}
+                            >
+                                <span className={`font-bold text-${cat.color}-700 text-sm sm:text-base truncate mr-2`}>{cat.label}</span>
+                                <button onClick={() => removeMealCategory(cat.id)} className={`text-${cat.color}-400 hover:text-rose-500 transition-colors shrink-0 p-1`}>
+                                    <Trash2 size={16} />
+                                </button>
+                            </div>
+                        ))}
                     </div>
                     <div className="flex flex-col xs:flex-row gap-2 sm:gap-3">
                         <input
@@ -231,39 +207,34 @@ export default function Settings() {
                             </button>
                         </div>
                     </div>
-                </motion.div>
+                </div>
 
                 {/* Dynamic Bill Categories */}
-                <motion.div variants={itemVariants} className="bg-white p-4 sm:p-6 md:p-8 lg:p-10 rounded-2xl sm:rounded-3xl lg:rounded-[32px] shadow-sm border border-slate-50">
+                <div className="bg-white p-4 sm:p-6 md:p-8 lg:p-10 rounded-2xl sm:rounded-3xl lg:rounded-[32px] shadow-sm border border-slate-50">
                     <h3 className="text-base sm:text-lg lg:text-xl font-bold text-slate-900 mb-4 sm:mb-6 flex items-center">
                         <Calculator className="text-slate-400 mr-2 sm:mr-3 shrink-0" size={20} /> ফিক্সড বিল ক্যাটাগরি
                     </h3>
                     <div className="space-y-2.5 sm:space-y-4 mb-4 sm:mb-6">
-                        <AnimatePresence>
-                            {billCategories.map(cat => {
-                                const Icon = IconMap[cat.icon] || Calculator;
-                                return (
-                                    <motion.div
-                                        initial={{ opacity: 0, scale: 0.95 }}
-                                        animate={{ opacity: 1, scale: 1 }}
-                                        exit={{ opacity: 0, scale: 0.95, transition: { duration: 0.2 } }}
-                                        key={cat.id}
-                                        className="flex items-center justify-between p-3 sm:p-4 rounded-lg sm:rounded-xl border border-slate-100 bg-slate-50"
-                                    >
-                                        <div className="flex items-center text-slate-700 font-bold text-sm sm:text-base truncate mr-2">
-                                            <Icon size={16} className="mr-2 sm:mr-3 text-slate-400 shrink-0" />
-                                            <span className="truncate">{cat.label}</span>
-                                            <span className={`ml-2 px-1.5 py-0.5 rounded text-[9px] sm:text-[10px] font-bold border ${(cat.billType === 'advance') ? 'bg-amber-50 text-amber-600 border-amber-200' : 'bg-slate-100 text-slate-500 border-slate-200'}`}>
-                                                {(cat.billType === 'advance') ? 'অগ্রিম' : 'ফিক্সড'}
-                                            </span>
-                                        </div>
-                                        <button onClick={() => removeBillCategory(cat.id)} className="text-slate-400 hover:text-rose-500 transition-colors shrink-0 p-1">
-                                            <Trash2 size={16} />
-                                        </button>
-                                    </motion.div>
-                                );
-                            })}
-                        </AnimatePresence>
+                        {billCategories.map(cat => {
+                            const Icon = IconMap[cat.icon] || Calculator;
+                            return (
+                                <div
+                                    key={cat.id}
+                                    className="flex items-center justify-between p-3 sm:p-4 rounded-lg sm:rounded-xl border border-slate-100 bg-slate-50"
+                                >
+                                    <div className="flex items-center text-slate-700 font-bold text-sm sm:text-base truncate mr-2">
+                                        <Icon size={16} className="mr-2 sm:mr-3 text-slate-400 shrink-0" />
+                                        <span className="truncate">{cat.label}</span>
+                                        <span className={`ml-2 px-1.5 py-0.5 rounded text-[9px] sm:text-[10px] font-bold border ${(cat.billType === 'advance') ? 'bg-amber-50 text-amber-600 border-amber-200' : 'bg-slate-100 text-slate-500 border-slate-200'}`}>
+                                            {(cat.billType === 'advance') ? 'অগ্রিম' : 'ফিক্সড'}
+                                        </span>
+                                    </div>
+                                    <button onClick={() => removeBillCategory(cat.id)} className="text-slate-400 hover:text-rose-500 transition-colors shrink-0 p-1">
+                                        <Trash2 size={16} />
+                                    </button>
+                                </div>
+                            );
+                        })}
                     </div>
                     <div className="flex flex-col xs:flex-row gap-2 sm:gap-3">
                         <input
@@ -294,11 +265,11 @@ export default function Settings() {
                             </button>
                         </div>
                     </div>
-                </motion.div>
+                </div>
             </div>
 
             {/* Member Management */}
-            <motion.div variants={itemVariants} className="bg-white p-4 sm:p-6 md:p-8 lg:p-10 rounded-2xl sm:rounded-3xl lg:rounded-[32px] shadow-sm border border-slate-50">
+            <div className="bg-white p-4 sm:p-6 md:p-8 lg:p-10 rounded-2xl sm:rounded-3xl lg:rounded-[32px] shadow-sm border border-slate-50">
                 <h3 className="text-base sm:text-lg lg:text-xl font-bold text-slate-900 mb-4 sm:mb-6 lg:mb-8 flex items-center justify-between flex-wrap gap-2">
                     <span className="flex items-center">
                         <User className="mr-2 sm:mr-3 text-slate-400 shrink-0" size={20} />
@@ -321,57 +292,50 @@ export default function Settings() {
                 </form>
 
                 <div className="space-y-2.5 sm:space-y-3">
-                    <AnimatePresence>
-                        {members.map(member => (
-                            <motion.div
-                                initial={{ opacity: 0, y: 10 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                exit={{ opacity: 0, x: -10, transition: { duration: 0.2 } }}
-                                whileHover={{ scale: 1.01, transition: { duration: 0.2 } }}
-                                key={member.id}
-                                className="flex items-center justify-between p-4 sm:p-5 rounded-xl sm:rounded-[20px] shadow-[0_2px_12px_rgba(0,0,0,0.02)] border border-slate-100 hover:border-slate-200 transition-colors bg-white group"
-                            >
-                                <div className="flex items-center space-x-3 sm:space-x-4 min-w-0">
-                                    <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-slate-50 flex items-center justify-center border border-slate-100 shrink-0">
-                                        <User size={18} className="text-slate-400 sm:hidden" />
-                                        <User size={22} className="text-slate-400 hidden sm:block" />
-                                    </div>
-                                    <span className="font-bold text-slate-900 text-base sm:text-[17px] truncate">{member.name}</span>
+                    {members.map(member => (
+                        <div
+                            key={member.id}
+                            className="flex items-center justify-between p-4 sm:p-5 rounded-xl sm:rounded-[20px] shadow-[0_2px_12px_rgba(0,0,0,0.02)] border border-slate-100 hover:border-slate-200 transition-colors bg-white group"
+                        >
+                            <div className="flex items-center space-x-3 sm:space-x-4 min-w-0">
+                                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-slate-50 flex items-center justify-center border border-slate-100 shrink-0">
+                                    <User size={18} className="text-slate-400 sm:hidden" />
+                                    <User size={22} className="text-slate-400 hidden sm:block" />
                                 </div>
-                                <div className="flex items-center gap-1 sm:gap-2 shrink-0 ml-2">
-                                    <button
-                                        onClick={async () => {
-                                            await updateMember(member.id, { billExempt: !member.billExempt }, selectedMonth);
-                                        }}
-                                        className={`px-2.5 sm:px-3 py-2 sm:py-2.5 font-bold border rounded-lg sm:rounded-xl transition-all flex items-center gap-1.5 text-[10px] sm:text-xs ${member.billExempt
-                                                ? 'text-amber-700 bg-amber-50 border-amber-200 hover:bg-amber-100'
-                                                : 'text-slate-400 bg-slate-50 border-slate-100 hover:bg-slate-100 hover:text-slate-600'
-                                            }`}
-                                        title={member.billExempt ? 'অগ্রিম বিল থেকে বাদ' : 'অগ্রিম বিল থেকে বাদ করুন'}
-                                    >
-                                        {member.billExempt
-                                            ? <><ShieldOff size={14} /> <span className="hidden xs:inline">বিল ছাড়</span></>
-                                            : <><ShieldCheck size={14} /> <span className="hidden xs:inline">সক্রিয়</span></>
-                                        }
-                                    </button>
-                                    <button onClick={() => handleEditMember(member.id, member.name)} className="px-3 sm:px-4 py-2 sm:py-2.5 text-slate-500 hover:text-blue-600 hover:bg-blue-50 font-bold border border-transparent hover:border-blue-100 rounded-lg sm:rounded-xl transition-all flex items-center gap-1.5 text-xs sm:text-sm" title="এডিট করুন">
-                                        <Edit2 size={16} /> <span className="hidden sm:inline">এডিট</span>
-                                    </button>
-                                    <button onClick={() => handleRemoveMember(member.id, member.name)} className="px-3 sm:px-4 py-2 sm:py-2.5 text-slate-500 hover:text-rose-600 hover:bg-rose-50 font-bold border border-transparent hover:border-rose-100 rounded-lg sm:rounded-xl transition-all flex items-center gap-1.5 text-xs sm:text-sm" title="ডিলিট করুন">
-                                        <Trash2 size={16} /> <span className="hidden sm:inline">ডিলিট</span>
-                                    </button>
-                                </div>
-                            </motion.div>
-                        ))}
-                    </AnimatePresence>
+                                <span className="font-bold text-slate-900 text-base sm:text-[17px] truncate">{member.name}</span>
+                            </div>
+                            <div className="flex items-center gap-1 sm:gap-2 shrink-0 ml-2">
+                                <button
+                                    onClick={async () => {
+                                        await updateMember(member.id, { billExempt: !member.billExempt }, selectedMonth);
+                                    }}
+                                    className={`px-2.5 sm:px-3 py-2 sm:py-2.5 font-bold border rounded-lg sm:rounded-xl transition-all flex items-center gap-1.5 text-[10px] sm:text-xs ${member.billExempt
+                                            ? 'text-amber-700 bg-amber-50 border-amber-200 hover:bg-amber-100'
+                                            : 'text-slate-400 bg-slate-50 border-slate-100 hover:bg-slate-100 hover:text-slate-600'
+                                        }`}
+                                    title={member.billExempt ? 'অগ্রিম বিল থেকে বাদ' : 'অগ্রিম বিল থেকে বাদ করুন'}
+                                >
+                                    {member.billExempt
+                                        ? <><ShieldOff size={14} /> <span className="hidden xs:inline">বিল ছাড়</span></>
+                                        : <><ShieldCheck size={14} /> <span className="hidden xs:inline">সক্রিয়</span></>
+                                    }
+                                </button>
+                                <button onClick={() => handleEditMember(member.id, member.name)} className="px-3 sm:px-4 py-2 sm:py-2.5 text-slate-500 hover:text-blue-600 hover:bg-blue-50 font-bold border border-transparent hover:border-blue-100 rounded-lg sm:rounded-xl transition-all flex items-center gap-1.5 text-xs sm:text-sm" title="এডিট করুন">
+                                    <Edit2 size={16} /> <span className="hidden sm:inline">এডিট</span>
+                                </button>
+                                <button onClick={() => handleRemoveMember(member.id, member.name)} className="px-3 sm:px-4 py-2 sm:py-2.5 text-slate-500 hover:text-rose-600 hover:bg-rose-50 font-bold border border-transparent hover:border-rose-100 rounded-lg sm:rounded-xl transition-all flex items-center gap-1.5 text-xs sm:text-sm" title="ডিলিট করুন">
+                                    <Trash2 size={16} /> <span className="hidden sm:inline">ডিলিট</span>
+                                </button>
+                            </div>
+                        </div>
+                    ))}
                     {members.length === 0 && (
                         <div className="bg-white p-8 sm:p-10 rounded-xl sm:rounded-[20px] text-center text-slate-400 border border-slate-100 text-sm sm:text-base">
                             কোনো মেম্বার পাওয়া যায়নি।
                         </div>
                     )}
                 </div>
-            </motion.div>
-
-        </motion.div>
+            </div>
+        </div>
     );
 }

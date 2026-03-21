@@ -1,4 +1,4 @@
-import React from 'react';
+import React from 'react'; // refreshed
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { DataProvider } from './contexts/DataContext';
@@ -12,6 +12,7 @@ import Deposits from './pages/Deposits';
 import Summary from './pages/Summary';
 import Bazaar from './pages/Bazaar';
 import Settings from './pages/Settings';
+import Users from './pages/Users';
 
 import ScrollToTop from './components/ScrollToTop';
 
@@ -22,7 +23,7 @@ function MainApp() {
     return (
       <div className="min-h-screen bg-white flex items-center justify-center">
         <div className="flex flex-col items-center">
-          <div className="w-16 h-16 border-4 border-slate-100 border-t-[#1A3A2A] rounded-full animate-spin mb-4"></div>
+          <div className="w-16 h-16 border-4 border-slate-100 border-t-[#1A3A2A] rounded-full mb-4"></div>
           <p className="text-slate-400 font-medium">লোড হচ্ছে...</p>
         </div>
       </div>
@@ -38,16 +39,17 @@ function MainApp() {
       <DataProvider>
         <ScrollToTop />
         <Routes>
-          <Route path="/" element={<MainLayout />}>
-            <Route index element={<Dashboard />} />
-            <Route path="meals" element={<Meals />} />
-            <Route path="expenses" element={<Expenses />} />
-            <Route path="deposits" element={<Deposits />} />
-            <Route path="summary" element={<Summary />} />
-            <Route path="bazaar" element={<Bazaar />} />
-            <Route path="settings" element={<Settings />} />
-            <Route path="*" element={<Navigate to="/" replace />} />
-          </Route>
+            <Route path="/" element={<MainLayout />}>
+              <Route index element={<Dashboard />} />
+              <Route path="meals" element={<Meals />} />
+              <Route path="expenses" element={<Expenses />} />
+              <Route path="deposits" element={<Deposits />} />
+              <Route path="summary" element={<Summary />} />
+              <Route path="bazaar" element={<Bazaar />} />
+              <Route path="users" element={<Users />} />
+              <Route path="settings" element={<Settings />} />
+              <Route path="*" element={<Navigate to="/" replace />} />
+            </Route>
         </Routes>
       </DataProvider>
     </DialogProvider>

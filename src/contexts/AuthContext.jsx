@@ -1,5 +1,4 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { auth, db } from '../lib/firebase';
 import {
     onAuthStateChanged,
     signInWithEmailAndPassword,
@@ -8,6 +7,7 @@ import {
     GoogleAuthProvider,
     signInWithPopup
 } from 'firebase/auth';
+import { auth, db, authSecondary } from '../lib/firebase';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 
 const AuthContext = createContext(null);
@@ -89,6 +89,21 @@ export function AuthProvider({ children }) {
         await signOut(auth);
     };
 
+    const createUserByAdmin = async (email, password, name) => {
+        // Use secondary auth to create user without logging current admin out
+        const cred = await createUserWithEmailAndPassword(authSecondary, email, password);
+        const newProfile = {
+            name: name || email.split('@')[0],
+            email: email,
+            role: 'viewer',
+            createdAt: new Date().toISOString()
+        };
+        await setDoc(doc(db, 'users', cred.user.uid), newProfile);
+        // Force logout of the secondary app immediately
+        await signOut(authSecondary);
+        return cred;
+    };
+
     const isAdmin = userProfile?.role === 'admin';
 
     const value = {
@@ -99,7 +114,8 @@ export function AuthProvider({ children }) {
         signup,
         loginWithGoogle,
         logout,
-        isAdmin
+        isAdmin,
+        createUserByAdmin
     };
 
     return (
