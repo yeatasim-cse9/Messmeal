@@ -3,7 +3,7 @@ import { useData } from '../contexts/DataContext';
 import { useAuth } from '../contexts/AuthContext';
 import { useDialog } from '../contexts/DialogContext';
 import { formatCurrency, englishToBangla, getBanglaMonthYear, IconMap } from '../utils/helpers';
-import { UserPlus, User, Trash2, Calendar, Copy, Tag, Plus, Loader2, Calculator, Edit2, ShieldOff, ShieldCheck } from 'lucide-react';
+import { UserPlus, User, Trash2, Calendar, Copy, Tag, Plus, Loader2, Calculator, Edit2, ShieldOff, ShieldCheck, Link2, ChevronDown } from 'lucide-react';
 import { useMembers, useMeals, useExpenses, useDeposits, useUtilities, useSettings, getCurrentMonth } from '../hooks/useFirestore';
 import { collection, getDocs, doc, setDoc, updateDoc } from 'firebase/firestore';
 import { db } from '../lib/firebase';
@@ -24,11 +24,8 @@ export default function Settings() {
     if (!isAdmin) {
         return (
             <div className="p-6 sm:p-10 rounded-2xl sm:rounded-3xl text-center shadow-sm border" style={{ backgroundColor: 'var(--bg-card)', borderColor: 'var(--border-primary)' }}>
-                <ShieldAlert className="mx-auto h-12 w-12 text-rose-500 mb-4" />
                 <h2 className="text-xl sm:text-2xl font-black mb-2" style={{ color: 'var(--text-primary)' }}>অ্যাক্সেস নেই</h2>
-                <p className="font-medium" style={{ color: 'var(--text-muted)' }}>
-                    এই পেজটি দেখার জন্য আপনার অ্যাডমিন অ্যাক্সেস প্রয়োজন।
-                </p>
+                <p className="font-medium" style={{ color: 'var(--text-muted)' }}>এই পেজটি দেখার জন্য আপনার অ্যাডমিন অ্যাক্সেস প্রয়োজন।</p>
             </div>
         );
     }
@@ -51,7 +48,6 @@ export default function Settings() {
                 const memberRef = doc(db, `messes/${messId}/months/${selectedMonth}/members`, id);
                 await updateDoc(memberRef, { name: newName });
             } catch (err) {
-                console.error(err);
                 showAlert('নাম আপডেট করতে সমস্যা হয়েছে।');
             }
         }
@@ -59,9 +55,7 @@ export default function Settings() {
 
     const handleRemoveMember = async (id, name) => {
         const confirmed = await showConfirm(`আপনি কি নিশ্চিত যে ${name}-কে মুছে ফেলতে চান?\nতার সব খরচ এবং জমার হিসাব মুছে যাবে।`);
-        if (confirmed) {
-            await removeMember(id, selectedMonth);
-        }
+        if (confirmed) await removeMember(id, selectedMonth);
     };
 
     const handleCopyMembers = async () => {
@@ -70,21 +64,17 @@ export default function Settings() {
             const confirmed = await showConfirm('বর্তমান মাসে ইতিমধ্যে মেম্বার আছে। কপি করলে তারা লিস্টে যোগ হবে। কন্টিনিউ করবেন?');
             if (!confirmed) return;
         }
-
         setCopyState(prev => ({ ...prev, loading: true, status: 'মেম্বার কপি হচ্ছে...' }));
-
         try {
             const messId = userProfile?.messId;
             if (!messId) return;
             const sourceMembersRef = collection(db, `messes/${messId}/months/${copyState.sourceMonth}/members`);
             const snapshot = await getDocs(sourceMembersRef);
-
             if (snapshot.empty) {
                 setCopyState(prev => ({ ...prev, loading: false, status: 'ওই মাসে কোনো মেম্বার পাওয়া যায়নি!' }));
                 await showAlert('ওই মাসে কোনো মেম্বার পাওয়া যায়নি!');
                 return;
             }
-
             let count = 0;
             for (const docSnap of snapshot.docs) {
                 const data = docSnap.data();
@@ -95,11 +85,9 @@ export default function Settings() {
                     count++;
                 }
             }
-
             setCopyState(prev => ({ ...prev, loading: false, status: `সাফল্য! ${count} জন মেম্বার কপি হয়েছে।` }));
             setTimeout(() => setCopyState(prev => ({ ...prev, status: '' })), 3000);
         } catch (err) {
-            console.error(err);
             setCopyState(prev => ({ ...prev, loading: false, status: 'কপি করতে সমস্যা হয়েছে।' }));
             showAlert('কপি করতে সমস্যা হয়েছে।');
         }
@@ -114,9 +102,7 @@ export default function Settings() {
 
     const removeMealCategory = async (id) => {
         const confirmed = await showConfirm('এই মিল ক্যাটাগরি ডিলিট করবেন?');
-        if (confirmed) {
-            await updateSettings({ mealCategories: mealCategories.filter(c => c.id !== id) });
-        }
+        if (confirmed) await updateSettings({ mealCategories: mealCategories.filter(c => c.id !== id) });
     };
 
     const addBillCategory = async () => {
@@ -128,15 +114,11 @@ export default function Settings() {
 
     const removeBillCategory = async (id) => {
         const confirmed = await showConfirm('এই ফিক্সড বিল ক্যাটাগরি ডিলিট করবেন?');
-        if (confirmed) {
-            await updateSettings({ billCategories: billCategories.filter(c => c.id !== id) });
-        }
+        if (confirmed) await updateSettings({ billCategories: billCategories.filter(c => c.id !== id) });
     };
 
     const handleUpdateLockTime = async (categoryId, lockTime) => {
-        const updatedCats = mealCategories.map(cat =>
-            cat.id === categoryId ? { ...cat, lockTime } : cat
-        );
+        const updatedCats = mealCategories.map(cat => cat.id === categoryId ? { ...cat, lockTime } : cat);
         await updateSettings({ mealCategories: updatedCats });
     };
 
@@ -144,155 +126,158 @@ export default function Settings() {
         try {
             await updateMember(memberId, { linkedEmail: email }, selectedMonth);
         } catch (err) {
-            console.error(err);
             showAlert('ইউজার লিঙ্ক করতে সমস্যা হয়েছে।');
         }
     };
 
-    return (
-        <div className="space-y-4 sm:space-y-6 lg:space-y-8 px-0">
+    /* ── Section wrapper component ── */
+    const SectionCard = ({ icon: Icon, iconColor = 'text-slate-400', title, badge, children }) => (
+        <div className="rounded-2xl sm:rounded-3xl border overflow-hidden" style={{ backgroundColor: 'var(--bg-card)', borderColor: 'var(--border-primary)' }}>
+            <div className="px-5 sm:px-7 py-4 sm:py-5 border-b flex items-center justify-between gap-3" style={{ borderColor: 'var(--border-primary)', backgroundColor: 'var(--bg-secondary)' }}>
+                <div className="flex items-center gap-2.5 min-w-0">
+                    <Icon size={18} className={`shrink-0 ${iconColor}`} />
+                    <h3 className="font-black text-base sm:text-lg truncate" style={{ color: 'var(--text-primary)' }}>{title}</h3>
+                </div>
+                {badge}
+            </div>
+            <div className="p-5 sm:p-7">{children}</div>
+        </div>
+    );
 
-            {/* Month Archiving Section */}
-            <div className="p-4 sm:p-6 md:p-8 lg:p-10 rounded-2xl sm:rounded-3xl lg:rounded-[32px] shadow-sm border" style={{ backgroundColor: 'var(--bg-card)', borderColor: 'var(--border-primary)' }}>
-                <h3 className="text-base sm:text-lg lg:text-xl font-bold mb-1.5 sm:mb-2 flex items-center" style={{ color: 'var(--text-primary)' }}>
-                    <Copy className="mr-2 sm:mr-3 text-indigo-500 shrink-0" size={20} />
-                    <span className="truncate">মাস থেকে মেম্বার কপি</span>
-                </h3>
-                <p className="text-xs sm:text-sm mb-4 sm:mb-6 font-medium leading-relaxed" style={{ color: 'var(--text-muted)' }}>
+    return (
+        <div className="space-y-4 sm:space-y-6 pb-10">
+
+            {/* ── 1. Copy Members ── */}
+            <SectionCard icon={Copy} iconColor="text-indigo-400" title="মাস থেকে মেম্বার কপি">
+                <p className="text-xs sm:text-sm font-medium mb-4" style={{ color: 'var(--text-muted)' }}>
                     আগের কোনো মাস থেকে মেম্বারদের বর্তমান মাসে কপি করুন।
                 </p>
-
-                <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4 p-3 sm:p-4 rounded-xl sm:rounded-2xl shadow-sm border" style={{ backgroundColor: 'var(--bg-elevated)', borderColor: 'var(--border-secondary)' }}>
-                    <div className="flex items-center space-x-2 sm:space-x-3 w-full sm:w-auto px-3 sm:px-4 py-2.5 rounded-lg sm:rounded-xl border" style={{ backgroundColor: 'var(--bg-input)', borderColor: 'var(--border-accent)' }}>
-                        <Calendar className="text-slate-400 shrink-0" size={16} />
+                <div className="flex flex-col sm:flex-row gap-3">
+                    <div className="flex items-center gap-2 flex-1 px-4 py-3 rounded-xl border" style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-secondary)' }}>
+                        <Calendar size={15} style={{ color: 'var(--text-muted)' }} className="shrink-0" />
                         <input
                             type="month"
                             value={copyState.sourceMonth}
                             onChange={e => setCopyState(p => ({ ...p, sourceMonth: e.target.value }))}
-                            className="bg-transparent font-bold focus:outline-none w-full outline-none text-sm sm:text-base"
+                            className="bg-transparent font-bold focus:outline-none flex-1 text-sm"
                             style={{ color: 'var(--text-primary)', colorScheme: 'dark' }}
                         />
                     </div>
                     <button
                         onClick={handleCopyMembers}
                         disabled={copyState.loading || !copyState.sourceMonth}
-                        className="w-full sm:w-auto flex items-center justify-center gap-2 px-4 sm:px-6 py-2.5 sm:py-3 rounded-lg sm:rounded-xl font-bold transition-all disabled:opacity-50 text-sm sm:text-base bg-blue-600 hover:bg-blue-700 text-white shadow-md shadow-blue-500/20"
+                        className="flex items-center justify-center gap-2 px-6 py-3 rounded-xl font-bold text-sm text-white transition-all disabled:opacity-50 active:scale-95 shrink-0 bg-blue-600 hover:bg-blue-700 shadow-lg shadow-blue-500/20"
                     >
-                        {copyState.loading ? <Loader2 size={16} className="animate-spin" /> : <Copy size={16} />}
-                        <span>কপি করুন</span>
+                        {copyState.loading ? <Loader2 size={15} className="animate-spin" /> : <Copy size={15} />}
+                        কপি করুন
                     </button>
                 </div>
                 {copyState.status && (
-                    <p className={`mt-3 sm:mt-4 text-xs sm:text-sm font-bold ${copyState.status.includes('সাফল্য') ? 'text-emerald-500' : 'text-rose-500'}`}>
+                    <p className={`mt-3 text-xs font-bold px-3 py-2 rounded-lg ${copyState.status.includes('সাফল্য') ? 'bg-emerald-500/10 text-emerald-500' : 'bg-rose-500/10 text-rose-400'}`}>
                         {copyState.status}
                     </p>
                 )}
-            </div>
+            </SectionCard>
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 lg:gap-8">
+            {/* ── 2. Meal + Bill Categories (stacked on mobile) ── */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
 
-                {/* Dynamic Meal Categories & Lock Times */}
-                <div className="p-4 sm:p-6 md:p-8 lg:p-10 rounded-2xl sm:rounded-3xl lg:rounded-[32px] shadow-sm border" style={{ backgroundColor: 'var(--bg-card)', borderColor: 'var(--border-primary)' }}>
-                    <h3 className="text-base sm:text-lg lg:text-xl font-bold mb-4 sm:mb-6 flex items-center" style={{ color: 'var(--text-primary)' }}>
-                        <Tag className="text-slate-400 mr-2 sm:mr-3 shrink-0" size={20} /> মিল ক্যাটাগরি ও সময়সীমা
-                    </h3>
-                    <div className="space-y-2.5 sm:space-y-4 mb-4 sm:mb-6">
+                {/* Meal Categories */}
+                <SectionCard icon={Tag} iconColor="text-amber-400" title="মিল ক্যাটাগরি ও সময়">
+                    <div className="space-y-2.5 mb-4">
                         {mealCategories.map(cat => (
-                            <div
-                                key={cat.id}
-                                className="flex flex-col p-3 sm:p-4 rounded-lg sm:rounded-xl border"
-                                style={{ backgroundColor: cat.color === 'slate' ? 'var(--bg-elevated)' : `var(--${cat.color}-dim, var(--bg-elevated))`, borderColor: 'var(--border-secondary)' }}
-                            >
-                                <div className="flex items-center justify-between mb-2">
-                                    <span className="font-bold text-sm sm:text-base truncate mr-2" style={{ color: cat.color === 'slate' ? 'var(--text-primary)' : `var(--${cat.color})` }}>{cat.label}</span>
-                                    <button onClick={() => removeMealCategory(cat.id)} className="hover:text-rose-500 transition-colors shrink-0 p-1" style={{ color: 'var(--text-muted)' }}>
-                                        <Trash2 size={16} />
-                                    </button>
+                            <div key={cat.id} className="flex items-center justify-between p-3.5 rounded-xl border"
+                                style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-secondary)' }}>
+                                <div className="flex items-center gap-2.5 min-w-0 flex-1 mr-2">
+                                    <div className={`w-2 h-2 rounded-full shrink-0 ${cat.color === 'indigo' ? 'bg-indigo-500' : cat.color === 'emerald' ? 'bg-emerald-500' : cat.color === 'amber' ? 'bg-amber-500' : 'bg-slate-400'}`}></div>
+                                    <span className="font-bold text-sm truncate" style={{ color: 'var(--text-primary)' }}>{cat.label}</span>
                                 </div>
-                                <div className="flex items-center gap-2 mt-1">
-                                    <label className="text-[10px] sm:text-xs font-bold uppercase" style={{ color: 'var(--text-muted)' }}>বন্ধ হওয়ার সময়:</label>
+                                <div className="flex items-center gap-2 shrink-0">
                                     <input
                                         type="time"
                                         value={cat.lockTime || "09:00"}
                                         onChange={(e) => handleUpdateLockTime(cat.id, e.target.value)}
-                                        className="border rounded px-2 py-1 text-xs font-bold outline-none focus:ring-1 focus:ring-slate-400"
+                                        className="border rounded-lg px-2 py-1 text-xs font-bold outline-none focus:ring-1 focus:ring-slate-400 w-[85px]"
                                         style={{ backgroundColor: 'var(--bg-input)', borderColor: 'var(--border-accent)', color: 'var(--text-primary)', colorScheme: 'dark' }}
                                     />
+                                    <button onClick={() => removeMealCategory(cat.id)} className="p-1.5 rounded-lg hover:bg-rose-500/10 hover:text-rose-500 transition-all" style={{ color: 'var(--text-muted)' }}>
+                                        <Trash2 size={14} />
+                                    </button>
                                 </div>
                             </div>
                         ))}
                     </div>
-                    <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
+                    {/* Add new meal category */}
+                    <div className="space-y-2">
                         <input
                             type="text"
-                            placeholder="যেমন: শুক্রবার স্পেশাল"
+                            placeholder="নতুন ক্যাটাগরির নাম"
                             value={newMealCat.label}
                             onChange={e => setNewMealCat({ ...newMealCat, label: e.target.value })}
-                            className="flex-1 min-w-0 px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg sm:rounded-xl border focus:ring-2 focus:ring-emerald-500 font-medium text-sm sm:text-base"
-                            style={{ backgroundColor: 'var(--bg-input)', borderColor: 'var(--border-secondary)', color: 'var(--text-primary)' }}
+                            onKeyDown={e => e.key === 'Enter' && addMealCategory()}
+                            className="w-full px-4 py-3 rounded-xl border focus:ring-2 focus:ring-emerald-500 font-medium text-sm"
+                            style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-secondary)', color: 'var(--text-primary)' }}
                         />
-                        <div className="flex gap-2 sm:gap-3">
+                        <div className="flex gap-2">
                             <select
                                 value={newMealCat.color}
                                 onChange={e => setNewMealCat({ ...newMealCat, color: e.target.value })}
-                                className="flex-1 sm:flex-initial px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg sm:rounded-xl border font-bold text-sm sm:text-base"
-                                style={{ backgroundColor: 'var(--bg-input)', borderColor: 'var(--border-secondary)', color: 'var(--text-primary)' }}
+                                className="flex-1 px-3 py-2.5 rounded-xl border font-bold text-sm"
+                                style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-secondary)', color: 'var(--text-primary)' }}
                             >
-                                <option value="slate">সাদা</option>
-                                <option value="indigo">নীল</option>
-                                <option value="emerald">সবুজ</option>
-                                <option value="amber">হলুদ</option>
+                                <option value="slate">⬜ সাদা</option>
+                                <option value="indigo">🔵 নীল</option>
+                                <option value="emerald">🟢 সবুজ</option>
+                                <option value="amber">🟡 হলুদ</option>
                             </select>
-                            <button onClick={addMealCategory} className="text-white px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg sm:rounded-xl transition-all font-bold flex items-center justify-center shrink-0" style={{ backgroundColor: 'var(--brand)' }}>
-                                <Plus size={18} />
+                            <button onClick={addMealCategory}
+                                className="px-4 py-2.5 rounded-xl text-white font-bold flex items-center gap-1.5 text-sm transition-all active:scale-95"
+                                style={{ backgroundColor: 'var(--brand)' }}>
+                                <Plus size={16} /> যোগ করুন
                             </button>
                         </div>
                     </div>
-                </div>
+                </SectionCard>
 
-                {/* Dynamic Bill Categories */}
-                <div className="p-4 sm:p-6 md:p-8 lg:p-10 rounded-2xl sm:rounded-3xl lg:rounded-[32px] shadow-sm border" style={{ backgroundColor: 'var(--bg-card)', borderColor: 'var(--border-primary)' }}>
-                    <h3 className="text-base sm:text-lg lg:text-xl font-bold mb-4 sm:mb-6 flex items-center" style={{ color: 'var(--text-primary)' }}>
-                        <Calculator className="text-slate-400 mr-2 sm:mr-3 shrink-0" size={20} /> ফিক্সড বিল ক্যাটাগরি
-                    </h3>
-                    <div className="space-y-2.5 sm:space-y-4 mb-4 sm:mb-6">
+                {/* Bill Categories */}
+                <SectionCard icon={Calculator} iconColor="text-blue-400" title="ফিক্সড বিল ক্যাটাগরি">
+                    <div className="space-y-2.5 mb-4">
                         {billCategories.map(cat => {
                             const Icon = IconMap[cat.icon] || Calculator;
                             return (
-                                <div
-                                    key={cat.id}
-                                    className="flex items-center justify-between p-3 sm:p-4 rounded-lg sm:rounded-xl border"
-                                    style={{ backgroundColor: 'var(--bg-elevated)', borderColor: 'var(--border-secondary)' }}
-                                >
-                                    <div className="flex items-center font-bold text-sm sm:text-base truncate mr-2" style={{ color: 'var(--text-primary)' }}>
-                                        <Icon size={16} className="mr-2 sm:mr-3 text-slate-400 shrink-0" />
-                                        <span className="truncate">{cat.label}</span>
-                                        <span className={`ml-2 px-1.5 py-0.5 rounded text-[9px] sm:text-[10px] font-bold border ${(cat.billType === 'advance') ? 'bg-amber-500/10 text-amber-500 border-amber-500/20' : 'bg-slate-500/10 text-slate-400 border-slate-500/20'}`}>
-                                            {(cat.billType === 'advance') ? 'অগ্রিম' : 'ফিক্সড'}
+                                <div key={cat.id} className="flex items-center justify-between p-3.5 rounded-xl border"
+                                    style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-secondary)' }}>
+                                    <div className="flex items-center gap-2.5 min-w-0 flex-1 mr-2">
+                                        <Icon size={15} className="text-slate-400 shrink-0" />
+                                        <span className="font-bold text-sm truncate" style={{ color: 'var(--text-primary)' }}>{cat.label}</span>
+                                        <span className={`px-2 py-0.5 rounded-md text-[10px] font-bold border shrink-0 ${cat.billType === 'advance' ? 'bg-amber-500/10 text-amber-500 border-amber-500/20' : 'bg-slate-500/10 text-slate-400 border-slate-500/20'}`}>
+                                            {cat.billType === 'advance' ? 'অগ্রিম' : 'ফিক্সড'}
                                         </span>
                                     </div>
-                                    <button onClick={() => removeBillCategory(cat.id)} className="hover:text-rose-500 transition-colors shrink-0 p-1" style={{ color: 'var(--text-muted)' }}>
-                                        <Trash2 size={16} />
+                                    <button onClick={() => removeBillCategory(cat.id)} className="p-1.5 rounded-lg hover:bg-rose-500/10 hover:text-rose-500 transition-all shrink-0" style={{ color: 'var(--text-muted)' }}>
+                                        <Trash2 size={14} />
                                     </button>
                                 </div>
                             );
                         })}
                     </div>
-                    <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
+                    {/* Add new bill category */}
+                    <div className="space-y-2">
                         <input
                             type="text"
-                            placeholder="যেমন: গ্যাস বিল"
+                            placeholder="নতুন বিলের নাম (যেমন: গ্যাস বিল)"
                             value={newBillCat.label}
                             onChange={e => setNewBillCat({ ...newBillCat, label: e.target.value })}
-                            className="flex-1 min-w-0 px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg sm:rounded-xl border focus:ring-2 focus:ring-emerald-500 font-medium text-sm sm:text-base"
-                            style={{ backgroundColor: 'var(--bg-input)', borderColor: 'var(--border-secondary)', color: 'var(--text-primary)' }}
+                            onKeyDown={e => e.key === 'Enter' && addBillCategory()}
+                            className="w-full px-4 py-3 rounded-xl border focus:ring-2 focus:ring-emerald-500 font-medium text-sm"
+                            style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-secondary)', color: 'var(--text-primary)' }}
                         />
-                        <div className="flex gap-2 sm:gap-3">
+                        <div className="flex gap-2">
                             <select
                                 value={newBillCat.billType}
                                 onChange={e => setNewBillCat({ ...newBillCat, billType: e.target.value })}
-                                className="flex-1 sm:flex-initial w-full sm:w-auto px-2 sm:px-3 py-2.5 sm:py-3 rounded-lg sm:rounded-xl border font-bold text-xs sm:text-sm"
-                                style={{ backgroundColor: 'var(--bg-input)', borderColor: 'var(--border-secondary)', color: 'var(--text-primary)' }}
+                                className="flex-1 px-3 py-2.5 rounded-xl border font-bold text-sm"
+                                style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-secondary)', color: 'var(--text-primary)' }}
                             >
                                 <option value="fixed">ফিক্সড</option>
                                 <option value="advance">অগ্রিম</option>
@@ -300,110 +285,116 @@ export default function Settings() {
                             <select
                                 value={newBillCat.icon}
                                 onChange={e => setNewBillCat({ ...newBillCat, icon: e.target.value })}
-                                className="flex-1 sm:flex-initial w-full sm:w-auto px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg sm:rounded-xl border font-bold text-sm sm:text-base"
-                                style={{ backgroundColor: 'var(--bg-input)', borderColor: 'var(--border-secondary)', color: 'var(--text-primary)' }}
+                                className="flex-1 px-3 py-2.5 rounded-xl border font-bold text-sm"
+                                style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-secondary)', color: 'var(--text-primary)' }}
                             >
                                 {Object.keys(IconMap).map(iconName => <option key={iconName} value={iconName}>{iconName}</option>)}
                             </select>
-                            <button onClick={addBillCategory} className="text-white px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg sm:rounded-xl transition-all font-bold flex items-center justify-center shrink-0" style={{ backgroundColor: 'var(--brand)' }}>
-                                <Plus size={18} />
+                            <button onClick={addBillCategory}
+                                className="px-4 py-2.5 rounded-xl text-white font-bold flex items-center gap-1.5 text-sm transition-all active:scale-95 shrink-0"
+                                style={{ backgroundColor: 'var(--brand)' }}>
+                                <Plus size={16} />
                             </button>
                         </div>
                     </div>
-                </div>
+                </SectionCard>
             </div>
 
-            {/* Member Management */}
-            <div className="p-4 sm:p-6 md:p-8 lg:p-10 rounded-2xl sm:rounded-3xl lg:rounded-[32px] shadow-sm border" style={{ backgroundColor: 'var(--bg-card)', borderColor: 'var(--border-primary)' }}>
-                <h3 className="text-base sm:text-lg lg:text-xl font-bold mb-4 sm:mb-6 lg:mb-8 flex items-center justify-between flex-wrap gap-2" style={{ color: 'var(--text-primary)' }}>
-                    <span className="flex items-center">
-                        <User className="mr-2 sm:mr-3 text-slate-400 shrink-0" size={20} />
-                        মেম্বার ম্যানেজমেন্ট
+            {/* ── 3. Member Management ── */}
+            <SectionCard
+                icon={User}
+                iconColor="text-emerald-400"
+                title="মেম্বার ম্যানেজমেন্ট"
+                badge={
+                    <span className="text-xs font-black px-3 py-1.5 rounded-lg" style={{ backgroundColor: 'var(--bg-elevated)', color: 'var(--text-muted)' }}>
+                        {englishToBangla(members.length)} জন
                     </span>
-                    <span className="text-xs sm:text-sm font-medium px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg" style={{ backgroundColor: 'var(--bg-elevated)', color: 'var(--text-muted)' }}>{englishToBangla(members.length)} জন</span>
-                </h3>
-
-                <form onSubmit={handleAddMember} className="flex flex-col sm:flex-row gap-3 sm:gap-4 mb-6 sm:mb-8 lg:mb-10">
+                }
+            >
+                {/* Add member form */}
+                <form onSubmit={handleAddMember} className="flex flex-col sm:flex-row gap-2.5 mb-5">
                     <input
                         type="text"
                         name="name"
-                        placeholder="সদস্যের নাম লিখুন"
+                        placeholder="সদস্যের নাম লিখুন..."
                         required
-                        className="flex-1 min-w-0 px-4 sm:px-5 py-3 sm:py-4 rounded-xl border focus:ring-2 focus:ring-emerald-500 font-medium text-base sm:text-lg"
-                        style={{ backgroundColor: 'var(--bg-input)', borderColor: 'var(--border-secondary)', color: 'var(--text-primary)' }}
+                        className="flex-1 min-w-0 px-4 py-3.5 rounded-xl border focus:ring-2 focus:ring-emerald-500 font-medium text-sm sm:text-base"
+                        style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-secondary)', color: 'var(--text-primary)' }}
                     />
-                    <button type="submit" className="text-white px-5 sm:px-8 py-3 sm:py-4 rounded-xl font-bold transition-all flex items-center justify-center shrink-0 text-sm sm:text-base" style={{ backgroundColor: 'var(--brand)' }}>
-                        <UserPlus className="mr-2" size={18} /> যুক্ত করুন
+                    <button type="submit"
+                        className="flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl text-white font-bold text-sm transition-all active:scale-95 shadow-lg shadow-emerald-500/20 shrink-0 sm:w-auto w-full"
+                        style={{ backgroundColor: 'var(--brand)' }}>
+                        <UserPlus size={16} /> যুক্ত করুন
                     </button>
                 </form>
 
-                <div className="space-y-2.5 sm:space-y-3">
+                {/* Members list */}
+                <div className="space-y-2.5">
                     {members.map(member => (
-                        <div
-                            key={member.id}
-                            className="flex items-center justify-between p-4 sm:p-5 rounded-xl sm:rounded-[20px] shadow-[0_2px_12px_rgba(0,0,0,0.02)] border hover:border-emerald-500 transition-colors group"
-                            style={{ backgroundColor: 'var(--bg-elevated)', borderColor: 'var(--border-secondary)' }}
-                        >
-                            <div className="flex items-center space-x-3 sm:space-x-4 min-w-0">
-                                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center border shrink-0" style={{ backgroundColor: 'var(--bg-input)', borderColor: 'var(--border-accent)' }}>
-                                    <User size={18} className="text-slate-400 sm:hidden" />
-                                    <User size={22} className="text-slate-400 hidden sm:block" />
+                        <div key={member.id} className="rounded-xl border overflow-hidden transition-all hover:border-emerald-500/50"
+                            style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-secondary)' }}>
+                            {/* Member top row */}
+                            <div className="flex items-center gap-3 p-3.5 sm:p-4">
+                                <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl flex items-center justify-center border shrink-0"
+                                    style={{ backgroundColor: 'var(--bg-elevated)', borderColor: 'var(--border-accent)' }}>
+                                    <User size={18} className="text-slate-400" />
                                 </div>
-                                <div className="flex flex-col min-w-0">
-                                    <span className="font-bold text-base sm:text-[17px] truncate" style={{ color: 'var(--text-primary)' }}>{member.name}</span>
-                                    <select
-                                        value={member.linkedEmail || ""}
-                                        onChange={(e) => handleLinkUser(member.id, e.target.value)}
-                                        className="text-[10px] sm:text-xs font-medium px-2 py-1 mt-1 rounded-md border outline-none cursor-pointer hover:border-emerald-500 transition-colors max-w-[120px] sm:max-w-[180px] md:max-w-xs truncate appearance-none pr-6 relative"
-                                        style={{ 
-                                            backgroundColor: 'var(--bg-card)', 
-                                            borderColor: 'var(--border-secondary)', 
-                                            color: member.linkedEmail ? 'var(--emerald)' : 'var(--text-muted)',
-                                            backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke-width='2' stroke='currentColor' class='w-4 h-4'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M8.25 15L12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9' /%3E%3C/svg%3E")`,
-                                            backgroundRepeat: 'no-repeat',
-                                            backgroundPosition: 'right 4px center',
-                                            backgroundSize: '12px'
-                                        }}
-                                    >
-                                        <option value="" style={{ color: 'var(--text-primary)', backgroundColor: 'var(--bg-card)' }}>ইউজার লিঙ্ক করুন</option>
-                                        {users.map(u => (
-                                            <option key={u.id} value={u.email} style={{ color: 'var(--text-primary)', backgroundColor: 'var(--bg-card)' }}>{u.email}</option>
-                                        ))}
-                                    </select>
+                                <div className="flex-1 min-w-0">
+                                    <p className="font-black text-sm sm:text-base truncate" style={{ color: 'var(--text-primary)' }}>{member.name}</p>
+                                    {/* Linked user dropdown */}
+                                    <div className="relative mt-1.5">
+                                        <select
+                                            value={member.linkedEmail || ""}
+                                            onChange={(e) => handleLinkUser(member.id, e.target.value)}
+                                            className="text-[11px] font-bold pl-2 pr-6 py-1 rounded-lg border outline-none cursor-pointer hover:border-emerald-500 transition-colors appearance-none w-full max-w-[180px] sm:max-w-[220px]"
+                                            style={{
+                                                backgroundColor: 'var(--bg-elevated)',
+                                                borderColor: member.linkedEmail ? 'rgba(16,185,129,0.4)' : 'var(--border-accent)',
+                                                color: member.linkedEmail ? 'var(--emerald)' : 'var(--text-muted)',
+                                            }}
+                                        >
+                                            <option value="">🔗 ইউজার লিঙ্ক করুন</option>
+                                            {users.map(u => (
+                                                <option key={u.id} value={u.email}>{u.email}</option>
+                                            ))}
+                                        </select>
+                                        <ChevronDown size={10} className="absolute right-1.5 top-1/2 -translate-y-1/2 pointer-events-none" style={{ color: 'var(--text-muted)' }} />
+                                    </div>
                                 </div>
                             </div>
-                            <div className="flex items-center gap-1 sm:gap-2 shrink-0 ml-2">
+                            {/* Member actions row */}
+                            <div className="flex border-t" style={{ borderColor: 'var(--border-primary)' }}>
                                 <button
-                                    onClick={async () => {
-                                        await updateMember(member.id, { billExempt: !member.billExempt }, selectedMonth);
-                                    }}
-                                    className={`px-2.5 sm:px-3 py-2 sm:py-2.5 font-bold border rounded-lg sm:rounded-xl transition-all flex items-center gap-1.5 text-[10px] sm:text-xs ${member.billExempt
-                                            ? 'text-amber-500 bg-amber-500/10 border-amber-500/20 hover:bg-amber-500/20'
-                                            : 'text-slate-400 bg-slate-500/10 border-slate-500/20 hover:bg-slate-500/20'
-                                        }`}
-                                    title={member.billExempt ? 'অগ্রিম বিল থেকে বাদ' : 'অগ্রিম বিল থেকে বাদ করুন'}
-                                >
-                                    {member.billExempt
-                                        ? <><ShieldOff size={14} /> <span className="hidden xs:inline">বিল ছাড়</span></>
-                                        : <><ShieldCheck size={14} /> <span className="hidden xs:inline">সক্রিয়</span></>
-                                    }
+                                    onClick={async () => await updateMember(member.id, { billExempt: !member.billExempt }, selectedMonth)}
+                                    className={`flex-1 flex items-center justify-center gap-1.5 py-2.5 text-[11px] font-bold transition-all ${member.billExempt ? 'text-amber-500 hover:bg-amber-500/10' : 'hover:bg-slate-500/10'}`}
+                                    style={!member.billExempt ? { color: 'var(--text-muted)' } : {}}>
+                                    {member.billExempt ? <ShieldOff size={13} /> : <ShieldCheck size={13} />}
+                                    <span>{member.billExempt ? 'বিল ছাড়' : 'সক্রিয়'}</span>
                                 </button>
-                                <button onClick={() => handleEditMember(member.id, member.name)} className="px-3 sm:px-4 py-2 sm:py-2.5 text-slate-400 hover:text-blue-500 hover:bg-blue-500/10 font-bold border border-transparent hover:border-blue-500/20 rounded-lg sm:rounded-xl transition-all flex items-center gap-1.5 text-xs sm:text-sm" title="এডিট করুন">
-                                    <Edit2 size={16} /> <span className="hidden sm:inline">এডিট</span>
+                                <div className="w-px" style={{ backgroundColor: 'var(--border-primary)' }}></div>
+                                <button onClick={() => handleEditMember(member.id, member.name)}
+                                    className="flex-1 flex items-center justify-center gap-1.5 py-2.5 text-[11px] font-bold transition-all hover:bg-blue-500/10 hover:text-blue-500"
+                                    style={{ color: 'var(--text-muted)' }}>
+                                    <Edit2 size={13} /> এডিট
                                 </button>
-                                <button onClick={() => handleRemoveMember(member.id, member.name)} className="px-3 sm:px-4 py-2 sm:py-2.5 text-slate-400 hover:text-rose-500 hover:bg-rose-500/10 font-bold border border-transparent hover:border-rose-500/20 rounded-lg sm:rounded-xl transition-all flex items-center gap-1.5 text-xs sm:text-sm" title="ডিলিট করুন">
-                                    <Trash2 size={16} /> <span className="hidden sm:inline">ডিলিট</span>
+                                <div className="w-px" style={{ backgroundColor: 'var(--border-primary)' }}></div>
+                                <button onClick={() => handleRemoveMember(member.id, member.name)}
+                                    className="flex-1 flex items-center justify-center gap-1.5 py-2.5 text-[11px] font-bold transition-all hover:bg-rose-500/10 hover:text-rose-500"
+                                    style={{ color: 'var(--text-muted)' }}>
+                                    <Trash2 size={13} /> ডিলিট
                                 </button>
                             </div>
                         </div>
                     ))}
+
                     {members.length === 0 && (
-                        <div className="p-8 sm:p-10 rounded-xl sm:rounded-[20px] text-center border text-sm sm:text-base" style={{ backgroundColor: 'var(--bg-elevated)', borderColor: 'var(--border-secondary)', color: 'var(--text-muted)' }}>
-                            কোনো মেম্বার পাওয়া যায়নি।
+                        <div className="py-10 text-center rounded-xl border border-dashed" style={{ borderColor: 'var(--border-secondary)', color: 'var(--text-muted)' }}>
+                            <User size={32} className="mx-auto mb-2 opacity-20" />
+                            <p className="text-sm font-bold">কোনো মেম্বার পাওয়া যায়নি।</p>
                         </div>
                     )}
                 </div>
-            </div>
+            </SectionCard>
         </div>
     );
 }
