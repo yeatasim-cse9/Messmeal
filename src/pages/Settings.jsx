@@ -176,7 +176,7 @@ export default function Settings() {
                     <button
                         onClick={handleCopyMembers}
                         disabled={copyState.loading || !copyState.sourceMonth}
-                        className="w-full sm:w-auto flex items-center justify-center gap-2 px-4 sm:px-6 py-2.5 sm:py-3 rounded-lg sm:rounded-xl font-bold transition-all disabled:opacity-50 text-sm sm:text-base bg-indigo-600 hover:bg-indigo-700 text-white shadow-md shadow-indigo-500/20"
+                        className="w-full sm:w-auto flex items-center justify-center gap-2 px-4 sm:px-6 py-2.5 sm:py-3 rounded-lg sm:rounded-xl font-bold transition-all disabled:opacity-50 text-sm sm:text-base bg-blue-600 hover:bg-blue-700 text-white shadow-md shadow-blue-500/20"
                     >
                         {copyState.loading ? <Loader2 size={16} className="animate-spin" /> : <Copy size={16} />}
                         <span>কপি করুন</span>

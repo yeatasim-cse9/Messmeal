@@ -4,8 +4,8 @@ import { useAuth } from '../contexts/AuthContext';
 import { useDialog } from '../contexts/DialogContext';
 import { auth } from '../lib/firebase';
 import { sendPasswordResetEmail } from 'firebase/auth';
-import { 
-    Users as UsersIcon, Shield, ShieldCheck, Trash2, 
+import {
+    Users as UsersIcon, Shield, ShieldCheck, Trash2,
     User as UserIcon, Mail, Key, Sparkles, CheckCircle2,
     Calendar, ArrowRight, Fingerprint, Plus, UserPlus, X, Lock, Eye, EyeOff,
     Activity, LayoutGrid, ListFilter
@@ -111,7 +111,7 @@ export default function Users() {
             <div className="relative overflow-hidden p-8 sm:p-14 rounded-xl sm:rounded-2xl shadow-2xl border" style={{ backgroundColor: 'var(--bg-card)', borderColor: 'var(--border-primary)' }}>
                 <div className="absolute top-[-10%] right-[-5%] w-[500px] h-[500px] bg-indigo-600/10 rounded-full blur-[120px]"></div>
                 <div className="absolute bottom-[-10%] left-[-5%] w-[400px] h-[400px] bg-emerald-500/10 rounded-full blur-[100px]"></div>
-                
+
                 <div className="relative z-10 flex flex-col xl:flex-row justify-between items-start xl:items-end gap-10">
                     <div className="flex-1 space-y-4">
                         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border" style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-secondary)' }}>
@@ -125,15 +125,14 @@ export default function Users() {
                             অ্যাপের সকল সদস্যদের রোল পরিচালনা করুন এবং তাদের এক্সেস লেভেল সেট করুন।
                         </p>
                     </div>
-                    
+
                     <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 w-full xl:w-auto">
-                        <button 
+                        <button
                             onClick={() => setIsAddingMode(!isAddingMode)}
-                            className={`flex items-center justify-center gap-3 px-8 py-5 rounded-xl sm:rounded-2xl font-black text-sm uppercase transition-all active:scale-95 group relative overflow-hidden ${
-                                isAddingMode 
-                                ? 'bg-rose-500 text-white shadow-2xl shadow-rose-500/20' 
-                                : 'bg-indigo-600 text-white shadow-xl hover:bg-indigo-700'
-                            }`}
+                            className={`flex items-center justify-center gap-3 px-8 py-5 rounded-xl sm:rounded-2xl font-black text-sm uppercase transition-all active:scale-95 group relative overflow-hidden ${isAddingMode
+                                    ? 'bg-rose-500 text-white shadow-2xl shadow-rose-500/20'
+                                    : 'bg-indigo-600 text-white shadow-xl hover:bg-indigo-700'
+                                }`}
                         >
                             {isAddingMode ? (
                                 <><X size={20} className="relative z-10" /> <span className="relative z-10">বন্ধ করুন</span></>
@@ -180,17 +179,17 @@ export default function Users() {
                                 <p className="font-bold text-sm" style={{ color: 'var(--text-muted)' }}>মেম্বারের জন্য সিকিউর এক্সেস তৈরি করুন</p>
                             </div>
                         </div>
-                        
+
                         <form onSubmit={handleCreateUser} className="grid grid-cols-1 md:grid-cols-12 gap-6">
                             <div className="md:col-span-4 space-y-2">
                                 <label className="text-[11px] font-black uppercase ml-1 flex items-center gap-2" style={{ color: 'var(--text-muted)' }}>
                                     <UserIcon size={12} className="text-indigo-500" /> ইউজারের নাম
                                 </label>
-                                <input 
+                                <input
                                     type="text"
-                                    placeholder="পার্থ প্রতীম"
+                                    placeholder="ইয়াতাসিম বিল্লাহ"
                                     value={formData.name}
-                                    onChange={e => setFormData({...formData, name: e.target.value})}
+                                    onChange={e => setFormData({ ...formData, name: e.target.value })}
                                     className="w-full px-5 py-4 rounded-xl sm:rounded-2xl border focus:ring-[6px] focus:ring-indigo-500/10 focus:border-indigo-500 font-bold outline-none transition-all"
                                     style={{ backgroundColor: 'var(--bg-input)', borderColor: 'var(--border-secondary)', color: 'var(--text-primary)' }}
                                 />
@@ -199,11 +198,11 @@ export default function Users() {
                                 <label className="text-[11px] font-black uppercase ml-1 flex items-center gap-2" style={{ color: 'var(--text-muted)' }}>
                                     <Mail size={12} className="text-indigo-500" /> ইমেইল অ্যাড্রেস
                                 </label>
-                                <input 
+                                <input
                                     type="email"
                                     placeholder="user@messmeal.com"
                                     value={formData.email}
-                                    onChange={e => setFormData({...formData, email: e.target.value})}
+                                    onChange={e => setFormData({ ...formData, email: e.target.value })}
                                     className="w-full px-5 py-4 rounded-xl sm:rounded-2xl border focus:ring-[6px] focus:ring-indigo-500/10 focus:border-indigo-500 font-bold outline-none transition-all"
                                     style={{ backgroundColor: 'var(--bg-input)', borderColor: 'var(--border-secondary)', color: 'var(--text-primary)' }}
                                 />
@@ -213,15 +212,15 @@ export default function Users() {
                                     <Lock size={12} className="text-indigo-500" /> পাসওয়ার্ড (min. 6 chars)
                                 </label>
                                 <div className="relative">
-                                    <input 
+                                    <input
                                         type={showPassword ? "text" : "password"}
                                         placeholder="••••••••"
                                         value={formData.password}
-                                        onChange={e => setFormData({...formData, password: e.target.value})}
+                                        onChange={e => setFormData({ ...formData, password: e.target.value })}
                                         className="w-full px-5 pr-14 py-4 rounded-xl sm:rounded-2xl border focus:ring-[6px] focus:ring-indigo-500/10 focus:border-indigo-500 font-bold outline-none transition-all"
                                         style={{ backgroundColor: 'var(--bg-input)', borderColor: 'var(--border-secondary)', color: 'var(--text-primary)' }}
                                     />
-                                    <button 
+                                    <button
                                         type="button"
                                         onClick={() => setShowPassword(!showPassword)}
                                         className="absolute right-5 top-1/2 -translate-y-1/2 hover:text-indigo-500 transition-colors"
@@ -232,7 +231,7 @@ export default function Users() {
                                 </div>
                             </div>
                             <div className="md:col-span-12 pt-4 flex justify-end">
-                                <button 
+                                <button
                                     type="submit"
                                     disabled={isCreating}
                                     className="w-full md:w-auto px-16 py-4 rounded-xl sm:rounded-2xl bg-[#0F172A] text-white font-black uppercase shadow-2xl hover:bg-black active:scale-95 transition-all disabled:bg-slate-200 flex items-center justify-center gap-4 group"
@@ -267,24 +266,22 @@ export default function Users() {
                             <div className="p-2 bg-indigo-600 text-white rounded-lg"><LayoutGrid size={16} /></div>
                         </div>
                     </div>
-                    
+
                     <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
                         {users.map((u) => (
-                            <div 
+                            <div
                                 key={u.id}
-                                className={`group relative p-8 rounded-xl sm:rounded-2xl border transition-all duration-500 hover:-translate-y-2 ${
-                                    u.role === 'admin' 
-                                    ? 'border-indigo-500/30 shadow-[0_0_15px_rgba(99,102,241,0.1)]' 
-                                    : ''
-                                }`}
+                                className={`group relative p-8 rounded-xl sm:rounded-2xl border transition-all duration-500 hover:-translate-y-2 ${u.role === 'admin'
+                                        ? 'border-indigo-500/30 shadow-[0_0_15px_rgba(99,102,241,0.1)]'
+                                        : ''
+                                    }`}
                                 style={{ backgroundColor: 'var(--bg-card)', borderColor: u.role === 'admin' ? '' : 'var(--border-primary)' }}
                             >
                                 <div className="flex items-center gap-5 mb-10">
-                                    <div className={`relative w-16 h-16 rounded-xl flex items-center justify-center border-2 transition-all duration-700 ${
-                                        u.role === 'admin' 
-                                        ? 'bg-indigo-500/10 text-indigo-500 border-indigo-500/30' 
-                                        : 'shadow-inner'
-                                    }`} style={u.role !== 'admin' ? { backgroundColor: 'var(--bg-secondary)', color: 'var(--text-muted)', borderColor: 'var(--border-primary)' } : {}}>
+                                    <div className={`relative w-16 h-16 rounded-xl flex items-center justify-center border-2 transition-all duration-700 ${u.role === 'admin'
+                                            ? 'bg-indigo-500/10 text-indigo-500 border-indigo-500/30'
+                                            : 'shadow-inner'
+                                        }`} style={u.role !== 'admin' ? { backgroundColor: 'var(--bg-secondary)', color: 'var(--text-muted)', borderColor: 'var(--border-primary)' } : {}}>
                                         <UserIcon size={30} />
                                         {u.role === 'admin' ? (
                                             <div className="absolute -top-2 -right-2 bg-indigo-500 text-white p-1 rounded-lg border-2" style={{ borderColor: 'var(--bg-card)' }}>
@@ -312,11 +309,10 @@ export default function Users() {
                                         <Calendar size={14} className="opacity-50" />
                                         <span>জিম্মাদার: {u.createdAt ? new Date(u.createdAt).toLocaleDateString('bn-BD', { month: 'short', year: 'numeric' }) : '২০২৪'}</span>
                                     </div>
-                                    <div className={`px-4 py-1.5 text-[10px] font-black rounded-lg border flex items-center gap-1.5 ${
-                                        u.role === 'admin' 
-                                        ? 'bg-indigo-600 text-white border-indigo-500' 
-                                        : 'bg-indigo-500/10 text-indigo-500 border-indigo-500/20'
-                                    }`}>
+                                    <div className={`px-4 py-1.5 text-[10px] font-black rounded-lg border flex items-center gap-1.5 ${u.role === 'admin'
+                                            ? 'bg-indigo-600 text-white border-indigo-500'
+                                            : 'bg-indigo-500/10 text-indigo-500 border-indigo-500/20'
+                                        }`}>
                                         <Fingerprint size={10} /> {u.role === 'admin' ? 'অ্যাডমিন' : 'সদস্য'}
                                     </div>
                                 </div>
@@ -324,15 +320,14 @@ export default function Users() {
                                 <div className="grid grid-cols-2 gap-4">
                                     <button
                                         onClick={() => handleRoleUpdate(u.id, u.role, u.name)}
-                                        className={`flex items-center justify-center gap-2 py-4 rounded-xl sm:rounded-2xl font-black text-[11px] transition-all border ${
-                                            u.role === 'admin' 
-                                            ? 'hover:bg-rose-500/10 text-rose-500 border-rose-500/20' 
-                                            : 'bg-indigo-600 text-white border-indigo-600 hover:bg-indigo-700'
-                                        }`}
+                                        className={`flex items-center justify-center gap-2 py-4 rounded-xl sm:rounded-2xl font-black text-[11px] transition-all border ${u.role === 'admin'
+                                                ? 'hover:bg-rose-500/10 text-rose-500 border-rose-500/20'
+                                                : 'bg-indigo-600 text-white border-indigo-600 hover:bg-indigo-700'
+                                            }`}
                                     >
                                         <Shield size={14} /> {u.role === 'admin' ? 'রোল বদলান' : 'অ্যাডমিন করুন'}
                                     </button>
-                                    
+
                                     <button
                                         onClick={() => handleResetPassword(u.email, u.name)}
                                         className="flex items-center justify-center gap-2 py-4 rounded-xl sm:rounded-2xl font-black text-[11px] transition-all border hover:border-indigo-500/50"
@@ -340,7 +335,7 @@ export default function Users() {
                                     >
                                         <Key size={14} className="text-amber-500" /> রিসেট লিংক
                                     </button>
-                                    
+
                                     <button
                                         onClick={() => handleDeleteUser(u.id, u.name)}
                                         className="col-span-2 flex items-center justify-center gap-2 py-4 rounded-xl sm:rounded-2xl font-black text-[11px] transition-all hover:bg-rose-500/10 hover:text-rose-500"
