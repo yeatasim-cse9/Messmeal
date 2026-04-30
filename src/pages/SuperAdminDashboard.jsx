@@ -89,12 +89,12 @@ export default function SuperAdminDashboard() {
               <div className="w-7 h-7 rounded-lg bg-emerald-500 flex items-center justify-center">
                 <Shield size={14} className="text-white" />
               </div>
-              <span className="text-xs font-bold uppercase tracking-widest text-emerald-400">Super Admin</span>
+              <span className="text-xs font-bold uppercase tracking-widest text-emerald-400">সুপার অ্যাডমিন</span>
             </div>
             <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black text-white leading-tight">
-              Mess <span className="text-emerald-400">Control</span> Panel
+              মেস <span className="text-emerald-400">কন্ট্রোল</span> প্যানেল
             </h1>
-            <p className="text-slate-400 text-sm mt-1">Manage all messes across the platform</p>
+            <p className="text-slate-400 text-sm mt-1">আপনার সকল মেস এখন আপনার নিয়ন্ত্রণে</p>
           </div>
           <button
             onClick={() => { closeModal(); setShowCreateModal(true); }}
@@ -102,7 +102,7 @@ export default function SuperAdminDashboard() {
             style={{ background: 'linear-gradient(135deg, #10b981, #059669)' }}
           >
             <Plus size={18} />
-            Create New Mess
+            নতুন মেস তৈরি করুন
           </button>
         </div>
       </div>
@@ -116,7 +116,7 @@ export default function SuperAdminDashboard() {
           </div>
           <div>
             <p className="text-2xl sm:text-3xl font-black" style={{ color: 'var(--text-primary)' }}>{messes.length}</p>
-            <p className="text-[10px] sm:text-xs font-bold uppercase" style={{ color: 'var(--text-muted)' }}>Total Messes</p>
+            <p className="text-[10px] sm:text-xs font-bold uppercase" style={{ color: 'var(--text-muted)' }}>মোট মেস</p>
           </div>
         </div>
         <div className="p-4 sm:p-6 rounded-2xl border flex items-center gap-3 sm:gap-4"
@@ -126,7 +126,7 @@ export default function SuperAdminDashboard() {
           </div>
           <div>
             <p className="text-2xl sm:text-3xl font-black text-blue-500">{activeMesses}</p>
-            <p className="text-[10px] sm:text-xs font-bold uppercase" style={{ color: 'var(--text-muted)' }}>Active</p>
+            <p className="text-[10px] sm:text-xs font-bold uppercase" style={{ color: 'var(--text-muted)' }}>এক্টিভ মেস</p>
           </div>
         </div>
       </div>
@@ -210,11 +210,11 @@ export default function SuperAdminDashboard() {
             <table className="w-full text-left border-collapse">
               <thead>
                 <tr style={{ backgroundColor: 'var(--bg-secondary)' }}>
-                  <th className="px-6 py-4 font-bold text-xs uppercase tracking-wider" style={{ color: 'var(--text-muted)' }}>Mess ID</th>
-                  <th className="px-6 py-4 font-bold text-xs uppercase tracking-wider" style={{ color: 'var(--text-muted)' }}>Name</th>
-                  <th className="px-6 py-4 font-bold text-xs uppercase tracking-wider" style={{ color: 'var(--text-muted)' }}>Address</th>
-                  <th className="px-6 py-4 font-bold text-xs uppercase tracking-wider" style={{ color: 'var(--text-muted)' }}>Status</th>
-                  <th className="px-6 py-4 font-bold text-xs uppercase tracking-wider" style={{ color: 'var(--text-muted)' }}>Actions</th>
+                  <th className="px-6 py-4 font-bold text-xs uppercase tracking-wider" style={{ color: 'var(--text-muted)' }}>মেস আইডি</th>
+                  <th className="px-6 py-4 font-bold text-xs uppercase tracking-wider" style={{ color: 'var(--text-muted)' }}>নাম</th>
+                  <th className="px-6 py-4 font-bold text-xs uppercase tracking-wider" style={{ color: 'var(--text-muted)' }}>ঠিকানা</th>
+                  <th className="px-6 py-4 font-bold text-xs uppercase tracking-wider" style={{ color: 'var(--text-muted)' }}>স্ট্যাটাস</th>
+                  <th className="px-6 py-4 font-bold text-xs uppercase tracking-wider" style={{ color: 'var(--text-muted)' }}>অ্যাকশন</th>
                 </tr>
               </thead>
               <tbody>
