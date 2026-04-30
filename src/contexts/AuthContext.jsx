@@ -29,15 +29,28 @@ export function AuthProvider({ children }) {
             if (firebaseUser) {
                 setUser(firebaseUser);
                 try {
-                    const profileRef = doc(db, 'users', firebaseUser.uid);
+                    const profileRef = doc(db, 'global_users', firebaseUser.uid);
                     const profileSnap = await getDoc(profileRef);
                     if (profileSnap.exists()) {
-                        setUserProfile(profileSnap.data());
+                        const data = profileSnap.data();
+                        let messName = 'Unknown Mess';
+                        if (data.messId) {
+                            try {
+                                const messSnap = await getDoc(doc(db, 'messes', data.messId));
+                                if (messSnap.exists()) {
+                                    messName = messSnap.data().name;
+                                }
+                            } catch (e) {}
+                        }
+                        setUserProfile({ ...data, messName });
                     } else {
                         const newProfile = {
                             name: firebaseUser.email.split('@')[0],
                             email: firebaseUser.email,
                             role: 'viewer',
+                            globalRole: 'member',
+                            messId: 'default_mess_001',
+                            messName: 'Main Mess',
                             createdAt: new Date().toISOString()
                         };
                         await setDoc(profileRef, newProfile);
@@ -72,9 +85,11 @@ export function AuthProvider({ children }) {
             name: name || email.split('@')[0],
             email: email,
             role: 'viewer',
+            globalRole: 'member',
+            messId: 'default_mess_001',
             createdAt: new Date().toISOString()
         };
-        await setDoc(doc(db, 'users', cred.user.uid), newProfile);
+        await setDoc(doc(db, 'global_users', cred.user.uid), newProfile);
         setUserProfile(newProfile);
         return cred;
     };
@@ -89,22 +104,25 @@ export function AuthProvider({ children }) {
         await signOut(auth);
     };
 
-    const createUserByAdmin = async (email, password, name) => {
+    const createUserByAdmin = async (email, password, name, targetMessId = null, targetRole = 'viewer') => {
         // Use secondary auth to create user without logging current admin out
         const cred = await createUserWithEmailAndPassword(authSecondary, email, password);
         const newProfile = {
             name: name || email.split('@')[0],
             email: email,
-            role: 'viewer',
+            role: targetRole,
+            globalRole: 'member',
+            messId: targetMessId || userProfile?.messId || 'default_mess_001',
             createdAt: new Date().toISOString()
         };
-        await setDoc(doc(db, 'users', cred.user.uid), newProfile);
+        await setDoc(doc(db, 'global_users', cred.user.uid), newProfile);
         // Force logout of the secondary app immediately
         await signOut(authSecondary);
         return cred;
     };
 
     const isAdmin = userProfile?.role === 'admin';
+    const isSuperAdmin = userProfile?.globalRole === 'super_admin';
 
     const value = {
         user,
@@ -115,6 +133,7 @@ export function AuthProvider({ children }) {
         loginWithGoogle,
         logout,
         isAdmin,
+        isSuperAdmin,
         createUserByAdmin
     };
 

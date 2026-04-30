@@ -45,22 +45,22 @@ export function DialogProvider({ children }) {
         <DialogContext.Provider value={{ showAlert, showConfirm, showPrompt }}>
             {children}
             {dialog && (
-                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm animate-in fade-in duration-200">
-                    <div className="bg-white rounded-[24px] shadow-2xl w-full max-w-sm overflow-hidden animate-in zoom-in-95 duration-300 border border-slate-100">
+                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+                    <div className="rounded-[24px] shadow-2xl w-full max-w-sm overflow-hidden border" style={{ backgroundColor: 'var(--bg-card)', borderColor: 'var(--border-secondary)' }}>
                         <div className="p-6 sm:p-8">
                             <div className="flex items-start justify-between mb-4">
                                 <div className="flex items-center gap-3">
-                                    {dialog.type === 'alert' && <AlertCircle className="text-rose-500" size={28} />}
-                                    {dialog.type === 'confirm' && <HelpCircle className="text-blue-500" size={28} />}
-                                    {dialog.type === 'prompt' && <CheckCircle2 className="text-emerald-500" size={28} />}
-                                    <h3 className="text-xl font-bold text-slate-900">{dialog.title}</h3>
+                                    {dialog.type === 'alert' && <AlertCircle className="text-rose-400" size={28} />}
+                                    {dialog.type === 'confirm' && <HelpCircle className="text-blue-400" size={28} />}
+                                    {dialog.type === 'prompt' && <CheckCircle2 className="text-emerald-400" size={28} />}
+                                    <h3 className="text-xl font-bold" style={{ color: 'var(--text-primary)' }}>{dialog.title}</h3>
                                 </div>
-                                <button onClick={closeDialog} className="text-slate-400 hover:text-slate-600 transition-colors p-1.5 bg-slate-50 hover:bg-slate-100 rounded-full">
+                                <button onClick={closeDialog} className="transition-colors p-1.5 rounded-full" style={{ color: 'var(--text-muted)', backgroundColor: 'var(--bg-elevated)' }}>
                                     <X size={18} />
                                 </button>
                             </div>
 
-                            <p className="text-slate-600 font-medium text-[15px] mb-6 whitespace-pre-wrap leading-relaxed">
+                            <p className="font-medium text-[15px] mb-6 whitespace-pre-wrap leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
                                 {dialog.message}
                             </p>
 
@@ -69,7 +69,8 @@ export function DialogProvider({ children }) {
                                     type="text"
                                     id="prompt-input"
                                     defaultValue={dialog.defaultValue}
-                                    className="w-full px-5 py-3.5 mb-6 rounded-xl border border-slate-200 focus:ring-2 focus:ring-slate-900 bg-slate-50 font-bold text-slate-800 outline-none"
+                                    className="w-full px-5 py-3.5 mb-6 rounded-xl border focus:ring-2 focus:ring-emerald-500 font-bold outline-none"
+                                    style={{ backgroundColor: 'var(--bg-input)', borderColor: 'var(--border-secondary)', color: 'var(--text-primary)' }}
                                     autoFocus
                                     onKeyDown={(e) => {
                                         if (e.key === 'Enter') confirmAction(e.target.value);
@@ -82,7 +83,10 @@ export function DialogProvider({ children }) {
                                 {dialog.type !== 'alert' && (
                                     <button
                                         onClick={closeDialog}
-                                        className="px-5 py-2.5 rounded-xl font-bold text-slate-500 hover:bg-slate-100 hover:text-slate-800 transition-all"
+                                        className="px-5 py-2.5 rounded-xl font-bold transition-all"
+                                        style={{ color: 'var(--text-muted)', backgroundColor: 'transparent' }}
+                                        onMouseEnter={e => { e.target.style.backgroundColor = 'var(--bg-elevated)'; e.target.style.color = 'var(--text-primary)'; }}
+                                        onMouseLeave={e => { e.target.style.backgroundColor = 'transparent'; e.target.style.color = 'var(--text-muted)'; }}
                                     >
                                         বাতিল
                                     </button>

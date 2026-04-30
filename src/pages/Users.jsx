@@ -28,13 +28,11 @@ export default function Users() {
 
     if (!isAdmin) {
         return (
-            <div className="flex flex-col items-center justify-center min-h-[500px] text-center p-12 bg-white rounded-xl sm:rounded-2xl border border-slate-100 shadow-xl relative overflow-hidden">
+            <div className="flex flex-col items-center justify-center min-h-[500px] text-center p-12 rounded-xl sm:rounded-2xl border shadow-xl relative overflow-hidden" style={{ backgroundColor: 'var(--bg-card)', borderColor: 'var(--border-primary)' }}>
                 <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-rose-400 via-orange-400 to-rose-400"></div>
-                <div className="w-24 h-24 bg-rose-50 text-rose-500 rounded-xl sm:rounded-2xl flex items-center justify-center mb-8 shadow-inner rotate-3 transition-transform ring-8 ring-rose-50/30">
+                <div className="w-24 h-24 bg-rose-500/10 text-rose-500 rounded-xl sm:rounded-2xl flex items-center justify-center mb-8 shadow-inner rotate-3 transition-transform ring-8 ring-rose-500/5">
                     <Shield size={48} />
                 </div>
-                <h2 className="text-3xl font-black text-slate-900 mb-4 leading-tight">প্রবেশাধিকার সংরক্ষিত</h2>
-                <p className="text-slate-500 max-w-sm leading-relaxed text-lg font-medium">এই পেজটি শুধুমাত্র উচ্চ-স্তরের অ্যাডমিনদের জন্য।</p>
                 <div className="mt-10 p-4 bg-slate-50 rounded-xl sm:rounded-2xl border border-slate-100 italic text-slate-400 text-sm">
                     🔒 Administrative Access Required
                 </div>
@@ -110,20 +108,20 @@ export default function Users() {
     return (
         <div className="space-y-6 pb-12">
             {/* Header Section */}
-            <div className="relative overflow-hidden bg-[#0A0F1E] p-8 sm:p-14 rounded-xl sm:rounded-2xl shadow-2xl text-white">
-                <div className="absolute top-[-10%] right-[-5%] w-[500px] h-[500px] bg-indigo-600/20 rounded-full blur-[120px]"></div>
+            <div className="relative overflow-hidden p-8 sm:p-14 rounded-xl sm:rounded-2xl shadow-2xl border" style={{ backgroundColor: 'var(--bg-card)', borderColor: 'var(--border-primary)' }}>
+                <div className="absolute top-[-10%] right-[-5%] w-[500px] h-[500px] bg-indigo-600/10 rounded-full blur-[120px]"></div>
                 <div className="absolute bottom-[-10%] left-[-5%] w-[400px] h-[400px] bg-emerald-500/10 rounded-full blur-[100px]"></div>
                 
                 <div className="relative z-10 flex flex-col xl:flex-row justify-between items-start xl:items-end gap-10">
                     <div className="flex-1 space-y-4">
-                        <div className="inline-flex items-center gap-2 px-3 py-1 bg-indigo-500/10 backdrop-blur-xl rounded-full border border-indigo-500/20">
-                            <ShieldCheck size={14} className="text-indigo-400" />
-                            <span className="text-[10px] font-black uppercase text-indigo-300">Administrative Suite</span>
+                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border" style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-secondary)' }}>
+                            <ShieldCheck size={14} className="text-indigo-500" />
+                            <span className="text-[10px] font-black uppercase text-indigo-500">Administrative Suite</span>
                         </div>
-                        <h1 className="text-4xl sm:text-6xl font-black tracking-tight leading-[1.1]">
-                            ইউজার <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-indigo-300 to-emerald-300">ম্যানেজমেন্ট</span>
+                        <h1 className="text-4xl sm:text-6xl font-black tracking-tight leading-[1.1]" style={{ color: 'var(--text-primary)' }}>
+                            ইউজার <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 to-emerald-500">ম্যানেজমেন্ট</span>
                         </h1>
-                        <p className="text-slate-400 max-w-2xl text-base sm:text-lg font-medium leading-relaxed">
+                        <p className="max-w-2xl text-base sm:text-lg font-medium leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
                             অ্যাপের সকল সদস্যদের রোল পরিচালনা করুন এবং তাদের এক্সেস লেভেল সেট করুন।
                         </p>
                     </div>
@@ -134,7 +132,7 @@ export default function Users() {
                             className={`flex items-center justify-center gap-3 px-8 py-5 rounded-xl sm:rounded-2xl font-black text-sm uppercase transition-all active:scale-95 group relative overflow-hidden ${
                                 isAddingMode 
                                 ? 'bg-rose-500 text-white shadow-2xl shadow-rose-500/20' 
-                                : 'bg-white text-[#0A0F1E] shadow-xl hover:shadow-white/10'
+                                : 'bg-indigo-600 text-white shadow-xl hover:bg-indigo-700'
                             }`}
                         >
                             {isAddingMode ? (
@@ -145,22 +143,22 @@ export default function Users() {
                         </button>
 
                         <div className="flex items-center gap-4">
-                            <div className="flex items-center gap-4 bg-white/5 backdrop-blur-2xl px-6 py-4 rounded-xl sm:rounded-2xl border border-white/10 group">
-                                <div className="w-12 h-12 bg-white/10 rounded-xl flex items-center justify-center border border-white/5 group-hover:scale-110 transition-transform">
-                                    <UsersIcon size={24} className="text-indigo-400" />
+                            <div className="flex items-center gap-4 px-6 py-4 rounded-xl sm:rounded-2xl border group" style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-secondary)' }}>
+                                <div className="w-12 h-12 rounded-xl flex items-center justify-center border group-hover:scale-110 transition-transform" style={{ backgroundColor: 'var(--bg-card)', borderColor: 'var(--border-primary)' }}>
+                                    <UsersIcon size={24} className="text-indigo-500" />
                                 </div>
                                 <div className="flex flex-col">
-                                    <span className="text-3xl font-black text-white leading-none">{users.length}</span>
-                                    <span className="text-[10px] font-black text-slate-500 uppercase mt-1">সক্রিয় সদস্য</span>
+                                    <span className="text-3xl font-black leading-none" style={{ color: 'var(--text-primary)' }}>{users.length}</span>
+                                    <span className="text-[10px] font-black uppercase mt-1" style={{ color: 'var(--text-muted)' }}>সক্রিয় সদস্য</span>
                                 </div>
                             </div>
-                            <div className="flex items-center gap-4 bg-white/5 backdrop-blur-2xl px-6 py-4 rounded-xl sm:rounded-2xl border border-white/10 group">
+                            <div className="flex items-center gap-4 px-6 py-4 rounded-xl sm:rounded-2xl border group" style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-secondary)' }}>
                                 <div className="w-12 h-12 bg-emerald-500/10 rounded-xl flex items-center justify-center border border-emerald-500/10 group-hover:scale-110 transition-transform">
-                                    <ShieldCheck size={24} className="text-emerald-400" />
+                                    <ShieldCheck size={24} className="text-emerald-500" />
                                 </div>
                                 <div className="flex flex-col">
-                                    <span className="text-3xl font-black text-emerald-400 leading-none">{adminCount}</span>
-                                    <span className="text-[10px] font-black text-slate-500 uppercase mt-1">বর্তমান অ্যাডমিন</span>
+                                    <span className="text-3xl font-black text-emerald-500 leading-none">{adminCount}</span>
+                                    <span className="text-[10px] font-black uppercase mt-1" style={{ color: 'var(--text-muted)' }}>বর্তমান অ্যাডমিন</span>
                                 </div>
                             </div>
                         </div>
@@ -170,22 +168,22 @@ export default function Users() {
 
             {/* Add Form */}
             {isAddingMode && (
-                <div className="bg-white p-8 sm:p-10 rounded-xl sm:rounded-2xl border border-indigo-50 shadow-2xl relative overflow-hidden">
-                    <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-50/50 rounded-full blur-[80px] -mr-32 -mt-32"></div>
+                <div className="p-8 sm:p-10 rounded-xl sm:rounded-2xl border shadow-2xl relative overflow-hidden" style={{ backgroundColor: 'var(--bg-card)', borderColor: 'var(--border-primary)' }}>
+                    <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-500/5 rounded-full blur-[80px] -mr-32 -mt-32"></div>
                     <div className="relative">
                         <div className="flex items-center gap-4 mb-8">
                             <div className="w-14 h-14 bg-indigo-600 text-white rounded-xl flex items-center justify-center shadow-lg">
                                 <UserPlus size={28} />
                             </div>
                             <div>
-                                <h3 className="text-2xl font-black text-slate-900 leading-tight">নতুন ইউজার একাউন্ট</h3>
-                                <p className="text-slate-400 font-bold text-sm">মেম্বারের জন্য সিকিউর এক্সেস তৈরি করুন</p>
+                                <h3 className="text-2xl font-black leading-tight" style={{ color: 'var(--text-primary)' }}>নতুন ইউজার একাউন্ট</h3>
+                                <p className="font-bold text-sm" style={{ color: 'var(--text-muted)' }}>মেম্বারের জন্য সিকিউর এক্সেস তৈরি করুন</p>
                             </div>
                         </div>
                         
                         <form onSubmit={handleCreateUser} className="grid grid-cols-1 md:grid-cols-12 gap-6">
                             <div className="md:col-span-4 space-y-2">
-                                <label className="text-[11px] font-black text-slate-500 uppercase ml-1 flex items-center gap-2">
+                                <label className="text-[11px] font-black uppercase ml-1 flex items-center gap-2" style={{ color: 'var(--text-muted)' }}>
                                     <UserIcon size={12} className="text-indigo-500" /> ইউজারের নাম
                                 </label>
                                 <input 
@@ -193,11 +191,12 @@ export default function Users() {
                                     placeholder="পার্থ প্রতীম"
                                     value={formData.name}
                                     onChange={e => setFormData({...formData, name: e.target.value})}
-                                    className="w-full px-5 py-4 rounded-xl sm:rounded-2xl bg-slate-50 border border-slate-100 focus:bg-white focus:ring-[6px] focus:ring-indigo-600/5 focus:border-indigo-600 font-bold outline-none transition-all placeholder:text-slate-300 text-slate-700"
+                                    className="w-full px-5 py-4 rounded-xl sm:rounded-2xl border focus:ring-[6px] focus:ring-indigo-500/10 focus:border-indigo-500 font-bold outline-none transition-all"
+                                    style={{ backgroundColor: 'var(--bg-input)', borderColor: 'var(--border-secondary)', color: 'var(--text-primary)' }}
                                 />
                             </div>
                             <div className="md:col-span-4 space-y-2">
-                                <label className="text-[11px] font-black text-slate-500 uppercase ml-1 flex items-center gap-2">
+                                <label className="text-[11px] font-black uppercase ml-1 flex items-center gap-2" style={{ color: 'var(--text-muted)' }}>
                                     <Mail size={12} className="text-indigo-500" /> ইমেইল অ্যাড্রেস
                                 </label>
                                 <input 
@@ -205,11 +204,12 @@ export default function Users() {
                                     placeholder="user@messmeal.com"
                                     value={formData.email}
                                     onChange={e => setFormData({...formData, email: e.target.value})}
-                                    className="w-full px-5 py-4 rounded-xl sm:rounded-2xl bg-slate-50 border border-slate-100 focus:bg-white focus:ring-[6px] focus:ring-indigo-600/5 focus:border-indigo-600 font-bold outline-none transition-all placeholder:text-slate-300 text-slate-700"
+                                    className="w-full px-5 py-4 rounded-xl sm:rounded-2xl border focus:ring-[6px] focus:ring-indigo-500/10 focus:border-indigo-500 font-bold outline-none transition-all"
+                                    style={{ backgroundColor: 'var(--bg-input)', borderColor: 'var(--border-secondary)', color: 'var(--text-primary)' }}
                                 />
                             </div>
                             <div className="md:col-span-4 space-y-2">
-                                <label className="text-[11px] font-black text-slate-500 uppercase ml-1 flex items-center gap-2">
+                                <label className="text-[11px] font-black uppercase ml-1 flex items-center gap-2" style={{ color: 'var(--text-muted)' }}>
                                     <Lock size={12} className="text-indigo-500" /> পাসওয়ার্ড (min. 6 chars)
                                 </label>
                                 <div className="relative">
@@ -218,12 +218,14 @@ export default function Users() {
                                         placeholder="••••••••"
                                         value={formData.password}
                                         onChange={e => setFormData({...formData, password: e.target.value})}
-                                        className="w-full px-5 pr-14 py-4 rounded-xl sm:rounded-2xl bg-slate-50 border border-slate-100 focus:bg-white focus:ring-[6px] focus:ring-indigo-600/5 focus:border-indigo-600 font-bold outline-none transition-all placeholder:text-slate-300 text-slate-700"
+                                        className="w-full px-5 pr-14 py-4 rounded-xl sm:rounded-2xl border focus:ring-[6px] focus:ring-indigo-500/10 focus:border-indigo-500 font-bold outline-none transition-all"
+                                        style={{ backgroundColor: 'var(--bg-input)', borderColor: 'var(--border-secondary)', color: 'var(--text-primary)' }}
                                     />
                                     <button 
                                         type="button"
                                         onClick={() => setShowPassword(!showPassword)}
-                                        className="absolute right-5 top-1/2 -translate-y-1/2 text-slate-300 hover:text-indigo-600 transition-colors"
+                                        className="absolute right-5 top-1/2 -translate-y-1/2 hover:text-indigo-500 transition-colors"
+                                        style={{ color: 'var(--text-muted)' }}
                                     >
                                         {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                                     </button>
@@ -249,16 +251,16 @@ export default function Users() {
 
             {/* Loading */}
             {loading ? (
-                <div className="py-40 text-center bg-white rounded-xl sm:rounded-2xl border border-dashed border-slate-200">
+                <div className="py-40 text-center rounded-xl sm:rounded-2xl border border-dashed" style={{ backgroundColor: 'var(--bg-card)', borderColor: 'var(--border-accent)' }}>
                     <div className="relative w-24 h-24 mx-auto mb-10">
-                        <div className="absolute inset-0 border-[6px] border-slate-50 border-t-indigo-600 rounded-full animate-spin"></div>
+                        <div className="absolute inset-0 border-[6px] border-t-indigo-600 rounded-full animate-spin" style={{ borderColor: 'var(--border-primary)' }}></div>
                     </div>
-                    <p className="text-slate-400 font-black uppercase text-[10px] animate-pulse">Establishing Secure Stream</p>
+                    <p className="font-black uppercase text-[10px] animate-pulse" style={{ color: 'var(--text-muted)' }}>Establishing Secure Stream</p>
                 </div>
             ) : (
                 <>
                     <div className="flex items-center justify-between px-2 pt-2">
-                        <div className="flex items-center gap-2 font-black text-[11px] text-slate-400 uppercase">
+                        <div className="flex items-center gap-2 font-black text-[11px] uppercase" style={{ color: 'var(--text-muted)' }}>
                             <Activity size={14} className="text-emerald-500" /> মেস ডিরেক্টরি
                         </div>
                         <div className="flex gap-2">
@@ -272,47 +274,48 @@ export default function Users() {
                                 key={u.id}
                                 className={`group relative p-8 rounded-xl sm:rounded-2xl border transition-all duration-500 hover:-translate-y-2 ${
                                     u.role === 'admin' 
-                                    ? 'bg-[#0F172A] border-indigo-500/30' 
-                                    : 'bg-white border-slate-100'
+                                    ? 'border-indigo-500/30 shadow-[0_0_15px_rgba(99,102,241,0.1)]' 
+                                    : ''
                                 }`}
+                                style={{ backgroundColor: 'var(--bg-card)', borderColor: u.role === 'admin' ? '' : 'var(--border-primary)' }}
                             >
                                 <div className="flex items-center gap-5 mb-10">
                                     <div className={`relative w-16 h-16 rounded-xl flex items-center justify-center border-2 transition-all duration-700 ${
                                         u.role === 'admin' 
-                                        ? 'bg-indigo-500/20 text-indigo-400 border-indigo-400/30' 
-                                        : 'bg-slate-50 text-slate-400 border-slate-100 shadow-inner'
-                                    }`}>
+                                        ? 'bg-indigo-500/10 text-indigo-500 border-indigo-500/30' 
+                                        : 'shadow-inner'
+                                    }`} style={u.role !== 'admin' ? { backgroundColor: 'var(--bg-secondary)', color: 'var(--text-muted)', borderColor: 'var(--border-primary)' } : {}}>
                                         <UserIcon size={30} />
                                         {u.role === 'admin' ? (
-                                            <div className="absolute -top-2 -right-2 bg-indigo-500 text-white p-1 rounded-lg border-2 border-[#0F172A]">
+                                            <div className="absolute -top-2 -right-2 bg-indigo-500 text-white p-1 rounded-lg border-2" style={{ borderColor: 'var(--bg-card)' }}>
                                                 <ShieldCheck size={14} />
                                             </div>
                                         ) : (
-                                            <div className="absolute -top-2 -right-2 bg-emerald-500 text-white p-1 rounded-lg border-2 border-white">
+                                            <div className="absolute -top-2 -right-2 bg-emerald-500 text-white p-1 rounded-lg border-2" style={{ borderColor: 'var(--bg-card)' }}>
                                                 <CheckCircle2 size={14} />
                                             </div>
                                         )}
                                     </div>
                                     <div className="min-w-0 flex-1">
-                                        <h4 className={`text-xl font-black truncate leading-none mb-1.5 ${u.role === 'admin' ? 'text-white' : 'text-slate-900 group-hover:text-indigo-600'}`}>
+                                        <h4 className="text-xl font-black truncate leading-none mb-1.5 transition-colors group-hover:text-indigo-500" style={{ color: 'var(--text-primary)' }}>
                                             {u.name}
                                         </h4>
                                         <div className="flex items-center gap-1.5 overflow-hidden">
-                                            <Mail size={12} className={u.role === 'admin' ? 'text-indigo-400' : 'text-slate-300'} />
-                                            <span className={`text-xs font-bold truncate ${u.role === 'admin' ? 'text-slate-500' : 'text-slate-400'}`}>{u.email}</span>
+                                            <Mail size={12} style={{ color: 'var(--text-muted)' }} />
+                                            <span className="text-xs font-bold truncate" style={{ color: 'var(--text-secondary)' }}>{u.email}</span>
                                         </div>
                                     </div>
                                 </div>
 
                                 <div className="flex flex-wrap items-center gap-4 mb-10">
-                                    <div className={`flex items-center gap-2 text-[10px] font-black uppercase ${u.role === 'admin' ? 'text-slate-500' : 'text-slate-400'}`}>
+                                    <div className="flex items-center gap-2 text-[10px] font-black uppercase" style={{ color: 'var(--text-muted)' }}>
                                         <Calendar size={14} className="opacity-50" />
                                         <span>জিম্মাদার: {u.createdAt ? new Date(u.createdAt).toLocaleDateString('bn-BD', { month: 'short', year: 'numeric' }) : '২০২৪'}</span>
                                     </div>
                                     <div className={`px-4 py-1.5 text-[10px] font-black rounded-lg border flex items-center gap-1.5 ${
                                         u.role === 'admin' 
-                                        ? 'bg-indigo-600 text-white border-indigo-400/20' 
-                                        : 'bg-indigo-50/50 text-indigo-600 border-indigo-100'
+                                        ? 'bg-indigo-600 text-white border-indigo-500' 
+                                        : 'bg-indigo-500/10 text-indigo-500 border-indigo-500/20'
                                     }`}>
                                         <Fingerprint size={10} /> {u.role === 'admin' ? 'অ্যাডমিন' : 'সদস্য'}
                                     </div>
@@ -323,8 +326,8 @@ export default function Users() {
                                         onClick={() => handleRoleUpdate(u.id, u.role, u.name)}
                                         className={`flex items-center justify-center gap-2 py-4 rounded-xl sm:rounded-2xl font-black text-[11px] transition-all border ${
                                             u.role === 'admin' 
-                                            ? 'bg-white text-rose-600 border-white hover:bg-rose-50' 
-                                            : 'bg-indigo-600 text-white border-indigo-600'
+                                            ? 'hover:bg-rose-500/10 text-rose-500 border-rose-500/20' 
+                                            : 'bg-indigo-600 text-white border-indigo-600 hover:bg-indigo-700'
                                         }`}
                                     >
                                         <Shield size={14} /> {u.role === 'admin' ? 'রোল বদলান' : 'অ্যাডমিন করুন'}
@@ -332,22 +335,16 @@ export default function Users() {
                                     
                                     <button
                                         onClick={() => handleResetPassword(u.email, u.name)}
-                                        className={`flex items-center justify-center gap-2 py-4 rounded-xl sm:rounded-2xl font-black text-[11px] transition-all border ${
-                                            u.role === 'admin' 
-                                            ? 'bg-white/5 text-white border-white/10 hover:bg-white/10' 
-                                            : 'bg-slate-50 text-slate-600 border-slate-100 hover:bg-white'
-                                        }`}
+                                        className="flex items-center justify-center gap-2 py-4 rounded-xl sm:rounded-2xl font-black text-[11px] transition-all border hover:border-indigo-500/50"
+                                        style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-secondary)', color: 'var(--text-secondary)' }}
                                     >
-                                        <Key size={14} className="text-amber-400" /> রিসেট লিংক
+                                        <Key size={14} className="text-amber-500" /> রিসেট লিংক
                                     </button>
                                     
                                     <button
                                         onClick={() => handleDeleteUser(u.id, u.name)}
-                                        className={`col-span-2 flex items-center justify-center gap-2 py-4 rounded-xl sm:rounded-2xl font-black text-[11px] transition-all ${
-                                            u.role === 'admin' 
-                                            ? 'text-slate-600 hover:text-rose-400' 
-                                            : 'text-slate-400 hover:text-rose-600 hover:bg-rose-50/50'
-                                        }`}
+                                        className="col-span-2 flex items-center justify-center gap-2 py-4 rounded-xl sm:rounded-2xl font-black text-[11px] transition-all hover:bg-rose-500/10 hover:text-rose-500"
+                                        style={{ color: 'var(--text-muted)' }}
                                     >
                                         <Trash2 size={16} /> পার্মানেন্ট ডিলিট
                                     </button>

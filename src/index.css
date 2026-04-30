@@ -5,9 +5,131 @@
   --font-sans: "Hind Siliguri", "Inter", sans-serif;
 }
 
+:root {
+  /* Light theme base */
+  --bg-primary: #F8FAFC;
+  --bg-secondary: #F1F5F9;
+  --bg-card: #FFFFFF;
+  --bg-card-hover: #F8FAFC;
+  --bg-elevated: #FFFFFF;
+  --bg-input: #F8FAFC;
+  
+  --border-primary: #E2E8F0;
+  --border-secondary: #CBD5E1;
+  --border-accent: #94A3B8;
+
+  --text-primary: #0F172A;
+  --text-secondary: #334155;
+  --text-muted: #475569;
+  --text-dim: #64748B;
+
+  /* Accent colors (darker for readability on light bg) */
+  --emerald: #059669;
+  --emerald-dim: #D1FAE5;
+  --rose: #E11D48;
+  --rose-dim: #FFE4E6;
+  --amber: #D97706;
+  --amber-dim: #FEF3C7;
+  --indigo: #4F46E5;
+  --indigo-dim: #E0E7FF;
+  --blue: #2563EB;
+  --blue-dim: #DBEAFE;
+  --violet: #8B5CF6;
+  --violet-dim: #EDE9FE;
+  --brand: #10B981;
+  --brand-dark: #059669;
+}
+
+[data-theme='dark'] {
+  /* Dark theme base */
+  --bg-primary: #0F1117;
+  --bg-secondary: #181A20;
+  --bg-card: #1E2028;
+  --bg-card-hover: #252730;
+  --bg-elevated: #282A33;
+  --bg-input: #22242D;
+  
+  --border-primary: #2A2D38;
+  --border-secondary: #33363F;
+  --border-accent: #3A3D48;
+
+  --text-primary: #F0F1F5;
+  --text-secondary: #B0B3C0;
+  --text-muted: #7A7E8F;
+  --text-dim: #5A5E6F;
+
+  /* Accent colors (softer for dark bg) */
+  --emerald: #34D399;
+  --emerald-dim: #065F46;
+  --rose: #FB7185;
+  --rose-dim: #4C0D1B;
+  --amber: #FBBF24;
+  --amber-dim: #451A03;
+  --indigo: #818CF8;
+  --indigo-dim: #2E1065;
+  --blue: #60A5FA;
+  --blue-dim: #1E3A5F;
+  --violet: #A78BFA;
+  --violet-dim: #2E1065;
+  --brand: #34D399;
+  --brand-dark: #065F46;
+}
+
 body {
-  background-color: #F8FAFC;
+  background-color: var(--bg-primary);
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  color: var(--text-primary);
+}
+
+/* Standardize tiny text sizes for better readability and consistency */
+.text-\[9px\], .text-\[10px\], .text-\[11px\] {
+  font-size: 0.75rem !important; /* 12px equivalent to text-xs */
+  line-height: 1rem !important;
+}
+
+@media (max-width: 640px) {
+  .text-xs {
+    font-size: 0.8125rem !important; /* Bump up xs on mobile slightly to 13px */
+  }
+}
+
+/* Removed tabular-nums to prevent Bangla font fallback issues */
+/* Custom scrollbar for dark theme */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: var(--bg-secondary);
+  border-radius: 8px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: var(--border-accent);
+  border-radius: 8px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
+}
+
+/* Global scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg-primary);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border-accent);
+  border-radius: 8px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
+}
+
+/* Selection color */
+::selection {
+  background: var(--brand);
+  color: #000;
 }

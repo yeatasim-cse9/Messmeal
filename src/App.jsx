@@ -13,6 +13,10 @@ import Summary from './pages/Summary';
 import Bazaar from './pages/Bazaar';
 import Settings from './pages/Settings';
 import Users from './pages/Users';
+import Profile from './pages/Profile';
+import Migration from './pages/Migration';
+import SuperAdminDashboard from './pages/SuperAdminDashboard';
+import ProtectedRoute from './components/ProtectedRoute';
 
 import ScrollToTop from './components/ScrollToTop';
 
@@ -21,10 +25,10 @@ function MainApp() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-white flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: 'var(--bg-primary)' }}>
         <div className="flex flex-col items-center">
-          <div className="w-16 h-16 border-4 border-slate-100 border-t-[#1A3A2A] rounded-full mb-4"></div>
-          <p className="text-slate-400 font-medium">লোড হচ্ছে...</p>
+          <div className="w-16 h-16 border-4 border-emerald-900 border-t-emerald-400 rounded-full mb-4 animate-spin"></div>
+          <p className="font-medium" style={{ color: 'var(--text-muted)' }}>লোড হচ্ছে...</p>
         </div>
       </div>
     );
@@ -48,6 +52,17 @@ function MainApp() {
               <Route path="bazaar" element={<Bazaar />} />
               <Route path="users" element={<Users />} />
               <Route path="settings" element={<Settings />} />
+              <Route path="profile" element={<Profile />} />
+              <Route path="migration" element={
+                <ProtectedRoute requireSuperAdmin>
+                  <Migration />
+                </ProtectedRoute>
+              } />
+              <Route path="super-admin" element={
+                <ProtectedRoute requireSuperAdmin>
+                  <SuperAdminDashboard />
+                </ProtectedRoute>
+              } />
               <Route path="*" element={<Navigate to="/" replace />} />
             </Route>
         </Routes>

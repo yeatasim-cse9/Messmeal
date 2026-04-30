@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useMemo } from 'react';
 import {
-    useMembers, useMeals, useExpenses, useDeposits, useUtilities, useSettings, getCurrentMonth
+    useMembers, useMeals, useExpenses, useDeposits, useUtilities, useSettings, getCurrentMonth, useUsers
 } from '../hooks/useFirestore';
 
 const DataContext = createContext(null);
@@ -18,11 +18,12 @@ export function DataProvider({ children }) {
 
     // Firestore hooks
     const { members, loading: membersLoading, addMember, removeMember, updateMember } = useMembers(selectedMonth);
-    const { meals, loading: mealsLoading, setMealValue } = useMeals(selectedMonth);
-    const { expenses, loading: expensesLoading, addExpense, removeExpense } = useExpenses(selectedMonth);
+    const { meals, loading: mealsLoading, setMealValue, setBulkMeals } = useMeals(selectedMonth);
+    const { expenses, loading: expensesLoading, addExpense, removeExpense, updateExpense } = useExpenses(selectedMonth);
     const { deposits, loading: depositsLoading, addDeposit, removeDeposit } = useDeposits(selectedMonth);
     const { utilities, loading: utilitiesLoading, setUtility } = useUtilities(selectedMonth);
     const { settings, loading: settingsLoading, updateSettings } = useSettings();
+    const { users, loading: usersLoading } = useUsers();
 
     const mealCategories = settings?.mealCategories || [];
     const billCategories = settings?.billCategories || [];
@@ -35,14 +36,34 @@ export function DataProvider({ children }) {
         const daysInCurrentMonth = getDaysInMonth(selectedMonth);
 
         // Calculate total meals and meals per member
-        Object.values(meals).forEach(dayRecord => {
-            Object.entries(dayRecord).forEach(([memberId, vals]) => {
-                const dMeals = mealCategories.reduce((sum, cat) => sum + (Number(vals[cat.id]) || 0), 0);
+        const now = new Date();
+        const currentMonthStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+        
+        let limitDay = daysInCurrentMonth;
+        if (selectedMonth === currentMonthStr) {
+            limitDay = now.getDate(); // count up to today for current month
+        } else if (selectedMonth > currentMonthStr) {
+            limitDay = 0; // future month, no meals happened yet
+        }
+
+        for (let d = 1; d <= limitDay; d++) {
+            const dateStr = `${selectedMonth}-${String(d).padStart(2, '0')}`;
+            const dayRecord = meals[dateStr] || {};
+            
+            members.forEach(m => {
+                const memberData = dayRecord[m.id] || {};
+                let dMeals = 0;
+                mealCategories.forEach(cat => {
+                    const val = memberData[cat.id];
+                    // If undefined, default is 1. Empty string is treated as 0 (Number("") === 0)
+                    dMeals += (val === undefined) ? 1 : Number(val);
+                });
+                
                 totalMeals += dMeals;
-                if (!mealsByMember[memberId]) mealsByMember[memberId] = 0;
-                mealsByMember[memberId] += dMeals;
+                if (!mealsByMember[m.id]) mealsByMember[m.id] = 0;
+                mealsByMember[m.id] += dMeals;
             });
-        });
+        }
 
         // Extract utility values safely
         // Split utilities into fixed and advance based on bill category type
@@ -87,6 +108,16 @@ export function DataProvider({ children }) {
             .filter(e => e.type === 'baki')
             .reduce((sum, e) => sum + Number(e.amount), 0);
 
+        // Baki payments (actual cash given to shop from fund)
+        const totalBakiPaid = expenses
+            .filter(e => e.type === 'baki_payment')
+            .reduce((sum, e) => sum + Number(e.amount), 0);
+
+        // Rent payments (actual cash paid for house rent from fund)
+        const totalRentPaid = expenses
+            .filter(e => e.type === 'rent_payment')
+            .reduce((sum, e) => sum + Number(e.amount), 0);
+
         const totalDeposit = deposits.reduce((sum, e) => sum + Number(e.amount), 0);
         const totalHouseRent = members.reduce((sum, m) => sum + (Number(m.houseRent) || 0), 0);
         const mealRate = totalMeals > 0 ? (totalMessFoodCost + totalBakiExpense) / totalMeals : 0;
@@ -107,11 +138,12 @@ export function DataProvider({ children }) {
             .reduce((sum, m) => sum + (Number(m.houseRent) || 0), 0);
         const extraRentPerBillable = billableMemberCount > 0 ? exemptRent / billableMemberCount : 0;
 
-        // Subtract all non-baki expenses that were paid from the mess fund
-        const messFundExpenses = expenses
+        // Subtract all fund-source expenses (including baki payments)
+        const totalFundSpent = expenses
             .filter(e => e.type !== 'baki' && e.fundSource !== 'own')
             .reduce((sum, e) => sum + Number(e.amount), 0);
-        const managerCashInHand = totalDeposit - messFundExpenses - paidFromFundUtilities;
+        
+        const managerCashInHand = totalDeposit - totalFundSpent - paidFromFundUtilities;
 
         const stats = members.map(m => {
             const mMeals = mealsByMember[m.id] || 0;
@@ -155,6 +187,8 @@ export function DataProvider({ children }) {
             totalMeals,
             totalMessFoodCost,
             totalBakiExpense,
+            totalBakiPaid,
+            totalRentPaid,
             totalDeposit,
             totalHouseRent,
             mealRate,
@@ -181,9 +215,11 @@ export function DataProvider({ children }) {
         updateMember,
         meals,
         setMealValue,
+        setBulkMeals,
         expenses,
         addExpense,
         removeExpense,
+        updateExpense,
         deposits,
         addDeposit,
         removeDeposit,
@@ -194,7 +230,9 @@ export function DataProvider({ children }) {
         mealCategories,
         billCategories,
         ...calculations,
-        loading
+        users,
+        usersLoading,
+        loading: loading || usersLoading
     };
 
     return (

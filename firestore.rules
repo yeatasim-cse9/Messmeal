@@ -1,0 +1,39 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    function isSuperAdmin() {
+      return get(/databases/$(database)/documents/global_users/$(request.auth.uid)).data.globalRole == 'super_admin';
+    }
+
+    function belongsToMess(messId) {
+      return get(/databases/$(database)/documents/global_users/$(request.auth.uid)).data.messId == messId;
+    }
+
+    match /global_users/{userId} {
+      // Users can read/write their own profile or if they are super_admin.
+      // Also allow reading if they belong to the same mess (needed for the Users page).
+      allow read: if request.auth != null && (request.auth.uid == userId || isSuperAdmin() || resource.data.messId == get(/databases/$(database)/documents/global_users/$(request.auth.uid)).data.messId);
+      // Allow write if same user, super admin, or if an admin is writing to a user in their own mess
+      allow write: if request.auth != null && (
+        request.auth.uid == userId || 
+        isSuperAdmin() || 
+        (
+          get(/databases/$(database)/documents/global_users/$(request.auth.uid)).data.role == 'admin' &&
+          request.resource.data.messId == get(/databases/$(database)/documents/global_users/$(request.auth.uid)).data.messId
+        )
+      );
+    }
+
+    match /messes/{messId} {
+      // Allow access if the user's messId matches the document messId, or if super_admin
+      allow read, write: if request.auth != null && (belongsToMess(messId) || isSuperAdmin());
+      
+      // Subcollections (months, members, meals, etc.)
+      match /{document=**} {
+        allow read, write: if request.auth != null && (belongsToMess(messId) || isSuperAdmin());
+      }
+    }
+  }
+}
