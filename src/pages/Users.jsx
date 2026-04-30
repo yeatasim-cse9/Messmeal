@@ -108,30 +108,30 @@ export default function Users() {
     return (
         <div className="space-y-6 pb-12">
             {/* Header Section */}
-            <div className="relative overflow-hidden p-8 sm:p-14 rounded-xl sm:rounded-2xl shadow-2xl border" style={{ backgroundColor: 'var(--bg-card)', borderColor: 'var(--border-primary)' }}>
-                <div className="absolute top-[-10%] right-[-5%] w-[500px] h-[500px] bg-indigo-600/10 rounded-full blur-[120px]"></div>
-                <div className="absolute bottom-[-10%] left-[-5%] w-[400px] h-[400px] bg-emerald-500/10 rounded-full blur-[100px]"></div>
+            <div className="relative overflow-hidden p-6 sm:p-10 xl:p-14 rounded-xl sm:rounded-2xl shadow-2xl border" style={{ backgroundColor: 'var(--bg-card)', borderColor: 'var(--border-primary)' }}>
+                <div className="absolute top-[-10%] right-[-5%] w-64 h-64 sm:w-[400px] sm:h-[400px] lg:w-[500px] lg:h-[500px] bg-indigo-600/10 rounded-full blur-[80px] lg:blur-[120px]"></div>
+                <div className="absolute bottom-[-10%] left-[-5%] w-56 h-56 sm:w-[300px] sm:h-[300px] lg:w-[400px] lg:h-[400px] bg-emerald-500/10 rounded-full blur-[60px] lg:blur-[100px]"></div>
 
-                <div className="relative z-10 flex flex-col xl:flex-row justify-between items-start xl:items-end gap-10">
-                    <div className="flex-1 space-y-4">
+                <div className="relative z-10 flex flex-col xl:flex-row justify-between items-start xl:items-end gap-8 xl:gap-10">
+                    <div className="flex-1 space-y-4 w-full">
                         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border" style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-secondary)' }}>
                             <ShieldCheck size={14} className="text-indigo-500" />
                             <span className="text-[10px] font-black uppercase text-indigo-500">Administrative Suite</span>
                         </div>
-                        <h1 className="text-4xl sm:text-6xl font-black tracking-tight leading-[1.1]" style={{ color: 'var(--text-primary)' }}>
+                        <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black tracking-tight leading-[1.1]" style={{ color: 'var(--text-primary)' }}>
                             ইউজার <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 to-emerald-500">ম্যানেজমেন্ট</span>
                         </h1>
-                        <p className="max-w-2xl text-base sm:text-lg font-medium leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
+                        <p className="max-w-2xl text-sm sm:text-base lg:text-lg font-medium leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
                             অ্যাপের সকল সদস্যদের রোল পরিচালনা করুন এবং তাদের এক্সেস লেভেল সেট করুন।
                         </p>
                     </div>
 
-                    <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 w-full xl:w-auto">
+                    <div className="flex flex-col lg:flex-row items-stretch lg:items-center gap-4 w-full xl:w-auto">
                         <button
                             onClick={() => setIsAddingMode(!isAddingMode)}
-                            className={`flex items-center justify-center gap-3 px-8 py-5 rounded-xl sm:rounded-2xl font-black text-sm uppercase transition-all active:scale-95 group relative overflow-hidden ${isAddingMode
-                                    ? 'bg-rose-500 text-white shadow-2xl shadow-rose-500/20'
-                                    : 'bg-indigo-600 text-white shadow-xl hover:bg-indigo-700'
+                            className={`flex items-center justify-center gap-2 sm:gap-3 px-6 sm:px-8 py-4 sm:py-5 rounded-xl sm:rounded-2xl font-black text-xs sm:text-sm uppercase transition-all active:scale-95 group relative overflow-hidden w-full lg:w-auto shrink-0 ${isAddingMode
+                                ? 'bg-rose-500 text-white shadow-2xl shadow-rose-500/20'
+                                : 'bg-indigo-600 text-white shadow-xl hover:bg-indigo-700'
                                 }`}
                         >
                             {isAddingMode ? (
@@ -141,23 +141,23 @@ export default function Users() {
                             )}
                         </button>
 
-                        <div className="flex items-center gap-4">
-                            <div className="flex items-center gap-4 px-6 py-4 rounded-xl sm:rounded-2xl border group" style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-secondary)' }}>
-                                <div className="w-12 h-12 rounded-xl flex items-center justify-center border group-hover:scale-110 transition-transform" style={{ backgroundColor: 'var(--bg-card)', borderColor: 'var(--border-primary)' }}>
-                                    <UsersIcon size={24} className="text-indigo-500" />
+                        <div className="grid grid-cols-2 gap-3 sm:gap-4 w-full lg:w-auto">
+                            <div className="flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-left gap-3 sm:gap-4 px-4 sm:px-6 py-4 rounded-xl sm:rounded-2xl border group" style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-secondary)' }}>
+                                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center border group-hover:scale-110 transition-transform shrink-0" style={{ backgroundColor: 'var(--bg-card)', borderColor: 'var(--border-primary)' }}>
+                                    <UsersIcon size={20} className="text-indigo-500 sm:w-6 sm:h-6" />
                                 </div>
-                                <div className="flex flex-col">
-                                    <span className="text-3xl font-black leading-none" style={{ color: 'var(--text-primary)' }}>{users.length}</span>
-                                    <span className="text-[10px] font-black uppercase mt-1" style={{ color: 'var(--text-muted)' }}>সক্রিয় সদস্য</span>
+                                <div className="flex flex-col min-w-0">
+                                    <span className="text-2xl sm:text-3xl font-black leading-none" style={{ color: 'var(--text-primary)' }}>{users.length}</span>
+                                    <span className="text-[9px] sm:text-[10px] font-black uppercase mt-1 sm:mt-1.5 truncate" style={{ color: 'var(--text-muted)' }}>সক্রিয় সদস্য</span>
                                 </div>
                             </div>
-                            <div className="flex items-center gap-4 px-6 py-4 rounded-xl sm:rounded-2xl border group" style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-secondary)' }}>
-                                <div className="w-12 h-12 bg-emerald-500/10 rounded-xl flex items-center justify-center border border-emerald-500/10 group-hover:scale-110 transition-transform">
-                                    <ShieldCheck size={24} className="text-emerald-500" />
+                            <div className="flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-left gap-3 sm:gap-4 px-4 sm:px-6 py-4 rounded-xl sm:rounded-2xl border group" style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-secondary)' }}>
+                                <div className="w-10 h-10 sm:w-12 sm:h-12 bg-emerald-500/10 rounded-xl flex items-center justify-center border border-emerald-500/10 group-hover:scale-110 transition-transform shrink-0">
+                                    <ShieldCheck size={20} className="text-emerald-500 sm:w-6 sm:h-6" />
                                 </div>
-                                <div className="flex flex-col">
-                                    <span className="text-3xl font-black text-emerald-500 leading-none">{adminCount}</span>
-                                    <span className="text-[10px] font-black uppercase mt-1" style={{ color: 'var(--text-muted)' }}>বর্তমান অ্যাডমিন</span>
+                                <div className="flex flex-col min-w-0">
+                                    <span className="text-2xl sm:text-3xl font-black text-emerald-500 leading-none">{adminCount}</span>
+                                    <span className="text-[9px] sm:text-[10px] font-black uppercase mt-1 sm:mt-1.5 truncate" style={{ color: 'var(--text-muted)' }}>বর্তমান অ্যাডমিন</span>
                                 </div>
                             </div>
                         </div>
@@ -167,16 +167,16 @@ export default function Users() {
 
             {/* Add Form */}
             {isAddingMode && (
-                <div className="p-8 sm:p-10 rounded-xl sm:rounded-2xl border shadow-2xl relative overflow-hidden" style={{ backgroundColor: 'var(--bg-card)', borderColor: 'var(--border-primary)' }}>
-                    <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-500/5 rounded-full blur-[80px] -mr-32 -mt-32"></div>
+                <div className="p-6 sm:p-10 rounded-xl sm:rounded-2xl border shadow-2xl relative overflow-hidden" style={{ backgroundColor: 'var(--bg-card)', borderColor: 'var(--border-primary)' }}>
+                    <div className="absolute top-0 right-0 w-48 h-48 sm:w-64 sm:h-64 bg-indigo-500/5 rounded-full blur-[60px] sm:blur-[80px] -mr-24 sm:-mr-32 -mt-24 sm:-mt-32"></div>
                     <div className="relative">
-                        <div className="flex items-center gap-4 mb-8">
-                            <div className="w-14 h-14 bg-indigo-600 text-white rounded-xl flex items-center justify-center shadow-lg">
-                                <UserPlus size={28} />
+                        <div className="flex flex-col sm:flex-row sm:items-center gap-4 mb-8 text-center sm:text-left">
+                            <div className="w-12 h-12 sm:w-14 sm:h-14 bg-indigo-600 text-white rounded-xl flex items-center justify-center shadow-lg mx-auto sm:mx-0 shrink-0">
+                                <UserPlus size={24} className="sm:w-7 sm:h-7" />
                             </div>
                             <div>
-                                <h3 className="text-2xl font-black leading-tight" style={{ color: 'var(--text-primary)' }}>নতুন ইউজার একাউন্ট</h3>
-                                <p className="font-bold text-sm" style={{ color: 'var(--text-muted)' }}>মেম্বারের জন্য সিকিউর এক্সেস তৈরি করুন</p>
+                                <h3 className="text-xl sm:text-2xl font-black leading-tight" style={{ color: 'var(--text-primary)' }}>নতুন ইউজার একাউন্ট</h3>
+                                <p className="font-bold text-xs sm:text-sm mt-1" style={{ color: 'var(--text-muted)' }}>মেম্বারের জন্য সিকিউর এক্সেস তৈরি করুন</p>
                             </div>
                         </div>
 
@@ -234,12 +234,12 @@ export default function Users() {
                                 <button
                                     type="submit"
                                     disabled={isCreating}
-                                    className="w-full md:w-auto px-16 py-4 rounded-xl sm:rounded-2xl bg-[#0F172A] text-white font-black uppercase shadow-2xl hover:bg-black active:scale-95 transition-all disabled:bg-slate-200 flex items-center justify-center gap-4 group"
+                                    className="w-full md:w-auto px-6 sm:px-16 py-4 rounded-xl sm:rounded-2xl bg-[#0F172A] text-white font-black uppercase shadow-2xl hover:bg-black active:scale-95 transition-all disabled:bg-slate-200 flex items-center justify-center gap-3 sm:gap-4 group text-sm sm:text-base"
                                 >
                                     {isCreating ? (
-                                        <><div className="w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin"></div> তৈরি হচ্ছে...</>
+                                        <><div className="w-4 h-4 sm:w-5 sm:h-5 border-2 border-white/20 border-t-white rounded-full animate-spin"></div> তৈরি হচ্ছে...</>
                                     ) : (
-                                        <><span className="text-indigo-400 group-hover:translate-x-1 transition-transform"><ArrowRight size={20} /></span> অ্যাকাউন্ট তৈরি করুন</>
+                                        <><span className="text-indigo-400 group-hover:translate-x-1 transition-transform"><ArrowRight size={18} className="sm:w-5 sm:h-5" /></span> অ্যাকাউন্ট তৈরি করুন</>
                                     )}
                                 </button>
                             </div>
@@ -271,77 +271,77 @@ export default function Users() {
                         {users.map((u) => (
                             <div
                                 key={u.id}
-                                className={`group relative p-8 rounded-xl sm:rounded-2xl border transition-all duration-500 hover:-translate-y-2 ${u.role === 'admin'
-                                        ? 'border-indigo-500/30 shadow-[0_0_15px_rgba(99,102,241,0.1)]'
-                                        : ''
+                                className={`group relative p-5 sm:p-8 rounded-xl sm:rounded-2xl border transition-all duration-500 hover:-translate-y-2 flex flex-col ${u.role === 'admin'
+                                    ? 'border-indigo-500/30 shadow-[0_0_15px_rgba(99,102,241,0.1)]'
+                                    : ''
                                     }`}
                                 style={{ backgroundColor: 'var(--bg-card)', borderColor: u.role === 'admin' ? '' : 'var(--border-primary)' }}
                             >
-                                <div className="flex items-center gap-5 mb-10">
-                                    <div className={`relative w-16 h-16 rounded-xl flex items-center justify-center border-2 transition-all duration-700 ${u.role === 'admin'
-                                            ? 'bg-indigo-500/10 text-indigo-500 border-indigo-500/30'
-                                            : 'shadow-inner'
+                                <div className="flex items-center gap-4 sm:gap-5 mb-6 sm:mb-10">
+                                    <div className={`relative w-12 h-12 sm:w-16 sm:h-16 rounded-xl flex items-center justify-center border-2 transition-all duration-700 shrink-0 ${u.role === 'admin'
+                                        ? 'bg-indigo-500/10 text-indigo-500 border-indigo-500/30'
+                                        : 'shadow-inner'
                                         }`} style={u.role !== 'admin' ? { backgroundColor: 'var(--bg-secondary)', color: 'var(--text-muted)', borderColor: 'var(--border-primary)' } : {}}>
-                                        <UserIcon size={30} />
+                                        <UserIcon size={24} className="sm:w-[30px] sm:h-[30px]" />
                                         {u.role === 'admin' ? (
                                             <div className="absolute -top-2 -right-2 bg-indigo-500 text-white p-1 rounded-lg border-2" style={{ borderColor: 'var(--bg-card)' }}>
-                                                <ShieldCheck size={14} />
+                                                <ShieldCheck size={12} className="sm:w-3.5 sm:h-3.5" />
                                             </div>
                                         ) : (
                                             <div className="absolute -top-2 -right-2 bg-emerald-500 text-white p-1 rounded-lg border-2" style={{ borderColor: 'var(--bg-card)' }}>
-                                                <CheckCircle2 size={14} />
+                                                <CheckCircle2 size={12} className="sm:w-3.5 sm:h-3.5" />
                                             </div>
                                         )}
                                     </div>
                                     <div className="min-w-0 flex-1">
-                                        <h4 className="text-xl font-black truncate leading-none mb-1.5 transition-colors group-hover:text-indigo-500" style={{ color: 'var(--text-primary)' }}>
+                                        <h4 className="text-lg sm:text-xl font-black truncate leading-none mb-1.5 transition-colors group-hover:text-indigo-500" style={{ color: 'var(--text-primary)' }}>
                                             {u.name}
                                         </h4>
                                         <div className="flex items-center gap-1.5 overflow-hidden">
-                                            <Mail size={12} style={{ color: 'var(--text-muted)' }} />
-                                            <span className="text-xs font-bold truncate" style={{ color: 'var(--text-secondary)' }}>{u.email}</span>
+                                            <Mail size={12} className="shrink-0" style={{ color: 'var(--text-muted)' }} />
+                                            <span className="text-[11px] sm:text-xs font-bold truncate" style={{ color: 'var(--text-secondary)' }}>{u.email}</span>
                                         </div>
                                     </div>
                                 </div>
 
-                                <div className="flex flex-wrap items-center gap-4 mb-10">
-                                    <div className="flex items-center gap-2 text-[10px] font-black uppercase" style={{ color: 'var(--text-muted)' }}>
-                                        <Calendar size={14} className="opacity-50" />
+                                <div className="flex flex-wrap items-center gap-2 sm:gap-4 mb-6 sm:mb-10 mt-auto">
+                                    <div className="flex items-center gap-1.5 sm:gap-2 text-[9px] sm:text-[10px] font-black uppercase" style={{ color: 'var(--text-muted)' }}>
+                                        <Calendar size={12} className="opacity-50 sm:w-3.5 sm:h-3.5" />
                                         <span>জিম্মাদার: {u.createdAt ? new Date(u.createdAt).toLocaleDateString('bn-BD', { month: 'short', year: 'numeric' }) : '২০২৪'}</span>
                                     </div>
-                                    <div className={`px-4 py-1.5 text-[10px] font-black rounded-lg border flex items-center gap-1.5 ${u.role === 'admin'
-                                            ? 'bg-indigo-600 text-white border-indigo-500'
-                                            : 'bg-indigo-500/10 text-indigo-500 border-indigo-500/20'
+                                    <div className={`px-3 sm:px-4 py-1 sm:py-1.5 text-[9px] sm:text-[10px] font-black rounded-lg border flex items-center gap-1.5 ml-auto sm:ml-0 ${u.role === 'admin'
+                                        ? 'bg-indigo-600 text-white border-indigo-500'
+                                        : 'bg-indigo-500/10 text-indigo-500 border-indigo-500/20'
                                         }`}>
                                         <Fingerprint size={10} /> {u.role === 'admin' ? 'অ্যাডমিন' : 'সদস্য'}
                                     </div>
                                 </div>
 
-                                <div className="grid grid-cols-2 gap-4">
+                                <div className="flex flex-col sm:grid sm:grid-cols-2 gap-3 sm:gap-4 mt-auto">
                                     <button
                                         onClick={() => handleRoleUpdate(u.id, u.role, u.name)}
-                                        className={`flex items-center justify-center gap-2 py-4 rounded-xl sm:rounded-2xl font-black text-[11px] transition-all border ${u.role === 'admin'
-                                                ? 'hover:bg-rose-500/10 text-rose-500 border-rose-500/20'
-                                                : 'bg-indigo-600 text-white border-indigo-600 hover:bg-indigo-700'
+                                        className={`flex items-center justify-center gap-2 py-3.5 sm:py-4 px-3 rounded-xl sm:rounded-2xl font-black text-[10px] sm:text-[11px] transition-all border w-full ${u.role === 'admin'
+                                            ? 'hover:bg-rose-500/10 text-rose-500 border-rose-500/20'
+                                            : 'bg-indigo-600 text-white border-indigo-600 hover:bg-indigo-700'
                                             }`}
                                     >
-                                        <Shield size={14} /> {u.role === 'admin' ? 'রোল বদলান' : 'অ্যাডমিন করুন'}
+                                        <Shield size={14} className="shrink-0" /> <span className="truncate">{u.role === 'admin' ? 'রোল বদলান' : 'অ্যাডমিন করুন'}</span>
                                     </button>
 
                                     <button
                                         onClick={() => handleResetPassword(u.email, u.name)}
-                                        className="flex items-center justify-center gap-2 py-4 rounded-xl sm:rounded-2xl font-black text-[11px] transition-all border hover:border-indigo-500/50"
+                                        className="flex items-center justify-center gap-2 py-3.5 sm:py-4 px-3 rounded-xl sm:rounded-2xl font-black text-[10px] sm:text-[11px] transition-all border hover:border-indigo-500/50 w-full"
                                         style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-secondary)', color: 'var(--text-secondary)' }}
                                     >
-                                        <Key size={14} className="text-amber-500" /> রিসেট লিংক
+                                        <Key size={14} className="text-amber-500 shrink-0" /> <span className="truncate">রিসেট লিংক</span>
                                     </button>
 
                                     <button
                                         onClick={() => handleDeleteUser(u.id, u.name)}
-                                        className="col-span-2 flex items-center justify-center gap-2 py-4 rounded-xl sm:rounded-2xl font-black text-[11px] transition-all hover:bg-rose-500/10 hover:text-rose-500"
+                                        className="sm:col-span-2 flex items-center justify-center gap-2 py-3.5 sm:py-4 px-3 rounded-xl sm:rounded-2xl font-black text-[10px] sm:text-[11px] transition-all hover:bg-rose-500/10 hover:text-rose-500 w-full"
                                         style={{ color: 'var(--text-muted)' }}
                                     >
-                                        <Trash2 size={16} /> পার্মানেন্ট ডিলিট
+                                        <Trash2 size={14} className="sm:w-4 sm:h-4 shrink-0" /> <span className="truncate">পার্মানেন্ট ডিলিট</span>
                                     </button>
                                 </div>
                             </div>

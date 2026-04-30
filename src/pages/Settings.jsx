@@ -222,7 +222,7 @@ export default function Settings() {
                             </div>
                         ))}
                     </div>
-                    <div className="flex flex-col xs:flex-row gap-2 sm:gap-3">
+                    <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
                         <input
                             type="text"
                             placeholder="যেমন: শুক্রবার স্পেশাল"
@@ -235,7 +235,7 @@ export default function Settings() {
                             <select
                                 value={newMealCat.color}
                                 onChange={e => setNewMealCat({ ...newMealCat, color: e.target.value })}
-                                className="flex-1 xs:flex-initial px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg sm:rounded-xl border font-bold text-sm sm:text-base"
+                                className="flex-1 sm:flex-initial px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg sm:rounded-xl border font-bold text-sm sm:text-base"
                                 style={{ backgroundColor: 'var(--bg-input)', borderColor: 'var(--border-secondary)', color: 'var(--text-primary)' }}
                             >
                                 <option value="slate">সাদা</option>
@@ -278,7 +278,7 @@ export default function Settings() {
                             );
                         })}
                     </div>
-                    <div className="flex flex-col xs:flex-row gap-2 sm:gap-3">
+                    <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
                         <input
                             type="text"
                             placeholder="যেমন: গ্যাস বিল"
@@ -291,7 +291,7 @@ export default function Settings() {
                             <select
                                 value={newBillCat.billType}
                                 onChange={e => setNewBillCat({ ...newBillCat, billType: e.target.value })}
-                                className="flex-1 xs:flex-initial px-2 sm:px-3 py-2.5 sm:py-3 rounded-lg sm:rounded-xl border font-bold text-xs sm:text-sm max-w-[90px] sm:max-w-[110px]"
+                                className="flex-1 sm:flex-initial w-full sm:w-auto px-2 sm:px-3 py-2.5 sm:py-3 rounded-lg sm:rounded-xl border font-bold text-xs sm:text-sm"
                                 style={{ backgroundColor: 'var(--bg-input)', borderColor: 'var(--border-secondary)', color: 'var(--text-primary)' }}
                             >
                                 <option value="fixed">ফিক্সড</option>
@@ -300,7 +300,7 @@ export default function Settings() {
                             <select
                                 value={newBillCat.icon}
                                 onChange={e => setNewBillCat({ ...newBillCat, icon: e.target.value })}
-                                className="flex-1 xs:flex-initial px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg sm:rounded-xl border font-bold text-sm sm:text-base max-w-[100px] sm:max-w-[120px]"
+                                className="flex-1 sm:flex-initial w-full sm:w-auto px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg sm:rounded-xl border font-bold text-sm sm:text-base"
                                 style={{ backgroundColor: 'var(--bg-input)', borderColor: 'var(--border-secondary)', color: 'var(--text-primary)' }}
                             >
                                 {Object.keys(IconMap).map(iconName => <option key={iconName} value={iconName}>{iconName}</option>)}
@@ -354,7 +354,7 @@ export default function Settings() {
                                     <select
                                         value={member.linkedEmail || ""}
                                         onChange={(e) => handleLinkUser(member.id, e.target.value)}
-                                        className="text-[10px] sm:text-xs font-medium px-2 py-1 mt-1 rounded-md border outline-none cursor-pointer hover:border-emerald-500 transition-colors w-max appearance-none pr-6 relative"
+                                        className="text-[10px] sm:text-xs font-medium px-2 py-1 mt-1 rounded-md border outline-none cursor-pointer hover:border-emerald-500 transition-colors max-w-[120px] sm:max-w-[180px] md:max-w-xs truncate appearance-none pr-6 relative"
                                         style={{ 
                                             backgroundColor: 'var(--bg-card)', 
                                             borderColor: 'var(--border-secondary)', 

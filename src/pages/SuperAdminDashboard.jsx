@@ -149,25 +149,25 @@ export default function SuperAdminDashboard() {
             <table className="w-full text-left border-collapse">
               <thead>
                 <tr style={{ backgroundColor: 'rgba(0,0,0,0.02)' }}>
-                  <th className="p-4 font-medium text-sm text-gray-500 border-b" style={{ borderColor: 'var(--border-color)' }}>Mess ID</th>
-                  <th className="p-4 font-medium text-sm text-gray-500 border-b" style={{ borderColor: 'var(--border-color)' }}>Name</th>
-                  <th className="p-4 font-medium text-sm text-gray-500 border-b" style={{ borderColor: 'var(--border-color)' }}>Address</th>
-                  <th className="p-4 font-medium text-sm text-gray-500 border-b" style={{ borderColor: 'var(--border-color)' }}>Status</th>
-                  <th className="p-4 font-medium text-sm text-gray-500 border-b" style={{ borderColor: 'var(--border-color)' }}>Actions</th>
+                  <th className="p-3 sm:p-4 font-medium text-xs sm:text-sm text-gray-500 border-b whitespace-nowrap" style={{ borderColor: 'var(--border-color)' }}>Mess ID</th>
+                  <th className="p-3 sm:p-4 font-medium text-xs sm:text-sm text-gray-500 border-b whitespace-nowrap" style={{ borderColor: 'var(--border-color)' }}>Name</th>
+                  <th className="p-3 sm:p-4 font-medium text-xs sm:text-sm text-gray-500 border-b whitespace-nowrap" style={{ borderColor: 'var(--border-color)' }}>Address</th>
+                  <th className="p-3 sm:p-4 font-medium text-xs sm:text-sm text-gray-500 border-b whitespace-nowrap" style={{ borderColor: 'var(--border-color)' }}>Status</th>
+                  <th className="p-3 sm:p-4 font-medium text-xs sm:text-sm text-gray-500 border-b whitespace-nowrap" style={{ borderColor: 'var(--border-color)' }}>Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {filteredMesses.map(mess => (
                   <tr key={mess.id} className="hover:bg-black/5 dark:hover:bg-white/5 transition-colors">
-                    <td className="p-4 border-b" style={{ borderColor: 'var(--border-color)', color: 'var(--text-primary)' }}>{mess.id}</td>
-                    <td className="p-4 border-b font-medium" style={{ borderColor: 'var(--border-color)', color: 'var(--text-primary)' }}>{mess.name}</td>
-                    <td className="p-4 border-b" style={{ borderColor: 'var(--border-color)', color: 'var(--text-muted)' }}>{mess.address || 'N/A'}</td>
-                    <td className="p-4 border-b" style={{ borderColor: 'var(--border-color)' }}>
-                      <span className={`px-2 py-1 text-xs rounded-full font-medium ${mess.isActive ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-400' : 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400'}`}>
+                    <td className="p-3 sm:p-4 border-b whitespace-nowrap text-xs sm:text-sm" style={{ borderColor: 'var(--border-color)', color: 'var(--text-primary)' }}>{mess.id}</td>
+                    <td className="p-3 sm:p-4 border-b font-medium whitespace-nowrap text-xs sm:text-sm" style={{ borderColor: 'var(--border-color)', color: 'var(--text-primary)' }}>{mess.name}</td>
+                    <td className="p-3 sm:p-4 border-b whitespace-nowrap text-xs sm:text-sm" style={{ borderColor: 'var(--border-color)', color: 'var(--text-muted)' }}>{mess.address || 'N/A'}</td>
+                    <td className="p-3 sm:p-4 border-b whitespace-nowrap" style={{ borderColor: 'var(--border-color)' }}>
+                      <span className={`px-2 py-1 text-[10px] sm:text-xs rounded-full font-medium ${mess.isActive ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-400' : 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400'}`}>
                         {mess.isActive ? 'Active' : 'Inactive'}
                       </span>
                     </td>
-                    <td className="p-4 border-b" style={{ borderColor: 'var(--border-color)' }}>
+                    <td className="p-3 sm:p-4 border-b whitespace-nowrap" style={{ borderColor: 'var(--border-color)' }}>
                       <div className="flex items-center space-x-4">
                         <button
                           onClick={() => handleEditMess(mess)}
@@ -209,11 +209,11 @@ export default function SuperAdminDashboard() {
       {showCreateModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
           <div className="w-full max-w-lg max-h-[90vh] flex flex-col rounded-2xl shadow-xl overflow-hidden" style={{ backgroundColor: 'var(--bg-secondary)', border: '1px solid var(--border-color)' }}>
-            <div className="p-6 border-b shrink-0" style={{ borderColor: 'var(--border-color)' }}>
+            <div className="p-4 sm:p-6 border-b shrink-0" style={{ borderColor: 'var(--border-color)' }}>
               <h2 className="text-xl font-bold" style={{ color: 'var(--text-primary)' }}>{isEditing ? 'Edit Mess' : 'Create New Mess'}</h2>
             </div>
             
-            <div className="overflow-y-auto p-6">
+            <div className="overflow-y-auto p-4 sm:p-6">
               <form id="mess-form" onSubmit={handleCreateMess} className="space-y-4">
                 <div className="space-y-4">
                   <h3 className="font-semibold text-sm uppercase tracking-wider text-emerald-500">Mess Details</h3>
@@ -252,7 +252,7 @@ export default function SuperAdminDashboard() {
               </form>
             </div>
             
-            <div className="p-6 border-t shrink-0 bg-black/5 dark:bg-white/5" style={{ borderColor: 'var(--border-color)' }}>
+            <div className="p-4 sm:p-6 border-t shrink-0 bg-black/5 dark:bg-white/5" style={{ borderColor: 'var(--border-color)' }}>
               <div className="flex justify-end space-x-3">
                 <button type="button" onClick={closeModal} className="px-4 py-2 rounded-xl font-medium transition-colors" style={{ backgroundColor: 'var(--bg-primary)', color: 'var(--text-primary)', border: '1px solid var(--border-color)' }}>
                   Cancel
